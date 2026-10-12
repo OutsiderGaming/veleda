@@ -1,9 +1,16 @@
 {
   "name": "veleda",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "test": "npm test --workspaces --if-present"
   },
-  "engines": { "node": ">=23.6" }
+  "engines": {
+    "node": ">=23.6"
+  },
+  "devDependencies": {
+    "@solana/web3.js": "1.98.4"
+  }
 }

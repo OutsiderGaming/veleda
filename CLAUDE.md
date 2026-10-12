@@ -41,7 +41,9 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 
 - `packages/reference`: TypeScript f64 reference model. `npm test` (Node's built-in runner, no dependencies; Node runs `.ts` directly).
 - `crates/veleda-math`: Rust maths (`fixed`, `float`, `lmsr`, `tree`) and `engine` (the program's instructions as plain Rust over borrowed state), `no_std`, used by the Anchor program. `cargo test -p veleda-math`; `scripts/cross-check.sh` replays 15,000 random reference-model actions through the engine.
-- `programs/veleda` (Anchor, not created yet) and `app/` (Next.js, not created yet).
+- `programs/veleda`: Anchor 1.x program, deployed on devnet at `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`. Week 1 holds only temporary `probe_*` instructions (compute-unit measurement); the real instructions come in week 2. Build with `anchor build`; `scripts/probe-cu.ts` measures compute units.
+- `app/` (Next.js, not created yet).
+- Devnet `[TOKEN]` mint: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` (6 decimals, classic SPL Token).
 - `keys/`: devnet keypairs, gitignored. Never commit or print private keys.
 
 ## Stack (from the spec)

@@ -198,7 +198,7 @@ Record a backup video of the full run in week 4 in case devnet is slow on the da
 | Privy's Solana wallet can't sign without sending, or doesn't work on devnet | Prove both in week 1 before building on it; fall back to standard wallet connect plus the airdrop if needed |
 | A paid service creeps in (RPC, hosting, wallet provider) | Free tiers only: Privy Developer, devnet faucet SOL, free RPC and hosting tiers. Check before adding any service |
 | First buy fails for a user with no SOL because they're asked to pay rent | Server key is the `payer` on every account the user's actions create; test with a wallet that has never held SOL |
-| Compute limit exceeded on wide ranges or deep trees | Measure compute units in week 1; lazy tree keeps each trade at ~16 nodes; request a higher compute budget if needed |
+| Compute limit exceeded on wide ranges or deep trees | Measured in week 1 on devnet with 732 atoms: trades 50,000–90,000 CU, market creation ~300,000 (needs a compute-budget request). See the build plan |
 | Tree values overflow as shares grow | Periodic rescale of the whole tree by a constant |
 | Account size or rent too high | Demo markets are small (≤ ~1,000 atoms); five-year hourly markets are a slide, not a build |
 | Judges read it as gambling | Lead with fans and credit for your call; test tokens only; "test money" label in the app |

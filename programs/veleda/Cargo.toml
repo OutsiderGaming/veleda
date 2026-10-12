@@ -1,0 +1,28 @@
+[package]
+name = "veleda"
+version = "0.1.0"
+description = "Veleda on-chain program"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "veleda"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+anchor-lang = "1.1.2"
+bytemuck = "1"
+solana-msg = "3"
+veleda-math = { path = "../../crates/veleda-math" }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

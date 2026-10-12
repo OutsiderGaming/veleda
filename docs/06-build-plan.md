@@ -31,7 +31,7 @@ keys/                  devnet keypairs (gitignored, never committed)
 - [ ] **Create the Privy app** (you): free Developer tier, enable Solana embedded wallets, email and Google sign-in. Note the app ID.
 - [x] **Install the toolchain**: Rust 1.99.0, Solana CLI 3.1.10 (Agave), Anchor CLI 1.1.2 via avm, Surfpool 1.6.1 (local test network, optional). `cargo test` and `cargo-build-sbf` both work.
 - [x] Repo skeleton: workspaces, `.gitignore`, reference-model and math-crate stubs.
-- [ ] Devnet keypairs in `keys/`: `admin.json`, `fee-payer.json`, `mint-authority.json`. Fund admin and fee payer from the faucet.
+- [x] Devnet keypairs in `keys/`: `admin.json` (7dWt…zDiC), `fee-payer.json` (44Rc…VRz2), `mint-authority.json` (GjLz…girp), `token-mint.json`, `veleda-program.json`. Admin and fee payer funded.
 
 ### Maths (the critical path)
 
@@ -39,11 +39,23 @@ keys/                  devnet keypairs (gitignored, never committed)
 - [x] **Fixed-point exp/ln** (`crates/veleda-math`): Q64.64 in u128; range reduction plus a short polynomial. Tests against f64 across the input range; rounding direction (costs up, proceeds down).
 - [x] **Segment tree with lazy range-multiply** (`crates/veleda-math`): range multiply, range sum, point zero (pruning), whole-tree rescale. Tests against a plain array on random operations.
 - [x] **Cross-check**: `crates/veleda-math/src/engine.rs` runs the program's instructions in plain Rust; `scripts/cross-check.sh` replays reference-model trading sessions (plain-text logs) through it. 26,000 trades pass: same accepts/rejects, costs never below the reference and within a couple of base units, proceeds never above, prices within 1e-10, balance never below the reference, same claims.
-- [ ] **Compute-unit spike**: a throwaway Anchor instruction doing one range update on a 732-leaf tree on devnet. Record the compute units used.
+- [x] **Compute-unit spike**: Anchor program `programs/veleda` (devnet `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`) with temporary `probe_*` instructions running the real engine on a 732-atom market; `scripts/probe-cu.ts` measures them. Results (12 Oct 2026):
+
+  | Action | Engine CU | Instruction total CU |
+  | --- | --- | --- |
+  | Create market (732 atoms) | 291,533 | 297,952 |
+  | Buy 1 day | 49,827 | 52,903 |
+  | Buy 31 days | 61,642 | 64,744 |
+  | Buy 696 days | 88,515 | 91,774 |
+  | Buy max size (29 × b) | 69,067 | 72,371 |
+  | Sell part of a position | 72,964 | 75,773 |
+  | Clear 101 elapsed days | 7,988 | 9,963 |
+
+  Every trade fits the default 200,000 CU per instruction with room for the real program's account checks and token transfers. `create_market` needs a compute-budget request (~300,000). Wider ranges cost more because the engine walks every atom in the range (owed shares) and every live atom (largest-payout check): fine at ~1,000 atoms, but a five-year hourly market would need a max-tree for liabilities instead (roadmap). Market account for 732 atoms: 55,072 bytes.
 
 ### Onboarding proof
 
-- [ ] **Create the `[TOKEN]` mint** (6 decimals) with `mint-authority.json`.
+- [x] **Create the `[TOKEN]` mint**: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` on devnet, 6 decimals, classic SPL Token program, mint authority `keys/mint-authority.json`, no freeze authority.
 - [ ] **Privy spike** in `app/`: email sign-in, embedded Solana wallet, then one transaction from a wallet that has never held SOL, with the server as fee payer and rent payer: create the user's token account and mint 100 `[TOKEN]` to it.
 
 ### Week 1 is done when
