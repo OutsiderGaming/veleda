@@ -63,3 +63,40 @@ keys/                  devnet keypairs (gitignored, never committed)
 - The Rust maths matches the reference within rounding on 10,000 random trades.
 - A new user signs in by email and receives 100 VCR with no SOL in their wallet.
 - The compute cost of a range update is measured and fits the budget.
+
+## Week 2: the real program
+
+Goal from the hackathon spec: both demo markets live on devnet with bot trading; the vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically (already done in week 1).
+
+### Decisions
+
+| Area | Decision |
+| --- | --- |
+| Program | Replace the `probe_*` instructions in `programs/veleda` with the seven real ones; same program ID (upgrade in place). Each instruction is a thin wrapper: load accounts, call `veleda_math::engine`, move tokens |
+| Market account | Zero-copy, created by the client with `createAccount` (it's over the 10 KB CPI limit), then initialised by `create_market`. Layout: header (params, admin, mint, vault, live edge, status, winner, balance, LP and platform fees, clock offset, demo flag), then tree sums, tree multipliers, owed shares |
+| Positions | PDA `["position", market, owner, nonce]` holding range and shares. The fee payer is the rent payer; `claim` closes it and returns the rent to the fee payer. Nonce chosen by the client |
+| Vault | Token account PDA `["vault", market]` owned by the market. Holds subsidy + stakes + fees |
+| Tokens | Anchor `token_interface` with `transfer_checked`, so classic SPL Token (VCR) and Token-2022 both work |
+| Fee payer | Every instruction takes a separate `fee_payer` signer for rent; the user signs only as token owner |
+| Tests | LiteSVM (Rust, in-process, no validator): every instruction, every rejection path, invariant after each step, a user with zero SOL |
+
+### Steps
+
+- [ ] **Account layout + `create_market`**: header struct, size helper shared with scripts, prior from presets, subsidy deposited into the vault from the admin's VCR. LiteSVM harness with the VCR mint and funded test users.
+- [ ] **`buy_range` / `sell_range`**: positions, `transfer_checked` in and out of the vault (vault PDA signs), `max_cost` / `min_proceeds`, fee payer pays position rent.
+- [ ] **`advance_time`, `resolve`, `claim`, `set_clock_offset`**: clock offset only on markets created as demo markets, forward only; "now" = chain time + offset everywhere.
+- [ ] **Tests**: full lifecycle per market type; locked/pruned/slippage/too-large/resolved rejections; claim on fully pruned positions; a user with 0 SOL buys and sells; invariant after every instruction. Re-run the compute measurement.
+- [ ] **Deploy + create markets**: upgrade the devnet program; `scripts/create-markets.ts` creates the flagship (Taylor Swift, 731 daily atoms, b 1,000, 72h lock, 24h lag) and the fast market (168 hourly atoms, b 100, flat, 1h lock, 10 min lag, clock offset enabled), minting each subsidy to its vault.
+- [ ] **Trade endpoints**: `app/` API routes that build buy/sell/claim transactions with the server as fee payer (same pattern as the week 1 transfer), for the web app in week 3 and the bots.
+- [ ] **Trader bots**: `scripts/bots.ts` with a few wallets (airdropped VCR, server fee payer) trading both markets on a schedule so the band has shape and history.
+
+### Open before starting
+
+- Flagship opening prior: the "not by end date" price and the preset shape over the two years.
+- Market start times: open both now, or align the flagship's window to a date.
+
+### Week 2 is done when
+
+- Both markets are live on devnet and the bots have been trading for a day.
+- LiteSVM tests pass for every instruction and rejection path, with the invariant checked after each.
+- A fresh Privy user with 0 SOL can buy and sell through the trade endpoints.
