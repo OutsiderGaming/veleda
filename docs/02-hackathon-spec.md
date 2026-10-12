@@ -43,9 +43,9 @@ Run two markets: a flagship that shows the real use case, and a fast one that sh
 | --- | --- | --- |
 | Question | "When will Taylor Swift's first child be born?" Natural timing, resolving on the reported date of birth | A staged event resolved live during judging |
 | Atom size | Day | Hour |
-| Window | 2 years (731 atoms + end-date atom) | 7 days (168 atoms + end-date atom) |
+| Window | 3 years (1,096 daily atoms + end-date atom) | 7 days (168 atoms + end-date atom) |
 | b | 1,000 VCR | 100 VCR |
-| Opening prior | Preset shape, "not by end date" set explicitly, 0.01% floor per atom | Flat |
+| Opening prior | "Not by end date" at 65%. The other 35% over the three years: near zero (the 0.01% floor) for the first ~6 months, then curving up to a peak around the end of year 2, then easing slightly down through year 3 | Flat |
 | Locked zone | 72 hours | 1 hour |
 | Clock offset | Always 0 | Admin-settable, so time can move forward during the demo |
 | Live-edge lag | 24 hours | 10 minutes |
@@ -181,7 +181,7 @@ If anything overruns, cut in this order: sub-range sells (already a stretch goal
 About 2:25 on one phone, two markets. The submission minimum is 2 minutes and the maximum 4, so this leaves margin either side. If the video uses the news-broadcast framing, these beats become its segments.
 
 1. **The need (20s).** "Fans already argue about when things will happen. Veleda lets you stake your call and get credit for it."
-2. **First call in under a minute (25s).** Open the link on a phone, drag to a month two years out, tap Buy, sign in with email, and the position appears. Show a stopwatch on screen.
+2. **First call in under a minute (25s).** Open the link on a phone, drag to a month two years out (in the flagship's peak), tap Buy, sign in with email, and the position appears. Show a stopwatch on screen.
 3. **Any width (15s).** Drag a 20-day chunk and watch the multiplier fall as the chunk widens. Same trade, any width.
 4. **Share it (20s).** Tap "Share this window as a link" and open it on a second phone: it lands on the same window, ready to buy.
 5. **Time passes (25s).** Switch to the fast market, move its clock offset forward a few hours and call advance time: elapsed hours grey out and the cash-out figure climbs. Cash out for a profit.

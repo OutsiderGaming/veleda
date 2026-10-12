@@ -86,13 +86,14 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 - [ ] **`buy_range` / `sell_range`**: positions, `transfer_checked` in and out of the vault (vault PDA signs), `max_cost` / `min_proceeds`, fee payer pays position rent.
 - [ ] **`advance_time`, `resolve`, `claim`, `set_clock_offset`**: clock offset only on markets created as demo markets, forward only; "now" = chain time + offset everywhere.
 - [ ] **Tests**: full lifecycle per market type; locked/pruned/slippage/too-large/resolved rejections; claim on fully pruned positions; a user with 0 SOL buys and sells; invariant after every instruction. Re-run the compute measurement.
-- [ ] **Deploy + create markets**: upgrade the devnet program; `scripts/create-markets.ts` creates the flagship (Taylor Swift, 731 daily atoms, b 1,000, 72h lock, 24h lag) and the fast market (168 hourly atoms, b 100, flat, 1h lock, 10 min lag, clock offset enabled), minting each subsidy to its vault.
+- [ ] **Deploy + create markets**: upgrade the devnet program; `scripts/create-markets.ts` creates the flagship (Taylor Swift, 3 years = 1,096 daily atoms, b 1,000, 72h lock, 24h lag, the opening shape from the hackathon spec) and the fast market (168 hourly atoms, b 100, flat, 1h lock, 10 min lag, clock offset enabled), minting each subsidy to its vault.
 - [ ] **Trade endpoints**: `app/` API routes that build buy/sell/claim transactions with the server as fee payer (same pattern as the week 1 transfer), for the web app in week 3 and the bots.
 - [ ] **Trader bots**: `scripts/bots.ts` with a few wallets (airdropped VCR, server fee payer) trading both markets on a schedule so the band has shape and history.
 
 ### Open before starting
 
-- Flagship opening prior: the "not by end date" price and the preset shape over the two years.
+- Flagship opening prior: settled (12 Oct 2026). 3-year window, "not by end date" 65%, near zero for ~6 months, curving up to a peak around the end of year 2, easing slightly through year 3.
+- 1,097 leaves need a 2,048-slot tree: the market account roughly doubles to ~107 KB (~0.75 devnet SOL rent), and trades cost a little more compute than the 732-atom measurement. Re-measure in the tests step.
 - Market start times: open both now, or align the flagship's window to a date.
 
 ### Week 2 is done when
