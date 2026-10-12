@@ -94,7 +94,7 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 
 - Flagship opening prior: settled (12 Oct 2026). 3-year window, "not by end date" 65%, near zero for ~6 months, curving up to a peak around the end of year 2, easing slightly through year 3.
 - 1,097 leaves need a 2,048-slot tree: the market account roughly doubles to ~107 KB (~0.75 devnet SOL rent), and trades cost a little more compute than the 732-atom measurement. Re-measure in the tests step.
-- Market start times: open both now, or align the flagship's window to a date.
+- Market start times: settled (12 Oct 2026). Both markets open as soon as they're created; each window starts at creation.
 
 ### Week 2 is done when
 
