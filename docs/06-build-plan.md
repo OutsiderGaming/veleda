@@ -28,7 +28,7 @@ keys/                  devnet keypairs (gitignored, never committed)
 
 ### Day 1: setup and long-lead items
 
-- [ ] **Create the Privy app** (you): free Developer tier, enable Solana embedded wallets, email and Google sign-in. Note the app ID.
+- [x] **Create the Privy app**: free Developer tier, enable Solana embedded wallets, email and Google sign-in. Note the app ID.
 - [x] **Install the toolchain**: Rust 1.99.0, Solana CLI 3.1.10 (Agave), Anchor CLI 1.1.2 via avm, Surfpool 1.6.1 (local test network, optional). `cargo test` and `cargo-build-sbf` both work.
 - [x] Repo skeleton: workspaces, `.gitignore`, reference-model and math-crate stubs.
 - [x] Devnet keypairs in `keys/`: `admin.json` (7dWt…zDiC), `fee-payer.json` (44Rc…VRz2), `mint-authority.json` (GjLz…girp), `token-mint.json`, `veleda-program.json`. Admin and fee payer funded.
