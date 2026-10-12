@@ -102,6 +102,15 @@ pub fn exp_neg(y: u128, rounding: Rounding) -> u128 {
     widen(v, rounding)
 }
 
+/// e^(−y) for y ≥ 0 split as (m, k) with e^(−y) = m · 2^(−k) and m in
+/// (1/2, 1], m rounded the given way. Unlike [`exp_neg`] this keeps full
+/// relative precision however small the result.
+pub fn exp_neg_split(y: u128, rounding: Rounding) -> (u128, u128) {
+    let k = y / LN2;
+    let r = y - k * LN2;
+    (widen(exp_taylor(r, true), rounding), k)
+}
+
 /// ln x for x ≥ 1. `None` if x < 1.
 pub fn ln(x: u128, rounding: Rounding) -> Option<u128> {
     if x < ONE {

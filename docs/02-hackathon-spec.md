@@ -88,8 +88,8 @@ One Anchor program: each market keeps its prices in a segment tree in one zero-c
 p is the range's current price (range sum ÷ root sum). A trade multiplies the range's leaves by e^(±x/b), which the tree does lazily in O(log n).
 
 - **Fixed point:** Q64.64 in u128, with exp and ln implemented by range reduction plus a short polynomial. Round every cost **up** and every proceeds figure **down**, so rounding can never drain the vault.
-- **Overflow and precision:** after every change, rescale the whole tree by a power of two whenever the root sum leaves [1, 2^16). Scaling down prevents overflow; scaling up keeps precision after sells or pruning shrink the tree. Prices are ratios, so they're unaffected. Pending range-multipliers are stored as small floats (mantissa + exponent) so untouched parts of the tree don't lose precision.
-- **Trade size cap:** one trade may add or remove at most 30 × b shares (factor e^30, so a trade can't overflow the tree between rescales). That's 30,000 shares on the flagship and 3,000 on the fast market; larger trades are rejected.
+- **Tree number format:** tree sums and pending multipliers are small packed floats (64-bit mantissa + power-of-two exponent), not fixed point. An atom squeezed to a tiny share of the market keeps full relative precision, buy prices reach the cost formula without truncation, and nothing can overflow, so no rescaling is needed.
+- **Trade size cap:** one trade may add or remove at most 30 × b shares, keeping exp inputs well inside range. That's 30,000 shares on the flagship and 3,000 on the fast market; larger trades are rejected and can be split.
 - **Invariant tested on every instruction:** vault balance − accrued fees ≥ the largest payout any single atom could require.
 - **Time:** "now" in every check is chain time + the market's clock offset (always 0 on the flagship).
 

@@ -6,6 +6,8 @@
 #![cfg_attr(not(test), no_std)]
 
 pub mod fixed;
+pub mod float;
+pub mod engine;
 pub mod lmsr;
 pub mod tree;
 

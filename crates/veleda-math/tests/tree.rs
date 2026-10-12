@@ -1,17 +1,91 @@
 mod common;
 
 use common::{f, q, Rng};
-use veleda_math::fixed::{self, Rounding::*, ONE};
-use veleda_math::tree::{storage_len, Tree, MAX_TRADE_EXPONENT, RESCALE_AT};
+use veleda_math::fixed::{Rounding::*, ONE};
+use veleda_math::float::Float;
+use veleda_math::tree::{storage_len, Tree, MAX_TRADE_EXPONENT};
 
 fn storage(n: usize) -> (Vec<u128>, Vec<u128>) {
     let (s, l) = storage_len(n);
     (vec![0; s], vec![0; l])
 }
 
+fn price(t: &mut Tree, l: usize, r: usize) -> f64 {
+    f(t.range_price(l, r, Down).unwrap())
+}
+
+#[test]
+fn float_arithmetic_matches_f64() {
+    let mut r = Rng::new(12);
+    for _ in 0..20_000 {
+        let (a, b) = (r.log_range(1e-12, 1e12), r.log_range(1e-12, 1e12));
+        let (fa, fb) = (Float::from_q64(q(a)).unwrap(), Float::from_q64(q(b)).unwrap());
+        let (xa, xb) = (f(q(a)), f(q(b)));
+        let one = Float::ONE;
+        // Read results back through ratio-to-one where they fit in Q64.64 (resolution 5e-20).
+        let sum = f(fa.add(fb).unwrap().ratio(one, Down).unwrap_or(u128::MAX));
+        if xa + xb < 1e18 {
+            assert!((sum - (xa + xb)).abs() <= (xa + xb) * 1e-15 + 1e-19, "{xa} + {xb} = {sum}");
+        }
+        let prod = fa.mul(fb).unwrap();
+        if xa * xb < 1e18 && xa * xb > 1e-12 {
+            let p = f(prod.ratio(one, Down).unwrap());
+            assert!((p - xa * xb).abs() <= xa * xb * 1e-15 + 1e-19, "{xa} × {xb} = {p}");
+        }
+        let ratio = fa.ratio(fb, Down);
+        if xa / xb < 1e18 && xa / xb > 1e-12 {
+            let v = f(ratio.unwrap());
+            assert!((v - xa / xb).abs() <= xa / xb * 1e-15 + 1e-19, "{xa} ÷ {xb} = {v}");
+        }
+    }
+    assert!(Float::ZERO.add(Float::ZERO).unwrap().is_zero());
+    assert!(Float::ONE.mul(Float::ZERO).unwrap().is_zero());
+}
+
+#[test]
+fn exp_neg_keeps_relative_precision_when_tiny() {
+    let mut r = Rng::new(13);
+    for _ in 0..20_000 {
+        let y = r.range(0.0, 60.0);
+        let got = Float::exp_neg(q(y)).unwrap().as_f64();
+        let want = (-f(q(y))).exp();
+        assert!(got >= want * (1.0 - 1e-15) && got <= want * (1.0 + 1e-12), "e^-{y}: {got:e} vs {want:e}");
+    }
+}
+
+#[test]
+fn rejects_wrong_storage_and_bad_ranges() {
+    let (mut s, mut l) = storage(10);
+    assert!(Tree::new(&mut s[..5], &mut l, 10).is_none());
+    let mut t = Tree::new(&mut s, &mut l, 10).unwrap();
+    assert!(t.init(&[ONE; 9]).is_none());
+    t.init(&[ONE; 10]).unwrap();
+    assert_eq!(t.range_price(3, 2, Down), None);
+    assert_eq!(t.range_price(0, 10, Down), None);
+    assert_eq!(t.range_mul(5, 10, Float::ONE), None);
+}
+
+#[test]
+fn init_builds_sums() {
+    let (mut s, mut l) = storage(5);
+    let mut t = Tree::new(&mut s, &mut l, 5).unwrap();
+    t.init(&[ONE, 2 * ONE, 3 * ONE, 4 * ONE, 5 * ONE]).unwrap();
+    assert!((price(&mut t, 1, 3) - 0.6).abs() < 1e-18);
+    assert_eq!(t.range_price(0, 4, Down), Some(ONE));
+}
+
+#[test]
+fn pruning_zeroes_leaves_and_renormalises() {
+    let (mut s, mut l) = storage(4);
+    let mut t = Tree::new(&mut s, &mut l, 4).unwrap();
+    t.init(&[ONE / 4; 4]).unwrap();
+    t.range_mul(0, 1, Float::ZERO).unwrap();
+    assert_eq!(t.range_price(0, 1, Up), Some(0));
+    assert!((price(&mut t, 2, 2) - 0.5).abs() < 1e-18);
+}
+
 /// Plain f64 array doing the same operations, kept normalised to sum 1.
-/// `.1` tracks each leaf's net exponent (q/b) so sells can only undo buys, as on a real market.
-struct Model(Vec<f64>, Vec<f64>);
+struct Model(Vec<f64>);
 
 impl Model {
     fn mul(&mut self, l: usize, r: usize, factor: f64) {
@@ -28,157 +102,73 @@ impl Model {
     }
 }
 
-fn random_prior(r: &mut Rng, n: usize) -> Vec<f64> {
-    let raw: Vec<f64> = (0..n).map(|_| r.log_range(1e-4, 1.0)).collect();
-    let total: f64 = raw.iter().sum();
-    raw.iter().map(|w| w / total).collect()
-}
-
-#[test]
-fn rejects_wrong_storage_and_bad_ranges() {
-    let (mut s, mut l) = storage(10);
-    assert!(Tree::new(&mut s[..5], &mut l, 10).is_none());
-    let mut t = Tree::new(&mut s, &mut l, 10).unwrap();
-    assert!(t.init(&[ONE; 9]).is_none());
-    t.init(&[ONE; 10]).unwrap();
-    assert_eq!(t.range_sum(3, 2), None);
-    assert_eq!(t.range_sum(0, 10), None);
-    assert_eq!(t.range_mul(5, 10, ONE), None);
-}
-
-#[test]
-fn init_builds_sums() {
-    let (mut s, mut l) = storage(5);
-    let mut t = Tree::new(&mut s, &mut l, 5).unwrap();
-    t.init(&[ONE, 2 * ONE, 3 * ONE, 4 * ONE, 5 * ONE]).unwrap();
-    assert_eq!(t.root(), 15 * ONE);
-    assert_eq!(t.range_sum(1, 3), Some(9 * ONE));
-    assert_eq!(t.leaf(4), Some(5 * ONE));
-}
-
-#[test]
-fn pruning_zeroes_leaves_and_renormalises() {
-    let (mut s, mut l) = storage(4);
-    let mut t = Tree::new(&mut s, &mut l, 4).unwrap();
-    t.init(&[ONE / 4; 4]).unwrap();
-    t.range_mul(0, 1, 0).unwrap();
-    assert_eq!(t.leaf(0), Some(0));
-    assert_eq!(t.range_sum(0, 1), Some(0));
-    let p = f(t.range_price(2, 2, Down).unwrap());
-    assert!((p - 0.5).abs() < 1e-15, "survivor price {p}");
-}
-
 #[test]
 fn random_operations_match_f64_model() {
-    // Weights are fixed point with a step of 2^-64 (root kept in [1, 2^16)), and
-    // every operation rounds up by a few ulps. A leaf's error, as a fraction of
-    // its weight, is then bounded by roughly
-    //     steps · ULPS_PER_STEP · 2^-64 / (smallest share of the root it has had)
-    // because error added while the leaf was small grows with it afterwards
-    // (plus 1e-11 for the f64 model's own drift). A share is weight ÷ root, so
-    // it also carries the root's error: the share-weighted average of every
-    // leaf's bound. Check that for every leaf after every step.
-    const ULPS_PER_STEP: f64 = 8.0;
-    let ulp = 1.0 / 18_446_744_073_709_551_616.0;
+    // With float weights, every price should match the model to ~1e-11
+    // relative however small it gets (the f64 model's own drift dominates).
+    // Sells here are unconstrained, so weights get squeezed far harder than
+    // on a real market.
     let mut r = Rng::new(9);
-    let mut worst = 0f64; // worst error as a fraction of its bound
+    let mut worst = 0f64;
     for &n in &[1usize, 2, 3, 7, 169, 732, 1000] {
-        let prior = random_prior(&mut r, n);
+        let raw: Vec<f64> = (0..n).map(|_| r.log_range(1e-4, 1.0)).collect();
+        let total: f64 = raw.iter().sum();
+        let prior: Vec<u128> = raw.iter().map(|w| q(w / total)).collect();
         let (mut s, mut l) = storage(n);
         let mut t = Tree::new(&mut s, &mut l, n).unwrap();
-        t.init(&prior.iter().map(|&p| q(p)).collect::<Vec<_>>()).unwrap();
-        let mut m = Model(prior.iter().map(|&p| f(q(p))).collect(), vec![0.0; n]);
-        let mut min_share = m.0.clone();
+        t.init(&prior).unwrap();
+        let mut m = Model(prior.iter().map(|&p| f(p)).collect());
         let mut edge = 0usize;
 
-        for step in 1..=1500usize {
+        for step in 0..1500 {
             let a = edge + (r.unit() * (n - edge) as f64) as usize;
             let b = a + (r.unit() * (n - a) as f64) as usize;
-            let roll = r.unit();
-            if roll < 0.95 {
-                // A trade: buy (×e^y) or, if every leaf holds enough, sell (×e^(−y)); y up to 3.
-                let yf = r.range(0.0, 3.0);
-                let y = q(yf);
-                let can_sell = m.1[a..=b].iter().all(|&e| e >= yf);
-                let factor = if can_sell && r.unit() < 0.4 { fixed::exp_neg(y, Up) } else { fixed::exp(y, Up).unwrap() };
-                let sign = if factor < ONE { -1.0 } else { 1.0 };
-                for e in &mut m.1[a..=b] {
-                    *e += sign * yf;
-                }
+            if r.unit() < 0.95 {
+                let y = q(r.range(0.0, 3.0));
+                let factor = if r.unit() < 0.6 { Float::exp(y).unwrap() } else { Float::exp_neg(y).unwrap() };
                 t.range_mul(a, b, factor).unwrap();
-                m.mul(a, b, f(factor));
+                m.mul(a, b, factor.as_f64());
             } else if edge + 1 < n {
-                // Prune the next few atoms (never the last one, like the end atom).
                 let to = (edge + 1 + (r.unit() * 5.0) as usize).min(n - 1);
-                t.range_mul(edge, to - 1, 0).unwrap();
+                t.range_mul(edge, to - 1, Float::ZERO).unwrap();
                 m.mul(edge, to - 1, 0.0);
                 edge = to;
             }
-            let root = t.root();
-            assert!((ONE..RESCALE_AT).contains(&root), "n {n} step {step}: root {} out of range", f(root));
-
-            let rel_bound: Vec<f64> = (0..n)
-                .map(|i| {
-                    min_share[i] = min_share[i].min(m.0[i]);
-                    if i < edge { 0.0 } else { 1e-11 + step as f64 * ULPS_PER_STEP * ulp / min_share[i] }
-                })
-                .collect();
-            let root_bound: f64 = (0..n).map(|i| m.0[i] * rel_bound[i]).sum();
             for i in 0..n {
-                let want = m.0[i];
-                let got = f(t.leaf(i).unwrap()) / f(root);
+                let (got, want) = (price(&mut t, i, i), m.0[i]);
                 if i < edge {
                     assert_eq!(got, 0.0, "n {n} step {step}: pruned leaf {i} not zero");
                     continue;
                 }
-                let bound = want * (rel_bound[i] + root_bound);
+                // Prices below Q64.64 resolution (5e-20) can only be checked absolutely.
                 let err = (got - want).abs();
-                worst = worst.max(err / bound);
-                assert!(err <= bound, "n {n} step {step} leaf {i}: {got:e} vs model {want:e}, bound {bound:e}");
+                if want > 1e-9 {
+                    worst = worst.max(err / want);
+                }
+                assert!(err <= want * 1e-11 + 1e-19, "n {n} step {step} leaf {i}: {got:e} vs model {want:e}");
             }
-            // Range prices go through the internal nodes rather than single leaves.
             let lo = edge + (r.unit() * (n - edge) as f64) as usize;
-            let got = f(t.range_price(lo, n - 1, Down).unwrap());
-            let want = m.price(lo, n - 1);
-            let bound: f64 = (lo..n).map(|i| m.0[i] * (rel_bound[i] + root_bound)).sum::<f64>() + 1e-18;
-            assert!((got - want).abs() <= bound, "n {n} step {step}: price [{lo}, {}] = {got:e}, model {want:e}", n - 1);
+            let (got, want) = (price(&mut t, lo, n - 1), m.price(lo, n - 1));
+            assert!((got - want).abs() <= want * 1e-11 + 1e-19, "n {n} step {step}: price [{lo}, {}]", n - 1);
         }
     }
-    println!("worst error as a fraction of its bound: {worst:.3}");
+    println!("worst relative error on prices above 1e-9: {worst:.2e}");
 }
 
 #[test]
-fn largest_trades_rescale_without_overflow() {
+fn largest_trades_never_overflow() {
     let n = 732;
     let (mut s, mut l) = storage(n);
     let mut t = Tree::new(&mut s, &mut l, n).unwrap();
     t.init(&vec![ONE / n as u128; n]).unwrap();
-    let factor = fixed::exp(MAX_TRADE_EXPONENT, Up).unwrap();
-    // Hammer one atom, then the whole range, then the end atom, with the biggest allowed factor.
-    for i in 0..50 {
+    let up = Float::exp(MAX_TRADE_EXPONENT).unwrap();
+    // Hammer one atom, the whole range and the end atom with the biggest allowed factor, many times over.
+    for i in 0..300 {
         let (a, b) = match i % 3 { 0 => (5, 5), 1 => (0, n - 1), _ => (n - 1, n - 1) };
-        t.range_mul(a, b, factor).unwrap();
-        assert!(t.root() < RESCALE_AT);
+        t.range_mul(a, b, up).unwrap();
     }
-    let p = f(t.range_price(5, 5, Down).unwrap()) + f(t.range_price(n - 1, n - 1, Down).unwrap());
-    assert!(p > 0.999 && p <= 1.0 + 1e-12, "two hammered atoms hold ~all the mass: {p}");
-}
-
-#[test]
-fn rounding_up_keeps_root_at_least_the_leaf_sum() {
-    let mut r = Rng::new(10);
-    let n = 169;
-    let prior = random_prior(&mut r, n);
-    let (mut s, mut l) = storage(n);
-    let mut t = Tree::new(&mut s, &mut l, n).unwrap();
-    t.init(&prior.iter().map(|&p| q(p)).collect::<Vec<_>>()).unwrap();
-    for _ in 0..2000 {
-        let a = (r.unit() * n as f64) as usize;
-        let b = a + (r.unit() * (n - a) as f64) as usize;
-        t.range_mul(a, b, fixed::exp(q(r.range(0.0, 2.0)), Up).unwrap()).unwrap();
-    }
-    let leaves: u128 = (0..n).map(|i| t.leaf(i).unwrap()).sum();
-    let root = t.root();
-    // Node sums and leaf sums agree to within a few ulps per level.
-    assert!(root.abs_diff(leaves) <= 64 * n as u128, "root {root} vs leaves {leaves}");
+    let both = price(&mut t, 5, 5) + price(&mut t, n - 1, n - 1);
+    assert!(both > 0.999 && both <= 1.0 + 1e-15, "two hammered atoms hold ~all the mass: {both}");
+    // Far below Q64.64 resolution, so read it rounded up: still nonzero.
+    assert!(t.range_price(100, 100, Up).unwrap() > 0, "untouched atoms keep a tiny but nonzero price");
 }

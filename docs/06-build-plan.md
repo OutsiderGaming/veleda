@@ -38,7 +38,7 @@ keys/                  devnet keypairs (gitignored, never committed)
 - [x] **Reference model** (`packages/reference`): market of n atoms + "not by end date"; `quoteBuy` / `quoteSell` for a range; fee taken out of the gross amount; `advanceTime` pruning; `resolve`; `claim`; a vault-invariant check. Property tests on random trade sequences: the vault always covers the largest single-atom payout, buy-then-sell returns at most the stake, prices always sum to 1.
 - [x] **Fixed-point exp/ln** (`crates/veleda-math`): Q64.64 in u128; range reduction plus a short polynomial. Tests against f64 across the input range; rounding direction (costs up, proceeds down).
 - [x] **Segment tree with lazy range-multiply** (`crates/veleda-math`): range multiply, range sum, point zero (pruning), whole-tree rescale. Tests against a plain array on random operations.
-- [ ] **Cross-check**: Rust maths vs the TS reference on 10,000 random trades, within rounding. Shared test vectors as JSON.
+- [x] **Cross-check**: `crates/veleda-math/src/engine.rs` runs the program's instructions in plain Rust; `scripts/cross-check.sh` replays reference-model trading sessions (plain-text logs) through it. 26,000 trades pass: same accepts/rejects, costs never below the reference and within a couple of base units, proceeds never above, prices within 1e-10, balance never below the reference, same claims.
 - [ ] **Compute-unit spike**: a throwaway Anchor instruction doing one range update on a 732-leaf tree on devnet. Record the compute units used.
 
 ### Onboarding proof

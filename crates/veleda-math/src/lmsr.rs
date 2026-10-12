@@ -13,18 +13,26 @@
 //! `costForShares` / `proceedsForShares` in packages/reference.
 
 use crate::fixed::{self, Rounding, ONE};
+use crate::float::Float;
 
-/// Cost of adding x shares to a range at price p, with depth b. All Q64.64.
+/// Cost of adding x shares to a range at price p (Q64.64), with depth b. All Q64.64.
 /// `None` if p > 1, b is 0, or x/b exceeds [`fixed::EXP_MAX`] (trade too large).
 pub fn range_cost(b: u128, p: u128, x: u128) -> Option<u128> {
-    use Rounding::Up;
     if p > ONE {
         return None;
     }
+    range_cost_float(b, Float::from_q64(p)?, x)
+}
+
+/// As [`range_cost`], with p as a [`Float`]. Big trades multiply p by up to
+/// e^30, so a tiny p must keep its full relative precision rather than be
+/// truncated to Q64.64 first.
+pub fn range_cost_float(b: u128, p: Float, x: u128) -> Option<u128> {
+    use Rounding::Up;
     // Cost rises with x/b and with p, so round both up.
     let y = fixed::div(x, b, Up)?;
     let e = fixed::exp(y, Up)?;
-    let t = fixed::mul(p, e - ONE, Up)?;
+    let t = p.mul(Float::from_q64(e - ONE)?)?.to_q64(Up)?;
     let l = fixed::ln(ONE.checked_add(t)?, Up)?;
     fixed::mul(b, l, Up)
 }
