@@ -1,18 +1,11 @@
-//! Veleda on-chain maths: Q64.64 fixed point in u128, exp/ln, and the
-//! segment tree with lazy range-multiply. No std-only dependencies, so the
-//! Anchor program can use it directly. Tested against `packages/reference`.
+//! Veleda on-chain maths: Q64.64 fixed point in u128, exp/ln with guaranteed
+//! rounding direction, and LMSR range pricing. No std, so the Anchor program
+//! can use it directly. Tested against f64 here and against
+//! `packages/reference` via shared vectors.
 
 #![cfg_attr(not(test), no_std)]
 
-/// 1.0 in Q64.64.
-pub const ONE: u128 = 1 << 64;
+pub mod fixed;
+pub mod lmsr;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn one_is_two_to_the_64() {
-        assert_eq!(ONE, 18_446_744_073_709_551_616);
-    }
-}
+pub use fixed::{Rounding, ONE};
