@@ -56,7 +56,7 @@ keys/                  devnet keypairs (gitignored, never committed)
 ### Onboarding proof
 
 - [x] **Create the VCR mint**: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` on devnet, 6 decimals, classic SPL Token program, mint authority `keys/mint-authority.json`, no freeze authority.
-- [ ] **Privy spike** in `app/`: email sign-in, embedded Solana wallet, then one transaction from a wallet that has never held SOL, with the server as fee payer and rent payer: create the user's token account and mint 100 VCR to it.
+- [x] **Privy spike** (`app/`, verified 12 Oct 2026 with Google sign-in): Solana embedded wallet created silently at sign-in; `/api/airdrop` creates the user's VCR account and mints 100 VCR with the server paying fee and rent; the user then signs "send 1 VCR back" from a wallet that has never held SOL, with the server as fee payer. The wallet address always comes from the verified Privy session.
 
 ### Week 1 is done when
 
