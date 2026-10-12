@@ -1,0 +1,9 @@
+{
+  "name": "veleda",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "test": "npm test --workspaces --if-present"
+  },
+  "engines": { "node": ">=23.6" }
+}

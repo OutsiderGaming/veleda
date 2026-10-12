@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+# programs/* is added when the Anchor program is created.
+
+[profile.release]
+overflow-checks = true

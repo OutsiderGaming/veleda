@@ -1,0 +1,22 @@
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Node
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Rust / Anchor
+target/
+.anchor/
+test-ledger/
+
+# Devnet keypairs: never commit
+keys/*
+!keys/README.md

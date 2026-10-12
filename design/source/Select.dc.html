@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veleda — Dragging a window</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E9A867}a:hover{color:#F6C792}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0D0F0E; color: #EDE4D6; font-family: 'Manrope', sans-serif; position: relative; overflow: hidden; display: flex; flex-direction: column">
+
+  <div style="position: relative; padding: 54px 20px 12px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img src="/_blob/96468e90d60a7f7438090e58c7df6a2a" alt="Veleda" style="width: 34px; height: 34px; border-radius: 10px; object-fit: cover; object-position: 50% 38%">
+        <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.18em">VELEDA</span>
+      </div>
+      <div style="font-size: 13px; font-weight: 600; color: #E9A867">100.00 <span style="color: #8E8577; font-weight: 500">USDC</span></div>
+    </div>
+    <h1 style="margin: 0; font-weight: 700; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; text-align: center">When will Taylor Swift's<br>first child be born?</h1>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #171A18; border-radius: 12px; padding: 4px">
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Year</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Month</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: #2A221A; color: #F6C792; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700">Day</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Hour</button>
+    </div>
+  </div>
+
+  <div style="flex: 1; position: relative; padding: 26px 20px 0; display: flex; flex-direction: column">
+    <div style="position: absolute; left: 20px; right: 20px; top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 600; color: #8E8577">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E9A867" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>
+      Now · 17 months up
+    </div>
+
+    <div style="position: absolute; left: 66px; right: 66px; top: 71px; height: 180px; border: 1.5px solid #E9A867; background: rgba(233,168,103,0.06)"></div>
+    <div style="position: absolute; left: 50%; top: 62px; width: 40px; height: 18px; margin-left: -20px; background: #F2BE84; border-radius: 9px; display: flex; align-items: center; justify-content: center">
+      <div style="width: 16px; height: 2px; background: #1A120A; border-radius: 1px"></div>
+    </div>
+    <div style="position: absolute; left: 50%; top: 242px; width: 40px; height: 18px; margin-left: -20px; background: #F2BE84; border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(242,190,132,0.18)">
+      <div style="width: 16px; height: 2px; background: #1A120A; border-radius: 1px"></div>
+    </div>
+
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="44">
+      <div style="display: flex; align-items: center; height: 9px">
+        <div style="width: 46px; font-size: 10px; font-weight: 600; color: {{r.labelColor}}; white-space: nowrap">{{r.label}}</div>
+        <div style="flex: 1; display: flex; justify-content: center">
+          <div style="height: 6px; width: {{r.w}}%; background: {{r.bg}}; background-size: 3px 3px, 100% 100%; opacity: {{r.op}}"></div>
+        </div>
+        <div style="width: 46px"></div>
+      </div>
+    </sc-for>
+
+    <div style="position: absolute; right: 8px; top: 140px; background: #151816; border: 1px solid #E9A867; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 10px 28px rgba(0,0,0,0.6)">
+      <div style="font-size: 11px; font-weight: 600; color: #8E8577">20 days · 6.1%</div>
+      <div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 28px; line-height: 1; color: #F6C792">×15.8</div>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 170px; background: linear-gradient(to bottom, rgba(13,15,14,0), #0D0F0E 50%); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 34px; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #8E8577">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E9A867" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      Drag to the edge to keep scrolling
+    </div>
+    <div style="font-size: 14px; font-weight: 600; color: #EDE4D6">Release to see your price</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const labels = { 0: '9 Mar', 7: '16 Mar', 14: '23 Mar', 21: '30 Mar', 28: '6 Apr', 35: '13 Apr', 42: '20 Apr' };
+    const stip = 'radial-gradient(circle, rgba(13,15,14,0.55) 0.7px, transparent 0.9px), linear-gradient(90deg, #7A4A22, #C48A50 30%, #E8B97E 50%, #C48A50 70%, #7A4A22)';
+    const stipSel = 'radial-gradient(circle, rgba(13,15,14,0.35) 0.7px, transparent 0.9px), linear-gradient(90deg, #C48A50, #F0CB98 50%, #C48A50)';
+    const rows = [];
+    for (let i = 0; i < 44; i++) {
+      const g = (c, s) => Math.exp(-Math.pow((i - c) / s, 2));
+      const w = 16 + 66 * g(14, 9) + 7 * Math.sin(i * 2.1);
+      const sel = i >= 5 && i <= 24;
+      rows.push({
+        label: labels[i] || '',
+        labelColor: sel ? '#F6C792' : '#5F5A50',
+        w: Math.max(8, Math.min(90, w)).toFixed(1),
+        bg: sel ? stipSel : stip,
+        op: sel ? 1 : 0.5
+      });
+    }
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>

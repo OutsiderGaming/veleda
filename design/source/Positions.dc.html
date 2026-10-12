@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veleda — Your positions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E9A867}a:hover{color:#F6C792}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0D0F0E; color: #EDE4D6; font-family: 'Manrope', sans-serif; position: relative; overflow: hidden; display: flex; flex-direction: column">
+
+  <div style="position: relative; padding: 54px 20px 14px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img src="/_blob/96468e90d60a7f7438090e58c7df6a2a" alt="Veleda" style="width: 34px; height: 34px; border-radius: 10px; object-fit: cover; object-position: 50% 38%">
+        <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.18em">VELEDA</span>
+      </div>
+      <div style="font-size: 13px; font-weight: 600; color: #E9A867">65.00 <span style="color: #8E8577; font-weight: 500">USDC</span></div>
+    </div>
+
+    <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 6px 0 4px">
+      <h1 style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Your positions</h1>
+      <div style="position: relative; display: flex; align-items: baseline; gap: 10px">
+        <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 58px; line-height: 1; color: #F6C792">43.52</span>
+        <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 20px; color: #C9965F">USDC</span>
+      </div>
+      <div style="position: relative; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #8E8577">
+        <span style="font-weight: 800; color: #9CCB8E">▲ +8.52 (+24.3%)</span><span>·</span><span>35.00 paid</span><span>·</span><span>3 open</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #171A18; border-radius: 12px; padding: 4px">
+      <button style="height: 32px; border: 0; border-radius: 8px; background: #2A221A; color: #F6C792; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700">Open · 3</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Settled · 0</button>
+    </div>
+  </div>
+
+  <div style="flex: 1; position: relative; padding: 2px 16px 0; display: flex; flex-direction: column; gap: 12px">
+    <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+      <article style="position: relative; background: #151816; border: 1px solid {{c.cardBorder}}; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; gap: 12px; align-items: flex-start">
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <div style="font-size: 15px; font-weight: 700; line-height: 1.25">{{c.question}}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #E9A867">{{c.window}}</div>
+          </div>
+          <div style="flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+            <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 800; letter-spacing: 0.12em; color: #8E8577">
+              <span style="width: 6px; height: 6px; border-radius: 3px; background: {{c.pnlColor}}; box-shadow: 0 0 0 3px {{c.pnlGlow}}"></span>LIVE P&amp;L
+            </div>
+            <div style="font-size: 18px; font-weight: 800; line-height: 1; color: {{c.pnlColor}}">{{c.pnlAmt}}</div>
+            <div style="font-size: 11px; font-weight: 700; color: {{c.pnlColor}}">{{c.pnlPct}}</div>
+            <svg width="64" height="22" viewBox="0 0 64 28" fill="none" role="img" aria-label="{{c.sparkLabel}}">
+              <polyline points="{{c.spark}}" stroke="{{c.pnlColor}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; background: #101311; border-radius: 12px; padding: 10px 12px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 10px; font-weight: 600; color: #8E8577">Paid</span>
+            <span style="font-size: 15px; font-weight: 700">{{c.paid}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 10px; font-weight: 600; color: #8E8577">Worth now</span>
+            <span style="font-size: 15px; font-weight: 700">{{c.value}}</span>
+            <span style="font-size: 11px; font-weight: 600; color: #8E8577">after 3.5% fee</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 10px; font-weight: 600; color: #8E8577">If it lands</span>
+            <span style="font-size: 15px; font-weight: 700; color: #F6C792">{{c.payout}}</span>
+            <span style="font-size: 11px; font-weight: 600; color: #8E8577">{{c.mult}}</span>
+          </div>
+        </div>
+
+        <div style="font-size: 11px; color: #8E8577">{{c.odds}}</div>
+
+        <sc-if value="{{c.open}}">
+          <button style="height: 50px; border-radius: 16px; border: 0; background: linear-gradient(180deg, #F2BE84 0%, #D08D4B 100%); color: #1A120A; font-family: 'Cinzel', serif; font-weight: 700; font-size: 14px; letter-spacing: 0.1em; display: flex; align-items: center; justify-content: center; gap: 12px">
+            <span>cash out</span><span style="width: 1px; height: 16px; background: rgba(26,18,10,0.35)"></span><span>{{c.value}} USDC</span>
+          </button>
+        </sc-if>
+        <sc-if value="{{c.locked}}">
+          <button disabled style="height: 50px; border-radius: 16px; border: 1px solid #2E2B25; background: #1B1E1B; color: #BFB5A5; font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9A867" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+            Locked · inside the final 72 hours
+          </button>
+        </sc-if>
+      </article>
+    </sc-for>
+  </div>
+
+  <nav style="position: absolute; left: 0; right: 0; bottom: 0; padding: 64px 28px 20px; background: linear-gradient(to bottom, rgba(13,15,14,0) 0px, #0D0F0E 52px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #8E8577; text-decoration: none; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"></path><path d="M7 10h10"></path><path d="M5 14h14"></path><path d="M8 18h8"></path></svg>
+      Markets
+    </a>
+    <a href="#" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #F6C792; text-decoration: none; font-size: 11px; font-weight: 700">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="5" rx="1.5"></rect><rect x="4" y="11" width="16" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg>
+      Positions
+    </a>
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #8E8577; text-decoration: none; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      Account
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const up = '#9CCB8E', down = '#E8907A';
+    const upGlow = 'rgba(156,203,142,0.18)', downGlow = 'rgba(232,144,122,0.18)';
+    const cards = [
+      {
+        question: "When will Taylor Swift's first child be born?",
+        window: '14 Mar – 2 Apr 2028 · 20 days',
+        paid: '20.00', value: '32.02', pnlAmt: '▲ +12.02', pnlPct: '+60.1%', pnlColor: up, pnlGlow: upGlow,
+        payout: '316.00', mult: '×15.8 at entry',
+        odds: 'Crowd odds 6.1% when you bought · 10.5% now',
+        spark: '2,24 12,22 22,23 32,17 42,14 52,9 62,5',
+        sparkLabel: 'Price rising since purchase',
+        open: true, locked: false, cardBorder: '#3A2E22'
+      },
+      {
+        question: 'When will BTC first cross $200,000 on major exchanges?',
+        window: '25 Dec 2026 · 1 day',
+        paid: '5.00', value: '5.06', pnlAmt: '▲ +0.06', pnlPct: '+1.2%', pnlColor: up, pnlGlow: upGlow,
+        payout: '2,412.00', mult: '×482.5 at entry',
+        odds: 'Crowd odds 0.20% when you bought · 0.22% now',
+        spark: '2,16 12,17 22,15 32,16 42,15 52,16 62,15',
+        sparkLabel: 'Price roughly flat since purchase',
+        open: true, locked: false, cardBorder: '#2C2A24'
+      },
+      {
+        question: 'When will SOL first close above $500?',
+        window: 'Jun 2027 · 1 month',
+        paid: '10.00', value: '6.44', pnlAmt: '▼ −3.56', pnlPct: '−35.6%', pnlColor: down, pnlGlow: downGlow,
+        payout: '230.00', mult: '×23.0 at entry',
+        odds: 'Crowd odds 4.2% when you bought · 2.9% now',
+        spark: '2,8 12,10 22,9 32,14 42,17 52,16 62,21',
+        sparkLabel: 'Price falling since purchase',
+        open: true, locked: false, cardBorder: '#2C2A24'
+      }
+    ];
+    return { cards };
+  }
+}
+</script>
+</body>
+</html>

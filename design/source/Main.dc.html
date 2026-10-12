@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veleda — Market timeline (month)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E9A867}a:hover{color:#F6C792}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0D0F0E; color: #EDE4D6; font-family: 'Manrope', sans-serif; position: relative; overflow: hidden; display: flex; flex-direction: column">
+
+  <div style="position: relative; padding: 54px 20px 12px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img src="/_blob/96468e90d60a7f7438090e58c7df6a2a" alt="Veleda" style="width: 34px; height: 34px; border-radius: 10px; object-fit: cover; object-position: 50% 38%">
+        <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.18em">VELEDA</span>
+      </div>
+      <div style="font-size: 13px; font-weight: 600; color: #E9A867">100.00 <span style="color: #8E8577; font-weight: 500">USDC</span></div>
+    </div>
+    <h1 style="margin: 0; font-weight: 700; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; text-align: center">When will Taylor Swift's<br>first child be born?</h1>
+    <div style="display: flex; justify-content: center; gap: 14px; font-size: 11px; font-weight: 600; color: #8E8577">
+      <span>48,210 USDC staked</span><span>·</span><span>Resolves on reported birth date</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #171A18; border-radius: 12px; padding: 4px">
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Year</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: #2A221A; color: #F6C792; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700">Month</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Day</button>
+      <button style="height: 32px; border: 0; border-radius: 8px; background: transparent; color: #8E8577; font-family: 'Manrope', sans-serif; font-size: 13px">Hour</button>
+    </div>
+  </div>
+
+  <div style="flex: 1; position: relative; padding: 30px 20px 0; display: flex; flex-direction: column; gap: 10px">
+    <div style="position: absolute; left: 20px; right: 20px; top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 600; color: #8E8577">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E9A867" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>
+      Now · 14 months up
+    </div>
+
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <sc-if value="{{r.yearBreak}}">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: #8E8577">{{r.year}}</span>
+            <div style="flex: 1; height: 1px; background: #2C2A24"></div>
+          </div>
+        </sc-if>
+        <div style="display: flex; align-items: center; height: 44px">
+          <div style="flex: 1; display: flex; justify-content: center">
+            <button aria-pressed="{{r.pressed}}" aria-label="{{r.aria}}" style="height: 44px; width: {{r.w}}%; border: {{r.border}}; border-radius: 0; padding: 0 12px; background: {{r.bg}}; background-size: 3px 3px, 100% 100%; box-shadow: {{r.glow}}; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; font-size: 14px; letter-spacing: 0.16em; color: {{r.text}}">{{r.month}}</button>
+          </div>
+          <div style="width: 58px; display: flex; flex-direction: column; align-items: flex-end; gap: 1px">
+            <span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: {{r.multSize}}; line-height: 1; color: {{r.multColor}}">{{r.mult}}</span>
+            <span style="font-size: 10px; font-weight: 600; color: #6E675B">{{r.pct}}</span>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 20px 34px; background: linear-gradient(to bottom, rgba(13,15,14,0), #0D0F0E 45%); display: flex; flex-direction: column; align-items: center; gap: 10px">
+    <div style="display: flex; align-items: center; gap: 10px; background: #151816; border: 1px solid #2C2A24; border-radius: 24px; padding: 12px 18px; font-size: 14px; font-weight: 600">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9A867" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V6a2 2 0 0 1 4 0v5"></path><path d="M13 10.5a2 2 0 0 1 4 0V15a6 6 0 0 1-6 6h-.5a6 6 0 0 1-5-2.7L3.8 15.6a1.8 1.8 0 0 1 2.9-2.1L9 16"></path></svg>
+      Tap a month, or drag across several
+    </div>
+    <div style="font-size: 12px; color: #8E8577">Each bar is one month · pinch in for days</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const months = [
+      { m: 'DEC', y: '2027', p: 2.1 },
+      { m: 'JAN', y: '2028', p: 3.4 },
+      { m: 'FEB', y: '2028', p: 5.0 },
+      { m: 'MAR', y: '2028', p: 7.8 },
+      { m: 'APR', y: '2028', p: 8.6 },
+      { m: 'MAY', y: '2028', p: 6.9 },
+      { m: 'JUN', y: '2028', p: 4.8 },
+      { m: 'JUL', y: '2028', p: 3.2 }
+    ];
+    const names = { DEC: 'December', JAN: 'January', FEB: 'February', MAR: 'March', APR: 'April', MAY: 'May', JUN: 'June', JUL: 'July' };
+    const stip = 'radial-gradient(circle, rgba(13,15,14,0.5) 0.8px, transparent 1px), linear-gradient(90deg, #3E2612, #7A4E28 30%, #9A6A3C 50%, #7A4E28 70%, #3E2612)';
+    const stipSel = 'radial-gradient(circle, rgba(13,15,14,0.3) 0.8px, transparent 1px), linear-gradient(90deg, #C48A50, #F0CB98 50%, #C48A50)';
+    const selected = 'APR';
+    const max = 8.6;
+    let lastYear = null;
+    const rows = months.map((x, i) => {
+      const sel = x.m === selected;
+      const mult = (96.5 / x.p).toFixed(1);
+      const yearBreak = i === 0 || x.y !== lastYear;
+      lastYear = x.y;
+      return {
+        month: x.m,
+        year: x.y,
+        yearBreak,
+        pressed: sel ? 'true' : 'false',
+        aria: names[x.m] + ' ' + x.y + ', ' + x.p + ' percent, pays ' + mult + ' times',
+        w: (34 + (x.p / max) * 60).toFixed(1),
+        bg: sel ? stipSel : stip,
+        border: sel ? '1.5px solid #F6C792' : '1px solid rgba(201,128,62,0.25)',
+        glow: sel ? '0 0 0 4px rgba(242,190,132,0.14), 0 10px 26px rgba(0,0,0,0.5)' : 'none',
+        text: sel ? '#1A120A' : '#EDE4D6',
+        mult: '×' + mult,
+        multSize: sel ? '20px' : '14px',
+        multColor: sel ? '#F6C792' : '#BFB5A5',
+        pct: x.p.toFixed(1) + '%'
+      };
+    });
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>
