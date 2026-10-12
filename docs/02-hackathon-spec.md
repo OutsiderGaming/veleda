@@ -20,7 +20,7 @@ Build the core loop end to end; present everything about outside LPs and decentr
 | In (build it) | Out (slide only) |
 | --- | --- |
 | Email/social login with an embedded wallet | Outside LP deposits and the vault token |
-| Platform-paid transaction fees; 100 [TOKEN] on sign-up | Depth (b) growing with volume |
+| Platform-paid transaction fees; 100 VCR on sign-up | Depth (b) growing with volume |
 | One LMSR per market over a segment tree | Volatility-based and near-term fees |
 | Buy and sell any contiguous range | Optimistic oracle and disputes |
 | "Not by end date" atom | Daytime-only filter; day/night prior pattern |
@@ -33,7 +33,7 @@ Build the core loop end to end; present everything about outside LPs and decentr
 | Mobile web app: home, timeline, select, buy, cash out | Partial sells of a sub-range (stretch goal) |
 | Share a window as a plain link | One Blink for buying a chunk (stretch goal if week 4 has room) |
 
-The platform creates every market and is the only LP. Every market is fully funded for its worst case. Everything runs on devnet in `[TOKEN]`, our own 6-decimal test mint (name not chosen yet; not USDC). The platform holds the mint authority and mints the market subsidies, sign-up airdrops and bot balances. The mint is configurable per market. The program uses Anchor's `token_interface`, so either SPL Token or Token-2022 mints work.
+The platform creates every market and is the only LP. Every market is fully funded for its worst case. Everything runs on devnet in **Veleda Credit (VCR)**, our own 6-decimal test mint (`CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`; not USDC). The platform holds the mint authority and mints the market subsidies, sign-up airdrops and bot balances. The mint is configurable per market. The program uses Anchor's `token_interface`, so either SPL Token or Token-2022 mints work.
 
 ## Demo markets
 
@@ -44,7 +44,7 @@ Run two markets: a flagship that shows the real use case, and a fast one that sh
 | Question | "When will Taylor Swift's first child be born?" Natural timing, resolving on the reported date of birth | A staged event resolved live during judging |
 | Atom size | Day | Hour |
 | Window | 2 years (731 atoms + end-date atom) | 7 days (168 atoms + end-date atom) |
-| b | 1,000 [TOKEN] | 100 [TOKEN] |
+| b | 1,000 VCR | 100 VCR |
 | Opening prior | Preset shape, "not by end date" set explicitly, 0.01% floor per atom | Flat |
 | Locked zone | 72 hours | 1 hour |
 | Clock offset | Always 0 | Admin-settable, so time can move forward during the demo |
@@ -63,7 +63,7 @@ One Anchor program: each market keeps its prices in a segment tree in one zero-c
 | --- | --- |
 | Market | Parameters (atom size, window, b, lock, lag, fee, token mint), admin key, clock offset (demo markets only), live-edge atom index, status, resolved atom |
 | Tree (zero-copy) | e^(q/b) per atom as leaves; range sums and lazy range-multipliers in internal nodes |
-| Vault (token account) | All [TOKEN] paid in, including fees not yet withdrawn; backs every payout |
+| Vault (token account) | All VCR paid in, including fees not yet withdrawn; backs every payout |
 | Fee ledger | LP fees and platform fees accrued separately (the tokens stay in the vault until withdrawn) |
 | Position (PDA per user + market + nonce) | Range start, range end, shares |
 
@@ -77,7 +77,7 @@ One Anchor program: each market keeps its prices in a segment tree in one zero-c
 | `advance_time` | Anyone | Zeroes atoms behind the live edge (now − lag); renormalisation is automatic because prices are leaf ÷ root sum |
 | `set_clock_offset` | Admin | Demo markets only: moves the market's "now" forward (it never goes back). Every time check uses chain time + offset. Rejected on markets created with a zero offset |
 | `resolve` | Admin | Called once the source quorum is met. Stops trading and records the winning atom |
-| `claim` | Holder | Pays shares × 1 [TOKEN] if the position's range contains the winner; closes the position |
+| `claim` | Holder | Pays shares × 1 VCR if the position's range contains the winner; closes the position |
 
 **Core maths**
 
@@ -99,7 +99,7 @@ A flat 3.5% on every buy and sell, always taken out of the gross amount. On a bu
 
 - **Fee split, recorded separately from day one:** 2.5% to the LP ledger, 1% to the platform ledger. Both belong to the platform for now, but keeping them apart gives you a real LP track record later.
 - **Multipliers are shown after fees and price impact** for the chosen stake, everywhere in the app (payout ÷ stake). At flagship b = 1,000, a 20 stake on a 6.1% window buys about 277 shares (×13.9). The mockups' ×15.8 ignores price impact. b = 1,000 keeps the headline multiplier close to the mockups while still letting one person visibly move the band: about 48 tokens takes that window from 6.1% to 10.5%.
-- **Subsidy per market** = b × ln(1 / lowest opening atom price). Flagship: 1,000 × ln(10,000) ≈ 9,210 [TOKEN]. Fast demo: flat over 169 atoms (168 + end-date), so 100 × ln(169) ≈ 513 [TOKEN]. Test tokens, so no real cost.
+- **Subsidy per market** = b × ln(1 / lowest opening atom price). Flagship: 1,000 × ln(10,000) ≈ 9,210 VCR. Fast demo: flat over 169 atoms (168 + end-date), so 100 × ln(169) ≈ 513 VCR. Test tokens, so no real cost.
 - **b is fixed** for each market; growth with volume is a roadmap slide.
 
 ## Frontend and share link
@@ -127,7 +127,7 @@ A judge should go from opening the link to holding a position in under 60 second
 
 1. **Browse first.** Markets, the band and the drag-to-select all work signed out.
 2. **Sign in at the moment of buying** with email or Google, via a **Privy** embedded wallet (free Developer tier). The wallet is created silently.
-3. **Starting balance.** A server-side job sends 100 [TOKEN] to every new wallet on sign-up, minted by the server using the platform's mint authority.
+3. **Starting balance.** A server-side job sends 100 VCR to every new wallet on sign-up, minted by the server using the platform's mint authority.
 4. **No SOL needed.** The server is the fee payer on every transaction: it builds the transaction, the user's wallet signs it without sending, and the server adds its signature and submits it. The server also pays rent: it is the `payer` when a `Position` account is created and when the user's token account is created during the sign-up airdrop. `claim` returns the position's rent to the fee payer. Use Solana's native fee payer, not Privy's paid gas sponsorship.
 5. **First buy.** The buy sheet is already open with their chunk; one tap confirms.
 
@@ -169,8 +169,8 @@ The maths comes first and gets the most testing; the frontend is quicker and com
 
 | Week | Build | Done when |
 | --- | --- | --- |
-| 1 | Off-chain reference model of LMSR, ranges, pruning and fees; fixed-point exp/ln; segment tree with lazy multiply; property tests. Create the [TOKEN] mint. Set up Privy (free tier) and prove email sign-in plus a first buy where the server pays fees and rent. Apply to the Actions registry. | On-chain maths matches the reference within rounding on 10,000 random trades; a test user signs in by email and opens a position from a wallet that has never held SOL |
-| 2 | Anchor program: all seven instructions, accounts, fee ledger, locked zone, live edge. Devnet deploy. Fee-payer server and sign-up airdrop. Trader-bot script. | Both demo markets live with bot trading; vault invariant holds after every instruction; new sign-ups receive 100 [TOKEN] automatically |
+| 1 | Off-chain reference model of LMSR, ranges, pruning and fees; fixed-point exp/ln; segment tree with lazy multiply; property tests. Create the VCR mint. Set up Privy (free tier) and prove email sign-in plus a first buy where the server pays fees and rent. Apply to the Actions registry. | On-chain maths matches the reference within rounding on 10,000 random trades; a test user signs in by email and opens a position from a wallet that has never held SOL |
+| 2 | Anchor program: all seven instructions, accounts, fee ledger, locked zone, live edge. Devnet deploy. Fee-payer server and sign-up airdrop. Trader-bot script. | Both demo markets live with bot trading; vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically |
 | 3 | Web app: home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link. | Link to first position in under 60 seconds on a phone, three times in a row |
 | 4 | One-command setup script and README. Seed markets. Demo video (~2:25). Rehearse. | A stranger can run the repo from the README; the demo script runs end to end twice without intervention |
 
@@ -220,7 +220,7 @@ What the design already answers but the prototype doesn't build, framed for judg
 Track: Best Consumer App on Solana. Each item maps to a stated requirement or judging criterion.
 
 - [ ] **Working demo on devnet:** both markets live and seeded, onboarding working on a phone
-- [ ] **Repository** with a README covering what Veleda is, a screenshot, setup instructions and a one-command setup script (deploy the program, create the [TOKEN] mint, create and seed both markets, start the bots)
+- [ ] **Repository** with a README covering what Veleda is, a screenshot, setup instructions and a one-command setup script (deploy the program, create the VCR mint, create and seed both markets, start the bots)
 - [ ] **README section "How Solana powers Veleda":** one account holds the whole timeline as a segment tree; every trade costs the same whatever the chunk width; transactions are cheap enough for small, precise bets; embedded wallets and platform-paid fees remove onboarding friction
 - [ ] **Demo video, 2–4 minutes** (target ~2:25), plus a backup recording of the live run
 - [ ] **Clear user need** stated in the first 20 seconds of the video and the first line of the README

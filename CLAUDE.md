@@ -21,7 +21,7 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 - **Scope:** only items in the hackathon spec's "In (build it)" column get built. Anything in "Out (slide only)" or the design spec's roadmap stays a slide until week 4 is done.
 - **Conflicts:** project brief > hackathon spec > design spec. Mockups are authoritative for UI layout and copy.
 - **Units:** the design spec's worked examples use £; the prototype uses a 6-decimal devnet test token. Treat £1 as 1 token unit.
-- **Currency placeholder:** `[TOKEN]` stands for our own 6-decimal devnet mint; its name hasn't been chosen. The platform holds the mint authority and mints market subsidies, sign-up airdrops and bot balances. Keep the mint configurable per market; don't hard-code a name. It is not USDC, and "USDXII" is a retired name from the old Twelvescore brand. The mockups show "USDC" only as a placeholder.
+- **Currency: Veleda Credit (VCR).** Our own 6-decimal devnet mint, `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`, with on-chain name and symbol (Metaplex metadata, `scripts/set-token-metadata.ts`). The platform holds the mint authority and mints market subsidies, sign-up airdrops and bot balances. Keep the mint configurable per market; don't hard-code a name. It is not USDC, and "USDXII" is a retired name from the old Twelvescore brand. The mockups show "USDC" only as a placeholder.
 
 ## Core model (short version)
 
@@ -34,7 +34,7 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 - **Fees:** flat 3.5%, always taken out of the gross amount: on a buy, the stake includes the fee (stake 20 → 0.70 fee, 19.30 goes to the LMSR); on a sell, the fee comes out of the LMSR proceeds. Recorded separately as 2.5% LP / 1% platform. Multipliers are always shown after fees **and** price impact for the chosen stake.
 - **Time:** `advance_time` (permissionless) zeroes atoms behind a live edge = now − lag; prices renormalise automatically. **Locked zone** (72h flagship / 1h fast demo): no buys or sells on atoms inside it. Every trade requires `range start ≥ now + lock`. This also blocks atoms that have elapsed but aren't yet pruned (between the live edge and now), which could otherwise be bought after the event is known.
 - **Instructions:** `create_market`, `buy_range` (with `max_cost`), `sell_range` (with `min_proceeds`), `advance_time`, `resolve` (admin; records the winning atom), `claim` (pays winners), `set_clock_offset` (admin, demo markets only: lets the fast market's time move forward on camera).
-- **Token program:** use Anchor's `token_interface`, so the market works with either SPL Token or Token-2022, whichever program the chosen `[TOKEN]` mint uses.
+- **Token program:** use Anchor's `token_interface`, so the market works with either SPL Token or Token-2022, whichever program the mint uses (VCR is classic SPL Token).
 - Platform is the only LP; each market is fully funded for its worst case `b·ln(1 / lowest opening price)`.
 
 ## Repo
@@ -43,7 +43,7 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 - `crates/veleda-math`: Rust maths (`fixed`, `float`, `lmsr`, `tree`) and `engine` (the program's instructions as plain Rust over borrowed state), `no_std`, used by the Anchor program. `cargo test -p veleda-math`; `scripts/cross-check.sh` replays 15,000 random reference-model actions through the engine.
 - `programs/veleda`: Anchor 1.x program, deployed on devnet at `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`. Week 1 holds only temporary `probe_*` instructions (compute-unit measurement); the real instructions come in week 2. Build with `anchor build`; `scripts/probe-cu.ts` measures compute units.
 - `app/` (Next.js, not created yet).
-- Devnet `[TOKEN]` mint: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` (6 decimals, classic SPL Token).
+- Devnet VCR mint: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` (6 decimals, classic SPL Token).
 - `keys/`: devnet keypairs, gitignored. Never commit or print private keys.
 
 ## Stack (from the spec)
@@ -53,13 +53,12 @@ Anchor program on devnet · React mobile-first PWA with the Solana wallet adapte
 ## Terminology and copy
 
 - App copy says **"window"**, not "chunk" (code and specs may still say chunk).
-- Primary button: **"predict the future │ 20 [TOKEN]"**. Cash-out button: **"cash out │ <amount> [TOKEN]"**. Show a small "test money" label next to balances.
+- Primary button: **"predict the future │ 20 VCR"**. Cash-out button: **"cash out │ <amount> VCR"**. Show a small "test money" label next to balances.
 - Never shorten the brand to "Veda" (an existing Solana DeFi protocol).
 - Onboarding must never show "seed phrase", "SOL" or "devnet" to the user.
 
 ## Open decisions (don't guess — ask)
 
-- The display name for `[TOKEN]`.
 - Whether 5 of 10 is the right quorum (it can be tuned).
 - Final list of the 10 flagship resolution sources (a draft is in the hackathon spec).
 - Month view (screen 1) vs day view (screen 2) sequencing in the flow.

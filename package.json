@@ -1,6 +1,7 @@
 {
   "name": "veleda",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],

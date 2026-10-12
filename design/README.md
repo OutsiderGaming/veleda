@@ -44,13 +44,13 @@ Live canvas (owner only): https://claude.ai/artifact/AT3unoJ2sQ7hHadgNZWfih
 
 1. **Timeline (month).** Year / Month / Day / Hour tabs. In month view, about 8 thick bars are on screen, each a tappable button with the month name engraved on it; bar width = crowd odds; right column shows that month's multiplier and %. Year dividers where the year changes. "Now · N months up" marker at top.
 2. **Dragging a window.** Day view: thin stippled bars, handles top and bottom of the selection, a floating tag showing days, % and multiplier. Hint: "Drag to the edge to keep scrolling / Release to see your price".
-3. **Buy sheet.** Dates and length, big Cinzel multiplier, "Crowd odds 6.1% · payout after fees", stake chips (5 / 20 / 50 / Other), "Wins if it lands", detail line (shares · fee · cancels if price passes X%), primary button "predict the future │ 20 USDC" (the app shows `[TOKEN]`), then "Share this window as a link". No edit button: swipe the sheet down to return to the timeline. Decorative radiating copper lines in the top-right are clipped just below the stake chips.
+3. **Buy sheet.** Dates and length, big Cinzel multiplier, "Crowd odds 6.1% · payout after fees", stake chips (5 / 20 / 50 / Other), "Wins if it lands", detail line (shares · fee · cancels if price passes X%), primary button "predict the future │ 20 USDC" (the app shows VCR), then "Share this window as a link". No edit button: swipe the sheet down to return to the timeline. Decorative radiating copper lines in the top-right are clipped just below the stake chips.
 4. **Your positions.** Hero total value in USDC (no label, no glow), then "▲ +P&L (%) · paid · N open". Open / Settled tabs. Each card: question, window in copper, LIVE P&L block with sparkline, Paid / Worth now (after 3.5% fee) / If it lands (with entry multiplier), entry vs current odds, full-width copper "cash out │ amount USDC" button. Locked state: greyed button with lock icon. The mockup copy "Locked · inside the final 72 hours" reads as the end of the window, so the app uses "Locked · within 72h of now". Bottom nav: Markets / Positions / Account.
 
 ## Known inconsistencies to resolve in the build
 
 - Screen 1 is month view but screen 2 is day view, so the sequence jumps zoom level.
-- The mockups show amounts in **USDC** as a placeholder. The demo uses our own devnet mint, `[TOKEN]` (name not chosen yet; not USDC), with a "test money" label.
+- The mockups show amounts in **USDC** as a placeholder. The demo uses our own devnet mint, Veleda Credit (VCR), with a "test money" label: the app shows "VCR" wherever the mockups show "USDC".
 - **Multipliers ignore price impact.** The buy sheet's 316 shares and ×15.8 for 20 USDC are the flat-price figures. With the hackathon spec's flagship b = 1,000, 20 buys about 277 shares (×13.9). The app shows the real figure for the chosen stake.
 - The "When will BTC first cross $200,000" card on screen 4 is decoration. That market is not in the hackathon spec.
 - The flagship market uses daily atoms, so the app hides the Hour tab there.

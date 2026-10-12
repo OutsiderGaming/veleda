@@ -18,7 +18,7 @@ Every Veleda market is a single on-chain automated market maker, a logarithmic m
 
 Because the AMM is always on the other side of the trade, there's no order book and no waiting for a counterparty. You can enter early at a long-shot price and cash out at the live price at any time. The maths runs in Q64.64 fixed point, with costs rounded up and proceeds rounded down. Every instruction checks one invariant: the vault always holds enough to pay the largest possible payout, so every position is fully backed on-chain.
 
-Solana's low fees and fast finality make small, precise calls practical, such as 5 [TOKEN] on a single day. Embedded wallets plus a platform fee payer let new users sign in with email and place their first call in under 60 seconds, with no SOL, seed phrase or wallet install.
+Solana's low fees and fast finality make small, precise calls practical, such as 5 VCR on a single day. Embedded wallets plus a platform fee payer let new users sign in with email and place their first call in under 60 seconds, with no SOL, seed phrase or wallet install.
 
 ### One-line version
 

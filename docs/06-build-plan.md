@@ -55,11 +55,11 @@ keys/                  devnet keypairs (gitignored, never committed)
 
 ### Onboarding proof
 
-- [x] **Create the `[TOKEN]` mint**: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` on devnet, 6 decimals, classic SPL Token program, mint authority `keys/mint-authority.json`, no freeze authority.
-- [ ] **Privy spike** in `app/`: email sign-in, embedded Solana wallet, then one transaction from a wallet that has never held SOL, with the server as fee payer and rent payer: create the user's token account and mint 100 `[TOKEN]` to it.
+- [x] **Create the VCR mint**: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` on devnet, 6 decimals, classic SPL Token program, mint authority `keys/mint-authority.json`, no freeze authority.
+- [ ] **Privy spike** in `app/`: email sign-in, embedded Solana wallet, then one transaction from a wallet that has never held SOL, with the server as fee payer and rent payer: create the user's token account and mint 100 VCR to it.
 
 ### Week 1 is done when
 
 - The Rust maths matches the reference within rounding on 10,000 random trades.
-- A new user signs in by email and receives 100 `[TOKEN]` with no SOL in their wallet.
+- A new user signs in by email and receives 100 VCR with no SOL in their wallet.
 - The compute cost of a range update is measured and fits the budget.
