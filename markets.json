@@ -5,6 +5,7 @@
     "flagship": {
       "address": "63fNCmpHJVRE5RduWzzcFT39Tm7PTh1U5v2qjhMdq5Jb",
       "question": "When will Taylor Swift's first child be born?",
+      "resolves": "Resolves on the reported birth date",
       "createdAt": "2026-10-13T10:34:01.211Z",
       "startTime": 1791849600,
       "atoms": 1096,
@@ -49,6 +50,7 @@
     "fast": {
       "address": "59dFi4bkexb7oSbCcMA5Z6hZSPyUEtzghHrSC7KXKf6K",
       "question": "Fast demo market",
+      "resolves": "Staged event \u00b7 resolves live in the demo",
       "createdAt": "2026-10-13T10:34:02.073Z",
       "startTime": 1791885600,
       "atoms": 168,

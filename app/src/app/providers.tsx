@@ -2,6 +2,8 @@
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import type { ReactNode } from "react";
+import { MarketsProvider } from "@/lib/client/markets";
+import { SessionProvider } from "@/lib/client/session";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -14,7 +16,9 @@ export function Providers({ children }: { children: ReactNode }) {
         embeddedWallets: { solana: { createOnLogin: "all-users" }, ethereum: { createOnLogin: "off" }, showWalletUIs: false },
       }}
     >
-      {children}
+      <SessionProvider>
+        <MarketsProvider>{children}</MarketsProvider>
+      </SessionProvider>
     </PrivyProvider>
   );
 }

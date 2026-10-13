@@ -17,9 +17,9 @@ import { FAST, FLAGSHIP, PROGRAM_ID, ata, createAtaIdempotent, createMarket, dec
 
 const RPC = process.env.SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
 const OUT = process.env.MARKETS_FILE ?? "markets.json";
-const PRESETS: Record<string, { args: MarketArgs; question: string }> = {
-  flagship: { args: FLAGSHIP, question: "When will Taylor Swift's first child be born?" },
-  fast: { args: FAST, question: "Fast demo market" },
+const PRESETS: Record<string, { args: MarketArgs; question: string; resolves: string }> = {
+  flagship: { args: FLAGSHIP, question: "When will Taylor Swift's first child be born?", resolves: "Resolves on the reported birth date" },
+  fast: { args: FAST, question: "Fast demo market", resolves: "Staged event · resolves live in the demo" },
 };
 
 const which = process.argv.slice(2);
@@ -45,7 +45,7 @@ record.mint = mint.toBase58();
 record.markets ??= {};
 
 for (const name of which) {
-  const { args, question } = PRESETS[name];
+  const { args, question, resolves } = PRESETS[name];
   const market = Keypair.generate();
   const space = marketAccountLen(args.atoms);
   const rent = await conn.getMinimumBalanceForRentExemption(space);
@@ -68,6 +68,7 @@ for (const name of which) {
   record.markets[name] = {
     address: market.publicKey.toBase58(),
     question,
+    resolves,
     createdAt: new Date().toISOString(),
     startTime: h.startTime,
     ...Object.fromEntries(Object.entries(args).map(([k, v]) => [k, typeof v === "bigint" ? Number(v) : v])),

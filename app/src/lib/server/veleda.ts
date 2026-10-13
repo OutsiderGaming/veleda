@@ -11,12 +11,12 @@ import { PROGRAM_ID } from "../veleda/program";
 
 const MARKETS_FILE = process.env.MARKETS_FILE ?? path.resolve(process.cwd(), "..", "markets.json");
 
-interface MarketsFile { mint: string; markets: Record<string, { address: string; question: string }> }
+interface MarketsFile { mint: string; markets: Record<string, { address: string; question: string; resolves?: string }> }
 const marketsFile = (): MarketsFile => JSON.parse(readFileSync(/*turbopackIgnore: true*/ MARKETS_FILE, "utf8"));
 
 /** The demo markets by name ("flagship", "fast"). */
-export function marketList(): { name: string; address: Address; question: string }[] {
-  return Object.entries(marketsFile().markets).map(([name, m]) => ({ name, address: address(m.address), question: m.question }));
+export function marketList(): { name: string; address: Address; question: string; resolves: string }[] {
+  return Object.entries(marketsFile().markets).map(([name, m]) => ({ name, address: address(m.address), question: m.question, resolves: m.resolves ?? "" }));
 }
 
 /** Accepts a market name or address, but only markets in markets.json. */

@@ -102,7 +102,7 @@ export interface BuyQuote {
  * Asks for slightly fewer shares than the exact answer (`margin`), so the
  * on-chain cost, which rounds up, stays within the stake.
  */
-export function quoteBuy(h: MarketHeader, prices: number[], from: number, to: number, stake: number, margin = 0.002): BuyQuote {
+export function quoteBuy(h: Pick<MarketHeader, "b">, prices: number[], from: number, to: number, stake: number, margin = 0.002): BuyQuote {
   const p = rangePrice(prices, from, to);
   const b = h.b / BASE;
   const cost = (stake / BASE) * (1 - FEE);
@@ -110,6 +110,17 @@ export function quoteBuy(h: MarketHeader, prices: number[], from: number, to: nu
   x = Math.min(x * (1 - margin), b * (MAX_TRADE_EXPONENT - 0.1));
   const shares = Math.floor(x * BASE);
   return { shares, maxCost: stake, price: p, multiplier: shares / stake };
+}
+
+/**
+ * The window price at which buying `shares` costs exactly `cost` (LMSR part,
+ * before the fee): p = (e^(c/b) − 1) / (e^(x/b) − 1). Used for "cancels if the
+ * price passes X%" (cost = the stake less the fee) and for the entry odds of a
+ * past buy (cost = what the LMSR actually took).
+ */
+export function priceForCost(h: Pick<MarketHeader, "b">, cost: number, shares: number): number {
+  const b = h.b / BASE;
+  return Math.expm1(cost / BASE / b) / Math.expm1(shares / BASE / b);
 }
 
 export interface SellQuote {
@@ -120,7 +131,7 @@ export interface SellQuote {
 }
 
 /** Proceeds of selling `shares` from [from, to]: −b·ln(1 − p + p·e^(−x/b)), less the fee. */
-export function quoteSell(h: MarketHeader, prices: number[], from: number, to: number, shares: number, slippage = 0.01): SellQuote {
+export function quoteSell(h: Pick<MarketHeader, "b">, prices: number[], from: number, to: number, shares: number, slippage = 0.01): SellQuote {
   const p = rangePrice(prices, from, to);
   const b = h.b / BASE;
   const gross = -b * Math.log1p(-p * -Math.expm1(-(shares / BASE) / b));

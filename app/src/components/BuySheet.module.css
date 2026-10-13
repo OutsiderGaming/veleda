@@ -1,0 +1,48 @@
+.backdrop { position: fixed; inset: 0; z-index: 35; background: rgba(5, 6, 6, 0.55); animation: fade 0.2s ease; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 auto; max-width: 480px;
+  background: var(--card); border: 1px solid var(--hairline); border-bottom: 0; border-radius: 28px 28px 0 0;
+  padding: 10px 20px calc(env(safe-area-inset-bottom) + 20px); overflow-x: hidden; overflow-y: auto; max-height: 94dvh;
+  animation: rise 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overscroll-behavior: contain;
+}
+@keyframes rise { from { transform: translateY(100%); } }
+@keyframes fade { from { opacity: 0; } }
+.grab { display: flex; justify-content: center; padding: 4px 0 14px; cursor: grab; }
+.grab::before { content: ""; width: 44px; height: 5px; border-radius: 3px; background: #3a3730; }
+.rays { position: absolute; top: -20px; right: -60px; width: 320px; height: 340px; pointer-events: none; opacity: 0.5; }
+.window { color: var(--text-2); font-size: 15px; position: relative; }
+.multRow { display: flex; align-items: baseline; gap: 4px; margin: 2px 0 0; position: relative; }
+.mult { font: 700 64px/1 var(--serif); color: var(--copper-light); }
+.mult small { font-size: 0.55em; margin-right: 2px; }
+.odds { color: var(--text-2); margin: 6px 0 18px; font-size: 14px; position: relative; }
+.stakeLabel { color: var(--text-2); font-size: 14px; margin-bottom: 8px; }
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; position: relative; }
+.chip {
+  height: 52px; border-radius: 14px; border: 1px solid var(--btn-border); background: var(--btn); color: var(--text);
+  font: 600 18px var(--sans); cursor: pointer;
+}
+.chipOn { background: var(--chip); border-color: var(--copper); color: var(--copper-light); }
+.chipOther { color: var(--muted); font-weight: 500; }
+.chipInput { width: 100%; text-align: center; background: var(--chip); border: 1px solid var(--copper); color: var(--copper-light); font: 600 18px var(--sans); border-radius: 14px; height: 52px; outline: none; }
+.wins { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 0 4px; }
+.winsLabel { font-size: 17px; color: var(--text); }
+.winsValue { font: 700 30px var(--sans); color: var(--text); }
+.winsValue small { font-size: 0.55em; color: var(--text-2); font-weight: 500; margin-left: 4px; }
+.detail { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+.primary {
+  width: 100%; height: 60px; border: 0; border-radius: 999px; background: var(--primary); color: var(--primary-text);
+  font: 700 17px var(--serif); letter-spacing: 0.16em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+.primary:disabled { opacity: 0.5; cursor: default; }
+.sep { width: 1px; height: 26px; background: rgba(26, 18, 10, 0.4); }
+.secondary {
+  width: 100%; height: 52px; margin-top: 12px; border-radius: 999px; border: 1px solid var(--btn-border); background: transparent;
+  color: var(--text); font: 600 16px var(--sans); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.secondary svg { color: var(--copper); }
+.error { color: var(--loss); font-size: 14px; margin: -6px 0 12px; }
+.done { text-align: center; padding: 8px 0 4px; position: relative; }
+.doneTick { font: 700 40px var(--serif); color: var(--gain); }
+.doneTitle { font: 700 26px var(--serif); color: var(--copper-light); margin: 2px 0 6px; }
+.doneText { color: var(--text-2); margin: 0 0 18px; }

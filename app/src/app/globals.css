@@ -1,38 +1,54 @@
+/* Tokens from design/README.md. Element styles stay scoped (to .app or .dev):
+   Privy draws its sign-in modal inside the page and must keep its own look. */
 :root {
   --bg: #0d0f0e;
   --card: #151816;
+  --inset: #101311;
+  --inset-2: #171a18;
+  --btn: #1b1e1b;
+  --btn-border: #2e2b25;
   --hairline: #2c2a24;
+  --chip: #2a221a;
   --text: #ede4d6;
   --text-2: #bfb5a5;
   --muted: #8e8577;
   --copper: #e9a867;
   --copper-light: #f6c792;
+  --primary: linear-gradient(180deg, #f2be84, #d08d4b);
+  --primary-text: #1a120a;
   --gain: #9ccb8e;
   --loss: #e8907a;
+  --serif: var(--font-cinzel), "Cinzel", Georgia, serif;
+  --sans: var(--font-manrope), "Manrope", system-ui, -apple-system, sans-serif;
+  --nav-h: 64px;
 }
 * { box-sizing: border-box; }
+html { background: var(--bg); }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 15px/1.45 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
-main { max-width: 480px; margin: 0 auto; padding: 32px 16px 64px; }
-h1 { font-weight: 600; letter-spacing: 0.2em; margin: 0 0 4px; }
-.sub { color: var(--muted); margin: 0 0 28px; }
-.card { background: var(--card); border: 1px solid var(--hairline); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
-.row { display: flex; justify-content: space-between; gap: 12px; }
-.label { color: var(--muted); font-size: 13px; }
-.mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; word-break: break-all; color: var(--text-2); }
-/* Scoped to main: Privy renders its sign-in modal inside our page and must keep its own styles. */
-main button {
-  width: 100%; border: 0; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer;
-  background: linear-gradient(#f2be84, #d08d4b); color: #1a120a; margin-top: 10px;
-}
-main button:disabled { opacity: 0.4; cursor: default; }
-main button.secondary { background: #1b1e1b; color: var(--text); border: 1px solid #2e2b25; }
-.step { display: flex; gap: 10px; align-items: baseline; margin: 6px 0; }
-.ok { color: var(--gain); }
-.err { color: var(--loss); }
 a { color: var(--copper); }
-.clock { font-variant-numeric: tabular-nums; color: var(--copper-light); }
+
+/* ---- Week 1/2 test page (/dev) ---- */
+.dev { max-width: 480px; margin: 0 auto; padding: 32px 16px 64px; }
+.dev h1 { font-weight: 600; letter-spacing: 0.2em; margin: 0 0 4px; }
+.dev .sub { color: var(--muted); margin: 0 0 28px; }
+.dev .card { background: var(--card); border: 1px solid var(--hairline); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+.dev .row { display: flex; justify-content: space-between; gap: 12px; }
+.dev .label { color: var(--muted); font-size: 13px; }
+.dev .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; word-break: break-all; color: var(--text-2); }
+.dev button {
+  width: 100%; border: 0; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer;
+  background: var(--primary); color: var(--primary-text); margin-top: 10px;
+}
+.dev button:disabled { opacity: 0.4; cursor: default; }
+.dev button.secondary { background: var(--btn); color: var(--text); border: 1px solid var(--btn-border); }
+.dev .step { display: flex; gap: 10px; align-items: baseline; margin: 6px 0; }
+.dev .ok { color: var(--gain); }
+.dev .err { color: var(--loss); }
+.dev .clock { font-variant-numeric: tabular-nums; color: var(--copper-light); }

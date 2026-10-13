@@ -1,0 +1,11 @@
+.title { font: 600 26px var(--sans); margin: 4px 0 18px; }
+.card { background: var(--card); border: 1px solid var(--hairline); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
+.label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+.balance { font: 700 34px var(--serif); color: var(--copper-light); }
+.balance span { font-size: 0.5em; color: var(--text-2); }
+.note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.mono { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--text-2); word-break: break-all; }
+.text { color: var(--text-2); }
+.link { display: block; margin: 18px 0; font-weight: 600; text-decoration: none; }
+.button { width: 100%; height: 52px; border-radius: 999px; border: 1px solid var(--btn-border); background: var(--btn); color: var(--text); font: 600 16px var(--sans); cursor: pointer; }
+.primary { width: 100%; height: 56px; border: 0; border-radius: 999px; background: var(--primary); color: var(--primary-text); font: 700 16px var(--serif); letter-spacing: 0.14em; cursor: pointer; }

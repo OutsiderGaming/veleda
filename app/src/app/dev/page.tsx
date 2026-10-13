@@ -1,9 +1,9 @@
 "use client";
 
-// Onboarding and trading test: sign in with email or Google, get a Solana
-// wallet silently, receive 100 VCR, sign a transfer, then buy windows on both
-// demo markets and cash them out, all from a wallet that has never held SOL.
-// The server pays every fee and rent deposit.
+// Developer test page (/dev, not linked from the app): sign in with email or
+// Google, get a Solana wallet silently, receive 100 VCR, sign a transfer, then
+// buy windows on both demo markets and cash them out, all from a wallet that
+// has never held SOL. The server pays every fee and rent deposit.
 
 import { usePrivy } from "@privy-io/react-auth";
 import { useSignTransaction, useWallets } from "@privy-io/react-auth/solana";
@@ -108,7 +108,7 @@ export default function Home() {
     signAndSubmit("/api/trade/sell", { position: p.address }, (b) => `Cashed out ${p.market} [${p.from}, ${p.to}] for ~${(b.quote as { proceeds: number }).proceeds.toFixed(2)} VCR`);
 
   return (
-    <main>
+    <main className="dev">
       <h1>VELEDA</h1>
       <p className="sub">Onboarding test · devnet</p>
 
