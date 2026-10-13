@@ -70,6 +70,9 @@
   display: flex; align-items: center; justify-content: center; touch-action: none; cursor: ns-resize; z-index: 3;
 }
 .handle::after { content: ""; width: 18px; height: 2.5px; border-radius: 2px; background: #1a120a; }
+/* Thick bars carry centred labels: slimmer handles sit on the gap between rows, clear of the text. */
+.thick .handle { height: 14px; width: 44px; margin-left: -22px; }
+.thick .handle::after { width: 16px; height: 2px; }
 
 .mine::before { content: ""; position: absolute; left: -10px; top: 15%; bottom: 15%; width: 3px; border-radius: 2px; background: var(--gain); }
 
