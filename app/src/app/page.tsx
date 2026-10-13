@@ -1,8 +1,9 @@
 "use client";
 
-// Week 1 onboarding test: sign in with email or Google, get a Solana wallet
-// silently, receive 100 VCR, then sign a transaction (send 1 VCR back) from a
-// wallet that has never held SOL. The server pays every fee and rent deposit.
+// Onboarding and trading test: sign in with email or Google, get a Solana
+// wallet silently, receive 100 VCR, sign a transfer, then buy windows on both
+// demo markets and cash them out, all from a wallet that has never held SOL.
+// The server pays every fee and rent deposit.
 
 import { usePrivy } from "@privy-io/react-auth";
 import { useSignTransaction, useWallets } from "@privy-io/react-auth/solana";
@@ -10,6 +11,8 @@ import { getBase64Decoder, getBase64Encoder } from "@solana/kit";
 import { useCallback, useEffect, useState } from "react";
 
 type Step = { text: string; status: "ok" | "err"; signature?: string; seconds: number };
+type Market = { name: string; firstOpenAtom: number; atoms: number; resolved: boolean };
+type Position = { address: string; market: string; from: number; to: number; shares: number; value: number | null; status: string };
 const explorer = (sig: string) => `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 
 export default function Home() {
@@ -23,6 +26,7 @@ export default function Home() {
   const [balance, setBalance] = useState<{ sol: number; vcr: number } | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [busy, setBusy] = useState(false);
+  const [positions, setPositions] = useState<Position[]>([]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 100);
@@ -33,7 +37,9 @@ export default function Home() {
     if (!wallet) return;
     const res = await fetch(`/api/balance?owner=${wallet.address}`);
     if (res.ok) setBalance(await res.json());
-  }, [wallet]);
+    const pos = await fetch("/api/positions", { headers: { authorization: `Bearer ${await getAccessToken()}` } });
+    if (pos.ok) setPositions((await pos.json()).positions);
+  }, [wallet, getAccessToken]);
 
   useEffect(() => {
     void refresh();
@@ -68,21 +74,38 @@ export default function Home() {
     }
   }
 
-  async function sendBack() {
+  /** Builds on the server, signs in the wallet, relays through the server. */
+  async function signAndSubmit(path: string, body: unknown, describe: (built: Record<string, unknown>) => string) {
     if (!wallet) return;
     setBusy(true);
     try {
-      const { transaction } = await api("/api/transfer/build");
-      const { signedTransaction } = await signTransaction({ transaction: getBase64Encoder().encode(transaction) as Uint8Array, wallet });
-      const { signature } = await api("/api/transfer/submit", { transaction: getBase64Decoder().decode(signedTransaction) });
-      log("Sent 1 VCR back: you signed, the server paid the fee", "ok", signature);
+      const built = await api(path, body);
+      const { signedTransaction } = await signTransaction({ transaction: getBase64Encoder().encode(built.transaction) as Uint8Array, wallet });
+      const { signature } = await api("/api/submit", { transaction: getBase64Decoder().decode(signedTransaction) });
+      log(describe(built), "ok", signature);
     } catch (e) {
-      log(`Send failed: ${(e as Error).message}`, "err");
+      log(`Failed: ${(e as Error).message}`, "err");
     } finally {
       setBusy(false);
       void refresh();
     }
   }
+
+  const sendBack = () => signAndSubmit("/api/transfer/build", {}, () => "Sent 1 VCR back: you signed, the server paid the fee");
+
+  async function buy(name: string, offset: number, width: number) {
+    const { markets } = (await (await fetch("/api/markets")).json()) as { markets: Market[] };
+    const m = markets.find((x) => x.name === name)!;
+    const from = Math.min(m.firstOpenAtom + offset, m.atoms - 1);
+    const to = Math.min(from + width - 1, m.atoms - 1);
+    await signAndSubmit("/api/trade/buy", { market: name, from, to, stake: 20 }, (b) => {
+      const q = b.quote as { shares: number; multiplier: number };
+      return `Bought ${name} [${from}, ${to}]: ${q.shares.toFixed(2)} shares for 20 VCR (${q.multiplier.toFixed(2)}x)`;
+    });
+  }
+
+  const cashOut = (p: Position) =>
+    signAndSubmit("/api/trade/sell", { position: p.address }, (b) => `Cashed out ${p.market} [${p.from}, ${p.to}] for ~${(b.quote as { proceeds: number }).proceeds.toFixed(2)} VCR`);
 
   return (
     <main>
@@ -113,9 +136,26 @@ export default function Home() {
               </div>
             )}
           </div>
+          {positions.length > 0 && (
+            <div className="card">
+              <div className="label">Your windows</div>
+              {positions.map((p) => (
+                <div key={p.address} className="row" style={{ marginTop: 8 }}>
+                  <span>{p.market} [{p.from}, {p.to}] · {p.shares.toFixed(2)} shares</span>
+                  {p.status === "open" && p.value !== null ? (
+                    <button className="secondary" onClick={() => cashOut(p)} disabled={busy}>cash out │ {p.value.toFixed(2)} VCR</button>
+                  ) : (
+                    <span className="label">{p.status}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="card">
             <button onClick={claim} disabled={busy || !wallet}>1 · Claim 100 VCR</button>
             <button onClick={sendBack} disabled={busy || !wallet || !balance?.vcr}>2 · Send 1 VCR back (you sign, we pay)</button>
+            <button onClick={() => buy("flagship", 296, 31)} disabled={busy || !wallet || (balance?.vcr ?? 0) < 20}>3 · Predict the future │ 20 VCR (flagship, ~day 300)</button>
+            <button onClick={() => buy("fast", 2, 6)} disabled={busy || !wallet || (balance?.vcr ?? 0) < 20}>4 · Predict the future │ 20 VCR (fast, 6 hours)</button>
             <button className="secondary" onClick={logout} disabled={busy}>Sign out</button>
           </div>
         </>

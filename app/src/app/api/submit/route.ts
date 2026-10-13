@@ -1,6 +1,6 @@
-// Relays a transaction the user has signed. It must already carry our fee
-// payer's signature (so only messages this server built can be sent) and be
-// fully signed.
+// Relays a transaction the user has signed: transfers, buys, sells and
+// claims. It must already carry our fee payer's signature (so only messages
+// this server built can be sent) and be fully signed.
 import { assertIsFullySignedTransaction, getBase64EncodedWireTransaction, getBase64Encoder, getTransactionDecoder } from "@solana/kit";
 import { HttpError, errorResponse, walletFromRequest } from "@/lib/server/privy";
 import { feePayer, sendAndConfirm } from "@/lib/server/solana";
