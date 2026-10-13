@@ -12,13 +12,15 @@ pub mod state;
 
 pub use error::VeledaError;
 pub use prior::ShapePoint;
-pub use state::{market_account_len, Market, MarketData, HEADER_LEN, MAX_ATOMS};
+pub use state::{market_account_len, Market, MarketData, Position, HEADER_LEN, MAX_ATOMS};
 
 declare_id!("7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx");
 
 pub const VAULT_SEED: &[u8] = b"vault";
 /// PDA that owns the vault and signs payouts.
 pub const AUTHORITY_SEED: &[u8] = b"authority";
+/// Position PDA: `[POSITION_SEED, market, owner, nonce (u64 LE)]`.
+pub const POSITION_SEED: &[u8] = b"position";
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct CreateMarketArgs {
@@ -94,6 +96,117 @@ pub mod veleda {
         msg!("market created: {} atoms, subsidy {}", a.atoms, subsidy);
         Ok(())
     }
+
+    /// Buys `shares` in every atom of [from, to] into a new position. The
+    /// owner pays the stake (LMSR cost + 3.5% fee, at most `max_cost`); the
+    /// fee payer pays the position's rent. `nonce` is any number not yet used
+    /// by this owner in this market.
+    pub fn buy_range(ctx: Context<BuyRange>, nonce: u64, from: u32, to: u32, shares: u64, max_cost: u64) -> Result<()> {
+        let info = ctx.accounts.market.to_account_info();
+        let receipt = {
+            let mut data = info.try_borrow_mut_data()?;
+            let mut m = MarketData::load(&mut data)?;
+            let now = m.header.now()?;
+            m.run(|e| e.buy(from, to, shares, max_cost, now))?
+        };
+
+        let accounts = &ctx.accounts;
+        let cpi = TransferChecked {
+            from: accounts.owner_token.to_account_info(),
+            mint: accounts.mint.to_account_info(),
+            to: accounts.vault.to_account_info(),
+            authority: accounts.owner.to_account_info(),
+        };
+        token_interface::transfer_checked(CpiContext::new(accounts.token_program.key(), cpi), receipt.stake, accounts.mint.decimals)?;
+
+        let position = &mut ctx.accounts.position;
+        position.set_inner(Position {
+            market: info.key(),
+            owner: ctx.accounts.owner.key(),
+            rent_payer: ctx.accounts.fee_payer.key(),
+            nonce,
+            from,
+            to,
+            shares,
+            bump: ctx.bumps.position,
+        });
+        emit!(Trade {
+            market: info.key(),
+            owner: position.owner,
+            position: position.key(),
+            from,
+            to,
+            shares,
+            is_buy: true,
+            amount: receipt.stake,
+            fee: receipt.fee,
+        });
+        Ok(())
+    }
+
+    /// Sells `shares` from the position's whole range at the live price. The
+    /// owner receives the LMSR proceeds less 3.5% (at least `min_proceeds`).
+    /// Selling the last share closes the position and returns its rent to
+    /// whoever paid it.
+    pub fn sell_range(ctx: Context<SellRange>, shares: u64, min_proceeds: u64) -> Result<()> {
+        let (from, to) = (ctx.accounts.position.from, ctx.accounts.position.to);
+        require!(shares <= ctx.accounts.position.shares, VeledaError::NotEnoughShares);
+        let info = ctx.accounts.market.to_account_info();
+        let (receipt, authority_bump) = {
+            let mut data = info.try_borrow_mut_data()?;
+            let mut m = MarketData::load(&mut data)?;
+            let now = m.header.now()?;
+            (m.run(|e| e.sell(from, to, shares, min_proceeds, now))?, m.header.authority_bump)
+        };
+
+        let accounts = &ctx.accounts;
+        let market_key = info.key();
+        let seeds: &[&[u8]] = &[AUTHORITY_SEED, market_key.as_ref(), &[authority_bump]];
+        let cpi = TransferChecked {
+            from: accounts.vault.to_account_info(),
+            mint: accounts.mint.to_account_info(),
+            to: accounts.owner_token.to_account_info(),
+            authority: accounts.authority.to_account_info(),
+        };
+        token_interface::transfer_checked(
+            CpiContext::new_with_signer(accounts.token_program.key(), cpi, &[seeds]),
+            receipt.net,
+            accounts.mint.decimals,
+        )?;
+
+        let position = &mut ctx.accounts.position;
+        position.shares -= shares;
+        emit!(Trade {
+            market: market_key,
+            owner: position.owner,
+            position: position.key(),
+            from,
+            to,
+            shares,
+            is_buy: false,
+            amount: receipt.net,
+            fee: receipt.fee,
+        });
+        if position.shares == 0 {
+            position.close(ctx.accounts.rent_payer.to_account_info())?;
+        }
+        Ok(())
+    }
+}
+
+/// Every buy and sell, for the app's activity feed and price history.
+#[event]
+pub struct Trade {
+    pub market: Pubkey,
+    pub owner: Pubkey,
+    pub position: Pubkey,
+    pub from: u32,
+    pub to: u32,
+    pub shares: u64,
+    pub is_buy: bool,
+    /// Stake paid (buy, fee included) or proceeds received (sell, after the fee).
+    pub amount: u64,
+    pub fee: u64,
 }
 
 #[derive(Accounts)]
@@ -123,4 +236,51 @@ pub struct CreateMarket<'info> {
     pub admin_token: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(nonce: u64)]
+pub struct BuyRange<'info> {
+    pub owner: Signer<'info>,
+    /// Pays the position's rent and gets it back when the position closes.
+    #[account(mut)]
+    pub fee_payer: Signer<'info>,
+    #[account(mut, has_one = mint, has_one = vault)]
+    pub market: AccountLoader<'info, Market>,
+    #[account(
+        init,
+        payer = fee_payer,
+        space = 8 + Position::INIT_SPACE,
+        seeds = [POSITION_SEED, market.key().as_ref(), owner.key().as_ref(), &nonce.to_le_bytes()],
+        bump,
+    )]
+    pub position: Account<'info, Position>,
+    pub mint: InterfaceAccount<'info, Mint>,
+    #[account(mut)]
+    pub vault: InterfaceAccount<'info, TokenAccount>,
+    #[account(mut, token::mint = mint, token::authority = owner, token::token_program = token_program)]
+    pub owner_token: InterfaceAccount<'info, TokenAccount>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct SellRange<'info> {
+    pub owner: Signer<'info>,
+    #[account(mut, has_one = mint, has_one = vault)]
+    pub market: AccountLoader<'info, Market>,
+    #[account(mut, has_one = market, has_one = owner, has_one = rent_payer)]
+    pub position: Account<'info, Position>,
+    /// CHECK: receives the position's rent if it closes; must match the position.
+    #[account(mut)]
+    pub rent_payer: UncheckedAccount<'info>,
+    pub mint: InterfaceAccount<'info, Mint>,
+    #[account(mut)]
+    pub vault: InterfaceAccount<'info, TokenAccount>,
+    /// CHECK: PDA with no data; signs for the vault.
+    #[account(seeds = [AUTHORITY_SEED, market.key().as_ref()], bump = market.load()?.authority_bump)]
+    pub authority: UncheckedAccount<'info>,
+    #[account(mut, token::mint = mint, token::authority = owner, token::token_program = token_program)]
+    pub owner_token: InterfaceAccount<'info, TokenAccount>,
+    pub token_program: Interface<'info, TokenInterface>,
 }

@@ -104,6 +104,21 @@ impl Market {
     }
 }
 
+/// Shares held in every atom of [from, to]. PDA `[POSITION_SEED, market, owner, nonce]`.
+#[account]
+#[derive(InitSpace)]
+pub struct Position {
+    pub market: Pubkey,
+    pub owner: Pubkey,
+    /// Paid the rent (the server's fee payer); gets it back when the position closes.
+    pub rent_payer: Pubkey,
+    pub nonce: u64,
+    pub from: u32,
+    pub to: u32,
+    pub shares: u64,
+    pub bump: u8,
+}
+
 /// A market account's data split into the header and the engine's slices.
 pub struct MarketData<'a> {
     pub header: &'a mut Market,

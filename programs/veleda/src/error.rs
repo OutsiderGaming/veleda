@@ -25,6 +25,8 @@ pub enum VeledaError {
     BadParams,
     #[msg("Invalid opening prices: check end price, floor and shape")]
     BadPrior,
+    #[msg("Position holds fewer shares than that")]
+    NotEnoughShares,
 }
 
 pub fn engine_error(e: engine::Error) -> Error {
