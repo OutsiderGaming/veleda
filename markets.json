@@ -1,0 +1,65 @@
+{
+  "programId": "7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx",
+  "mint": "CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP",
+  "markets": {
+    "flagship": {
+      "address": "63fNCmpHJVRE5RduWzzcFT39Tm7PTh1U5v2qjhMdq5Jb",
+      "question": "When will Taylor Swift's first child be born?",
+      "createdAt": "2026-10-13T10:34:01.211Z",
+      "startTime": 1791849600,
+      "atoms": 1096,
+      "atomSeconds": 86400,
+      "b": 1000000000,
+      "lockSeconds": 259200,
+      "lagSeconds": 86400,
+      "demo": false,
+      "endPricePpm": 650000,
+      "floorPpm": 100,
+      "shape": [
+        [
+          182,
+          0
+        ],
+        [
+          300,
+          15
+        ],
+        [
+          420,
+          40
+        ],
+        [
+          550,
+          70
+        ],
+        [
+          650,
+          90
+        ],
+        [
+          730,
+          100
+        ],
+        [
+          1095,
+          85
+        ]
+      ]
+    },
+    "fast": {
+      "address": "59dFi4bkexb7oSbCcMA5Z6hZSPyUEtzghHrSC7KXKf6K",
+      "question": "Fast demo market",
+      "createdAt": "2026-10-13T10:34:02.073Z",
+      "startTime": 1791885600,
+      "atoms": 168,
+      "atomSeconds": 3600,
+      "b": 100000000,
+      "lockSeconds": 3600,
+      "lagSeconds": 600,
+      "demo": true,
+      "endPricePpm": 5917,
+      "floorPpm": 0,
+      "shape": []
+    }
+  }
+}
