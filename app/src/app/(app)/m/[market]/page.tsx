@@ -20,7 +20,7 @@ export default function MarketPage() {
 function MarketScreen() {
   const { market: name } = useParams<{ market: string }>();
   const market = useMarket(name);
-  if (market === undefined) return null;
+  if (market === undefined) return <p className={s.missing}>Loading the market…</p>;
   if (market === null) return <p className={s.missing}>There&apos;s no market here.</p>;
   return <Loaded market={market} />;
 }

@@ -28,7 +28,7 @@ function Header() {
       </Link>
       {!ready ? null : authenticated ? (
         <div className={s.balance}>
-          <span className={s.balanceValue}>{airdropping && !balance ? "…" : vcr(balance ?? 0)}</span> <span className={s.unit}>VCR</span>
+          <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : vcr(balance)}</span> <span className={s.unit}>VCR</span>
           <span className={s.testMoney}>test money</span>
         </div>
       ) : (

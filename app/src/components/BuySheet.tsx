@@ -79,8 +79,11 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
   let label: React.ReactNode = <>PREDICT THE FUTURE <span className={s.sep} /> {vcrShort(stake)} VCR</>;
   let disabled = busy || stake <= 0 || q.shares <= 0 || market.resolved;
   if (busy) label = "PLACING YOUR CALL…";
-  else if (session.authenticated && (session.airdropping || balance === null)) {
+  else if (session.authenticated && session.airdropping) {
     label = "GETTING YOUR 100 VCR…";
+    disabled = true;
+  } else if (session.authenticated && balance === null) {
+    label = "ONE MOMENT…";
     disabled = true;
   } else if (session.authenticated && balance !== null && balance < stake) {
     label = "NOT ENOUGH VCR";
