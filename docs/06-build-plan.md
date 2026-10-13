@@ -104,7 +104,10 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
   - Devnet check with a fresh keypair: 20 VCR stakes on both markets cost 19.92 VCR, positions found by owner, cash-out quotes matched the chain within 0.000001 VCR.
   - The onboarding test page has buttons 3 and 4 (20 VCR on each market) and a "Your windows" list with cash-out buttons, for the Privy check below.
   - Bots sign with their own keys, so they use `scripts/lib/veleda.ts` directly rather than these routes.
-- [ ] **Trader bots**: `scripts/bots.ts` with a few wallets (airdropped VCR, server fee payer) trading both markets on a schedule so the band has shape and history.
+- [x] **Trader bots**: `scripts/bots.ts` with a few wallets (minted VCR, admin pays fees and rent) trading both markets on a schedule so the band has shape and history. Written and tested 13 Oct 2026; the day-long run is still to do:
+  - Five bots, each with a view of each market (peak, spread, "not by end date"). Each round a bot either buys a window it values at more than 1.15x its price (5–40 VCR), or sells the position it thinks most overpriced (above 1.4x its view, or when it holds 4 in that market). Every round also calls `advance_time` on both markets.
+  - Keys in `keys/bots/` (gitignored, created on first run); the mint authority tops a bot up with 2,000 VCR when it drops below 200. The admin pays fees and position rent, so the user-facing fee payer's SOL is kept for users.
+  - `node scripts/bots.ts` runs a round every ~2 minutes until stopped (`--rounds N --interval S` for tests). Reads `SOLANA_RPC_URL` from `.env`; the public devnet RPC returns 429s under bursts, which web3.js retries.
 
 ### Open before starting
 

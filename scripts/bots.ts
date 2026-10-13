@@ -11,9 +11,9 @@
 // advance_time on both markets.
 //
 // Reads SOLANA_RPC_URL from the repo's .env if it's there. Bot keys live in
-// keys/bots/ (created on first run). The admin pays the
-// bots' fees and position rent, so the user-facing fee payer keeps its SOL;
-// the mint authority tops bots up with VCR.
+// keys/bots/ (created on first run). The admin pays the bots' fees and
+// position rent, so the user-facing fee payer keeps its SOL; the mint
+// authority tops bots up with VCR.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction, type TransactionInstruction } from "@solana/web3.js";
 import { BASE, atomPrices, decodeMarket, decodePosition, firstOpenAtom, quoteBuy, quoteSell, rangePrice, POSITION_LEN, type MarketHeader } from "../app/src/lib/veleda/market.ts";
