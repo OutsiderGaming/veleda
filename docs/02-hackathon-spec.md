@@ -135,18 +135,18 @@ A scripted story that shows the whole life of a market in about a minute: pick a
 - **Labelling:** a persistent "Practice · simulated prices" tag and no real balances anywhere on the screen, so it can't be mistaken for a live market. The same goes for the demo video.
 - **Screens:** reuses the timeline, select and buy sheet components, plus a caption card for each beat.
 
-**Draft script** (fictional event, edit freely): "When will Luna the cat have her kittens?" A 10-day window with daily atoms, a 1-day locked zone, b = 100, 20 VCR pretend stake.
+**Draft script** (fictional event, edit freely): "When will Luna the cat have her kittens?" A 10-day window with daily atoms, a 1-day locked zone, b = 100, 20 VCR pretend stake. Opening prices: "not by day 10" 62%, the rest a gentle bump around days 5–7. The data is in `app/src/lib/practice/scenario.ts`; `node scripts/practice-scenario.ts` runs it through the reference model and prints these figures.
 
 1. **The timeline.** "Each bar is a day. Its height is the crowd's odds that the kittens arrive then. The bar at the bottom is 'not by day 10'."
-2. **Pick a window.** "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." The suggested window is days 6–7, at about 10%.
-3. **Make the call.** "Predict the future │ 20 VCR." The multiplier shows about 5.7x after fees and price impact (114 shares).
-4. **Time passes.** Scrub forward two days. "Days that have passed grey out and drop away. The odds on the days left go up, and so does your window's value."
-5. **News.** "The vet says 'any day now'. Traders pile into the next few days, and your window jumps." The cash-out figure is at its high.
-6. **Your choice.** "Cash out now for 48 VCR, or hold for 114?" Both branches can be scrubbed.
+2. **Pick a window.** "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." The suggested window is days 6–7, at 9.6%.
+3. **Make the call.** "Predict the future │ 20 VCR." The multiplier shows ×5.84 after fees and price impact (117 shares).
+4. **Time passes.** Scrub forward two days. "Days that have passed grey out and drop away. The odds on the days left go up, and so does your window's value." (Cash-out value 18.62 straight after buying, 19.95 now: fees and price impact mean an instant round trip loses a little.)
+5. **News.** "The vet says 'any day now, probably day 6 or 7'. Traders pile in, and your window jumps." Window odds 70%; cash-out value 63.59.
+6. **Your choice.** "Cash out now for 63.59 VCR, or hold for 116.72?" Both branches can be scrubbed.
 7. **Locked.** "Inside the last day before now, a window can't be bought or sold. That stops anyone trading on what they've just seen."
-8. **It happens.** Day 7, 3 a.m. "Windows that contain the moment pay 1 VCR per share. You win 114 VCR." If they cashed out: "You locked in 48 VCR early."
+8. **It happens.** Day 7, 3 a.m. "Windows that contain the moment pay 1 VCR per share. You win 116.72 VCR." If they cashed out: "You locked in 63.59 VCR early."
 
-(The figures are placeholders until the script is run through the reference model.)
+(Figures from the reference model, 13 Oct 2026. The vault stays solvent throughout.)
 
 ## Onboarding
 
