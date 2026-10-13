@@ -10,7 +10,7 @@
 // - a selection never extends into the locked zone or the past.
 // With a mouse, pressing and dragging selects straight away.
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 import { rangePrice } from "@/lib/veleda/market";
 import { buildBars, endLabel as cutoffLabel, isThick, multiplierFor, pct, type Bar, type TimelineMarket, type Zoom } from "@/lib/veleda/timeline";
 import s from "./Timeline.module.css";
@@ -47,6 +47,8 @@ interface Props {
 }
 
 const HOLD_MS = 300;
+/** Bottom of the sticky zoom tabs: the drag tag never goes above this. */
+const TABS_BOTTOM = 74;
 const SLOP = 8;
 const EDGE = 90;
 const NAV = 64;
@@ -312,16 +314,43 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, on
           </span>
         </div>
       </div>
-      {drag && <DragTag market={market} range={rangeOf(drag.anchor, drag.current)} unit={market.atomSeconds >= 86_400 ? "day" : "hour"} />}
+      {drag && (
+        <DragTag market={market} range={rangeOf(drag.anchor, drag.current)} unit={market.atomSeconds >= 86_400 ? "day" : "hour"} listRef={listRef} firstBar={Math.min(drag.anchor, drag.current)} />
+      )}
     </>
   );
 }
 
-function DragTag({ market, range, unit }: { market: TimelineMarket; range: Range; unit: string }) {
+/**
+ * The live multiplier while dragging, sitting just above the top-right corner
+ * of the selection (clear of the thumb and of the date labels on the left). If
+ * the top of the selection is off screen, it stops below the sticky zoom tabs.
+ */
+function DragTag({ market, range, unit, listRef, firstBar }: { market: TimelineMarket; range: Range; unit: string; listRef: RefObject<HTMLDivElement | null>; firstBar: number }) {
   const n = range.to - range.from + 1;
   const p = rangePrice(market.prices, range.from, range.to);
+  const tag = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+
+  // Re-measure when the selection changes and as the page auto-scrolls.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const list = listRef.current, el = tag.current;
+      const row = list?.querySelector<HTMLElement>(`[data-bar="${firstBar}"]`);
+      if (!list || !el || !row) return;
+      const above = row.getBoundingClientRect().top - el.offsetHeight - 6;
+      setPos({
+        top: Math.min(Math.max(above, TABS_BOTTOM), window.innerHeight - el.offsetHeight - 150),
+        right: window.innerWidth - list.getBoundingClientRect().right,
+      });
+    };
+    measure();
+    window.addEventListener("scroll", measure, { passive: true });
+    return () => window.removeEventListener("scroll", measure);
+  }, [listRef, firstBar, range.from, range.to]);
+
   return (
-    <div className={s.tag}>
+    <div ref={tag} className={s.tag} style={pos ? { top: pos.top, right: pos.right } : { visibility: "hidden" }}>
       <div className={s.tagTop}>
         {n} {unit}{n === 1 ? "" : "s"} · {pct(p)}
       </div>

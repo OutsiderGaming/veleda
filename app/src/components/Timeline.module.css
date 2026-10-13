@@ -88,8 +88,8 @@
 .endRow { margin-top: 18px; }
 
 .tag {
-  /* Pinned top right, below the sticky zoom tabs: clear of the dragging thumb and of the date labels on the left. */
-  position: fixed; top: 74px; right: max(12px, calc(50vw - 228px)); z-index: 30; pointer-events: none;
+  /* Placed by DragTag: just above the selection's top-right corner. */
+  position: fixed; z-index: 30; pointer-events: none;
   background: var(--card); border: 1.5px solid var(--copper); border-radius: 16px; padding: 8px 14px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
