@@ -120,7 +120,7 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 - Both markets are live on devnet and the bots have been trading for a day.
 - LiteSVM tests pass for every instruction and rejection path, with the invariant checked after each.
 - A fresh Privy user with 0 SOL can buy and sell through the trade endpoints. Done 13 Oct 2026: a new Privy sign-in on the test page claimed 100 VCR, bought on both markets (flagship 1,584 shares for 20 VCR at 79x; fast 310 shares at 15x) and cashed both out, ending on 94.56 VCR with 0 SOL. First position 59 s after page load, sign-in included.
-- Bots started 13 Oct 2026 10:54 UTC (`bots.log`); the day-long run is due 14 Oct.
+- Bots started 13 Oct 2026 10:54 UTC (`bots.log`). Agreed 13 Oct: a few hours of trading is enough (the aim is a shaped band with history; gaps while the laptop sleeps don't matter). Re-run a burst before the week 4 recording; where the bots live long term is decided with hosting in week 3.
 
 ## Week 3: the web app
 
