@@ -92,3 +92,5 @@
 .tagTop { font-size: 13px; color: var(--text-2); white-space: nowrap; }
 .tagMult { font: 700 30px/1.1 var(--serif); color: var(--copper-light); }
 .tagMult small { font-size: 0.7em; }
+
+.winner { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--gain); font-size: 20px; text-shadow: 0 0 10px rgba(156, 203, 142, 0.6); }

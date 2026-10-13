@@ -34,6 +34,14 @@ interface Props {
   lockLabel: string;
   /** Hide gestures (resolved markets). */
   readOnly?: boolean;
+  /** Label for the "not by end date" row. */
+  endLabel?: string;
+  /** The winning atom, once resolved. */
+  winner?: number | null;
+  /** Row height for thick bars (default 76). */
+  rowHeight?: number;
+  /** Show the drag handles on a finished selection (default true). */
+  handles?: boolean;
 }
 
 const HOLD_MS = 300;
@@ -57,7 +65,7 @@ interface Gesture {
   raf?: number;
 }
 
-export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lockLabel, readOnly }: Props) {
+export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lockLabel, readOnly, endLabel = "NOT BY THE END", winner = null, rowHeight: thickRow = 76, handles = true }: Props) {
   const bars = useMemo(() => buildBars(market, zoom), [market, zoom]);
   const END = bars.length; // index of the "not by end date" row
   const thick = isThick(zoom, bars.length);
@@ -212,7 +220,7 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
 
   const firstLocked = bars.findIndex((b) => b.state === "locked");
   const firstLive = bars.findIndex((b) => b.state !== "elapsed");
-  const rowHeight = thick ? 76 : 18;
+  const rowHeight = thick ? thickRow : 18;
 
   return (
     <>
@@ -231,10 +239,10 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
           const width = b.state === "elapsed" ? 30 : Math.max(thick ? 22 : 6, (b.price / maxPrice) * 100);
           return (
             <div key={`${zoom}-${b.from}`}>
-              {b.index === firstLive && (
+              {winner === null && b.index === firstLive && (
                 <div className={s.marker}>↑ Now{firstLocked === b.index ? ` · locked for ${lockLabel}` : ""}</div>
               )}
-              {firstLocked >= 0 && b.index === firstOpenBar && firstOpenBar !== firstLive && (
+              {winner === null && firstLocked >= 0 && b.index === firstOpenBar && firstOpenBar !== firstLive && (
                 <div className={`${s.marker} ${s.markerMuted}`}>Open for trading</div>
               )}
               {b.divider && <div className={thick ? s.divider : s.dividerSmall}>{b.divider}</div>}
@@ -246,18 +254,19 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
                 <span className={`${s.side} ${sel ? s.sideStrong : ""}`}>{thick ? null : b.side}</span>
                 <span className={`${s.track} ${isMine ? s.mine : ""}`}>
                   <span className={s.bar} style={{ width: `${width}%` }} />
+                  {winner !== null && b.from <= winner && winner <= b.to && <span className={s.winner}>★</span>}
                   {thick && b.label && <span className={s.barLabel}>{b.label}</span>}
-                  {!drag && !readOnly && sel && b.index === selLo && (
+                  {handles && !drag && !readOnly && sel && b.index === selLo && (
                     <span data-handle="top" className={s.handle} style={{ top: -13 }} />
                   )}
-                  {!drag && !readOnly && sel && b.index === selHi && (
+                  {handles && !drag && !readOnly && sel && b.index === selHi && (
                     <span data-handle="bottom" className={s.handle} style={{ bottom: -13 }} />
                   )}
                 </span>
                 {!thick && <span className={s.right} />}
                 {thick && (
                   <span className={s.right}>
-                    {b.state === "open" && (
+                    {b.state === "open" && winner === null && (
                       <>
                         <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, Math.max(b.from, market.firstOpenAtom), b.to))}</div>
                         <div className={s.pct}>{pct(b.price)}</div>
@@ -273,16 +282,20 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
         <div
           data-bar={END}
           className={`${s.row} ${s.thick} ${endSelected ? s.selected : ""}`}
-          style={{ height: 76, padding: "6px 0" }}
+          style={{ height: thickRow, padding: "6px 0" }}
         >
           <span className={s.side} />
           <span className={s.track}>
             <span className={s.bar} style={{ width: `${Math.min(100, Math.max(22, (market.prices[market.atoms] / maxPrice) * 100))}%` }} />
-            <span className={s.barLabel} style={{ fontSize: 14 }}>NOT BY THE END</span>
+            <span className={s.barLabel} style={{ fontSize: 14 }}>{endLabel}</span>
           </span>
           <span className={s.right}>
-            <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, market.atoms, market.atoms))}</div>
-            <div className={s.pct}>{pct(market.prices[market.atoms])}</div>
+            {winner === null && (
+              <>
+                <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, market.atoms, market.atoms))}</div>
+                <div className={s.pct}>{pct(market.prices[market.atoms])}</div>
+              </>
+            )}
           </span>
         </div>
       </div>

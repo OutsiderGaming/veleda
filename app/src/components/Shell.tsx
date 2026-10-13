@@ -19,6 +19,8 @@ export function Shell({ children }: { children: ReactNode }) {
 
 function Header() {
   const { ready, authenticated, login, balance, airdropping } = useSession();
+  // Practice mode shows no real balances (hackathon spec, "Practice mode").
+  const practice = usePathname().startsWith("/practice");
   return (
     <header className={s.header}>
       <Link href="/" className={s.brand}>
@@ -26,7 +28,7 @@ function Header() {
         <img src="/logo-128.png" alt="" className={s.logo} />
         <span className={s.wordmark}>VELEDA</span>
       </Link>
-      {!ready ? null : authenticated ? (
+      {!ready || practice ? null : authenticated ? (
         <div className={s.balance}>
           <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : vcr(balance)}</span> <span className={s.unit}>VCR</span>
           <span className={s.testMoney}>test money</span>

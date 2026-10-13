@@ -99,6 +99,7 @@ function Loaded({ market: m }: { market: MarketView }) {
         mine={mine}
         lockLabel={lock}
         readOnly={market.resolved}
+        winner={market.resolved ? market.winner : null}
         onSelect={(r, done) => {
           setSelection(r);
           if (done) setSheet(true);

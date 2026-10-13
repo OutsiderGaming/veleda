@@ -15,6 +15,8 @@ export interface TimelineMarket {
   now: number;
   /** Depth, base units. */
   b: number;
+  /** Bar labels by atom, replacing dates (practice mode's "DAY 1"…). */
+  labels?: string[];
 }
 
 export type Zoom = "year" | "month" | "day" | "hour";
@@ -82,7 +84,8 @@ export function buildBars(m: TimelineMarket, zoom: Zoom): Bar[] {
     for (let a = from; a <= to; a++) price += m.prices[a];
     const end = atomStart(m, to + 1);
     const state = end <= m.now ? "elapsed" : to < m.firstOpenAtom ? "locked" : "open";
-    bars.push({ index: bars.length, from, to, state, price, ...decorate(m, zoom, from, bars.length === 0) });
+    const text = m.labels ? { label: m.labels[from] } : decorate(m, zoom, from, bars.length === 0);
+    bars.push({ index: bars.length, from, to, state, price, ...text });
     from = i;
   }
   return bars;
