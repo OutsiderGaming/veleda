@@ -11,7 +11,8 @@
 // advance_time on both markets.
 //
 // Reads SOLANA_RPC_URL from the repo's .env if it's there. Bot keys live in
-// keys/bots/ (created on first run). The admin pays the bots' fees and
+// keys/bots/ (created on first run). Without keys/ (GitHub Actions), keys come
+// from ADMIN_KEY, MINT_AUTHORITY_KEY and BOT_KEYS (see .github/workflows/bots.yml). The admin pays the bots' fees and
 // position rent, so the user-facing fee payer keeps its SOL; the mint
 // authority tops bots up with VCR.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -47,9 +48,14 @@ const BOTS: { name: string; views: Record<string, View> }[] = [
 ];
 const WIDTHS: Record<string, number[]> = { flagship: [7, 14, 30, 61], fast: [2, 3, 6, 12] };
 
-const load = (path: string) => Keypair.fromSecretKey(Uint8Array.from(JSON.parse(readFileSync(path, "utf8"))));
-const admin = load("keys/admin.json");
-const mintAuthority = load("keys/mint-authority.json");
+const fromJson = (json: string) => Keypair.fromSecretKey(Uint8Array.from(JSON.parse(json)));
+const load = (path: string) => fromJson(readFileSync(path, "utf8"));
+/** A key from keys/, or from an environment variable holding the same JSON (GitHub Actions secrets). */
+const keyFrom = (path: string, envVar: string) => (existsSync(path) ? load(path) : fromJson(process.env[envVar] ?? ""));
+const admin = keyFrom("keys/admin.json", "ADMIN_KEY");
+const mintAuthority = keyFrom("keys/mint-authority.json", "MINT_AUTHORITY_KEY");
+/** BOT_KEYS: {"early": [...], ...}, used when keys/bots/ isn't there. */
+const botKeysEnv: Record<string, number[]> = process.env.BOT_KEYS ? JSON.parse(process.env.BOT_KEYS) : {};
 const record = JSON.parse(readFileSync("markets.json", "utf8"));
 const mint = new PublicKey(record.mint);
 const markets = Object.entries(record.markets as Record<string, { address: string }>).map(([name, m]) => ({ name, address: new PublicKey(m.address) }));
@@ -63,6 +69,7 @@ function send(ixs: TransactionInstruction[], signers: Keypair[] = []) {
 
 function botKey(name: string): Keypair {
   const path = `keys/bots/${name}.json`;
+  if (!existsSync(path) && botKeysEnv[name]) return Keypair.fromSecretKey(Uint8Array.from(botKeysEnv[name]));
   if (!existsSync(path)) {
     mkdirSync("keys/bots", { recursive: true });
     writeFileSync(path, JSON.stringify([...Keypair.generate().secretKey]));

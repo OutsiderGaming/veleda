@@ -146,7 +146,7 @@ Goal from the hackathon spec: the real app on a phone (home, timeline band, drag
 
 In build order; each step should leave the app working.
 
-- [ ] **Bots on GitHub Actions**: `bots.ts` reads keys from environment secrets when `keys/` isn't there; a workflow on a 30-minute schedule (plus manual trigger) installs `@solana/web3.js` and runs `--rounds 1`. Set the secrets with `gh secret set` from the key files (ask before running it). Stop the local run once it's going.
+- [ ] **Bots on GitHub Actions**: `bots.ts` reads keys from environment secrets when `keys/` isn't there; a workflow on a 30-minute schedule (plus manual trigger) installs `@solana/web3.js` and runs `--rounds 1`. Set the secrets with `gh secret set` from the key files (ask before running it). Stop the local run once it's going. Built 13 Oct 2026 and tested with environment keys and no `keys/` folder. Waiting on the user: (1) `gh auth refresh -s workflow` so the workflow can be pushed (it sits at `scripts/bots.workflow.yml` until then), (2) the go-ahead to upload the secrets; until they exist each run skips with a notice.
 - [ ] **Shell and design system**: routes, bottom nav, tokens, fonts, Home/Account placeholders; test page moved to `/dev`; PWA manifest and icons from `design/logo.png` so it can be added to a home screen.
 - [ ] **Data layer**: market polling hook, browser-side quotes, atom ↔ date helpers (local time, locked zone, elapsed), session hook with the automatic airdrop and the VCR balance with its "test money" label.
 - [ ] **Home**: both markets as cards with question, total traded and a mini band; tap to open.
