@@ -1,16 +1,14 @@
-# Lives here until the git login has the `workflow` scope (`gh auth refresh -s workflow`);
-# then move it to .github/workflows/bots.yml.
-
 # One round of trader bots every 30 minutes (see scripts/bots.ts), so both
 # demo markets keep trading without a laptop running. The repo is private:
 # 2,000 free Actions minutes a month and each run bills at least a minute, so
 # 30 minutes (~1,440 a month) fits. Tighten the schedule if the repo goes public.
 #
-# Secrets (devnet keys, set straight from the key files so they're never printed):
-#   gh secret set ADMIN_KEY < keys/admin.json
-#   gh secret set MINT_AUTHORITY_KEY < keys/mint-authority.json
+# Secrets hold only low-value devnet keys: the bots' own payer and the five
+# bot wallets. The admin and mint authority never leave the laptop (bots were
+# pre-funded with VCR). Set them straight from the key files so they're never printed:
+#   gh secret set BOT_PAYER_KEY < keys/bot-payer.json
 #   node -e 'const fs=require("fs");const o={};for(const f of fs.readdirSync("keys/bots"))o[f.replace(".json","")]=JSON.parse(fs.readFileSync("keys/bots/"+f));process.stdout.write(JSON.stringify(o))' | gh secret set BOT_KEYS
-# Optional: SOLANA_RPC_URL. Until ADMIN_KEY is set, runs skip without failing.
+# Optional: SOLANA_RPC_URL. Until the secrets are set, runs skip without failing.
 name: Trader bots
 
 on:
@@ -27,15 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-      MINT_AUTHORITY_KEY: ${{ secrets.MINT_AUTHORITY_KEY }}
+      BOT_PAYER_KEY: ${{ secrets.BOT_PAYER_KEY }}
       BOT_KEYS: ${{ secrets.BOT_KEYS }}
       SOLANA_RPC_URL: ${{ secrets.SOLANA_RPC_URL }}
     steps:
       - name: Check secrets
         id: secrets
         run: |
-          if [ -z "$ADMIN_KEY" ] || [ -z "$MINT_AUTHORITY_KEY" ] || [ -z "$BOT_KEYS" ]; then
+          if [ -z "$BOT_PAYER_KEY" ] || [ -z "$BOT_KEYS" ]; then
             echo "::notice::Bot secrets aren't set yet; skipping this round."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else

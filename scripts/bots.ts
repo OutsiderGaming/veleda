@@ -10,11 +10,13 @@
 // holding at most a few positions per market. Every round also calls
 // advance_time on both markets.
 //
-// Reads SOLANA_RPC_URL from the repo's .env if it's there. Bot keys live in
-// keys/bots/ (created on first run). Without keys/ (GitHub Actions), keys come
-// from ADMIN_KEY, MINT_AUTHORITY_KEY and BOT_KEYS (see .github/workflows/bots.yml). The admin pays the bots' fees and
-// position rent, so the user-facing fee payer keeps its SOL; the mint
-// authority tops bots up with VCR.
+// Reads SOLANA_RPC_URL from the repo's .env if it's there. Keys: bot wallets
+// in keys/bots/ (created on first run) and a dedicated payer, keys/bot-payer.json,
+// which pays the bots' fees and position rent so neither the admin nor the
+// user-facing fee payer is needed. Without keys/ (GitHub Actions), they come
+// from BOT_PAYER_KEY and BOT_KEYS (see .github/workflows/bots.yml). The mint
+// authority (keys/mint-authority.json) tops bots up with VCR when it's
+// available, i.e. locally; the cloud job never has it.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction, type TransactionInstruction } from "@solana/web3.js";
 import { BASE, atomPrices, decodeMarket, decodePosition, firstOpenAtom, quoteBuy, quoteSell, rangePrice, POSITION_LEN, type MarketHeader } from "../app/src/lib/veleda/market.ts";
@@ -52,8 +54,8 @@ const fromJson = (json: string) => Keypair.fromSecretKey(Uint8Array.from(JSON.pa
 const load = (path: string) => fromJson(readFileSync(path, "utf8"));
 /** A key from keys/, or from an environment variable holding the same JSON (GitHub Actions secrets). */
 const keyFrom = (path: string, envVar: string) => (existsSync(path) ? load(path) : fromJson(process.env[envVar] ?? ""));
-const admin = keyFrom("keys/admin.json", "ADMIN_KEY");
-const mintAuthority = keyFrom("keys/mint-authority.json", "MINT_AUTHORITY_KEY");
+const payer = keyFrom("keys/bot-payer.json", "BOT_PAYER_KEY");
+const mintAuthority = existsSync("keys/mint-authority.json") ? load("keys/mint-authority.json") : null;
 /** BOT_KEYS: {"early": [...], ...}, used when keys/bots/ isn't there. */
 const botKeysEnv: Record<string, number[]> = process.env.BOT_KEYS ? JSON.parse(process.env.BOT_KEYS) : {};
 const record = JSON.parse(readFileSync("markets.json", "utf8"));
@@ -64,7 +66,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const vcr = (base: number) => (base / BASE).toFixed(2);
 
 function send(ixs: TransactionInstruction[], signers: Keypair[] = []) {
-  return sendAndConfirmTransaction(conn, new Transaction().add(...ixs), [admin, ...signers]);
+  return sendAndConfirmTransaction(conn, new Transaction().add(...ixs), [payer, ...signers]);
 }
 
 function botKey(name: string): Keypair {
@@ -84,7 +86,8 @@ async function balance(token: PublicKey): Promise<number> {
 
 async function topUp(bot: Bot) {
   if ((await balance(bot.token)) >= TOP_UP_BELOW * BASE) return;
-  await send([createAtaIdempotent(admin.publicKey, bot.key.publicKey, mint), mintTo(mint, bot.token, mintAuthority.publicKey, BigInt(TOP_UP) * 1_000_000n)], [mintAuthority]);
+  if (!mintAuthority) return console.log(`  ${bot.name}: low on VCR; top it up locally (needs the mint authority)`);
+  await send([createAtaIdempotent(payer.publicKey, bot.key.publicKey, mint), mintTo(mint, bot.token, mintAuthority.publicKey, BigInt(TOP_UP) * 1_000_000n)], [mintAuthority]);
   console.log(`  ${bot.name}: topped up with ${TOP_UP} VCR`);
 }
 
@@ -146,7 +149,7 @@ async function act(bot: Bot, market: { name: string; address: PublicKey }) {
   const stake = Math.round((5 + Math.min(35, 10 * (edge - 1)) * Math.random()) * BASE);
   const q = quoteBuy(h, prices, from, to, stake);
   const nonce = BigInt(Date.now());
-  await send([buyRange({ ...accounts, feePayer: admin.publicKey }, { nonce, from, to, shares: BigInt(q.shares), maxCost: BigInt(q.maxCost) })], [bot.key]);
+  await send([buyRange({ ...accounts, feePayer: payer.publicKey }, { nonce, from, to, shares: BigInt(q.shares), maxCost: BigInt(q.maxCost) })], [bot.key]);
   console.log(`  ${bot.name}: bought ${market.name} [${from}, ${to}] for ${vcr(stake)} VCR at ${(q.price * 100).toFixed(2)}% (thinks ${(rangePrice(belief, from, to) * 100).toFixed(2)}%)`);
 }
 
