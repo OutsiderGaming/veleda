@@ -33,6 +33,7 @@ Build the core loop end to end; present everything about outside LPs and decentr
 | Mobile web app: home, timeline, select, buy, cash out | Partial sells of a sub-range (stretch goal) |
 | Share a window as a plain link | One Blink for buying a chunk (stretch goal if week 4 has room) |
 | Practice mode: an interactive tutorial with a scripted, simulated market you can scrub forwards and backwards | A time machine over live market data; user-controlled clocks on real markets |
+| | Buying several unconnected windows in one tap (a basket: one transaction, several `buy_range` instructions) |
 
 The platform creates every market and is the only LP. Every market is fully funded for its worst case. Everything runs on devnet in **Veleda Credit (VCR)**, our own 6-decimal test mint (`CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`; not USDC). The platform holds the mint authority and mints the market subsidies, sign-up airdrops and bot balances. The mint is configurable per market. The program uses Anchor's `token_interface`, so either SPL Token or Token-2022 mints work.
 
