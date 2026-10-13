@@ -32,6 +32,7 @@ Build the core loop end to end; present everything about outside LPs and decentr
 | | Halt on first report; void and refunds; AI halt watcher; AI or multi-model resolution |
 | Mobile web app: home, timeline, select, buy, cash out | Partial sells of a sub-range (stretch goal) |
 | Share a window as a plain link | One Blink for buying a chunk (stretch goal if week 4 has room) |
+| Practice mode: an interactive tutorial with a scripted, simulated market you can scrub forwards and backwards | A time machine over live market data; user-controlled clocks on real markets |
 
 The platform creates every market and is the only LP. Every market is fully funded for its worst case. Everything runs on devnet in **Veleda Credit (VCR)**, our own 6-decimal test mint (`CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`; not USDC). The platform holds the mint authority and mints the market subsidies, sign-up airdrops and bot balances. The mint is configurable per market. The program uses Anchor's `token_interface`, so either SPL Token or Token-2022 mints work.
 
@@ -121,6 +122,31 @@ A mobile-first web app (installable PWA) rather than native apps, built in React
 - The same URL opens the normal web app for anyone without the extension.
 - Showing the card on X needs approval from Dialect's Actions registry. Without it, demo the Blink in Dialect's own viewer (dial.to).
 
+## Practice mode (interactive tutorial)
+
+A scripted story that shows the whole life of a market in about a minute: pick a window, buy, watch time pass, decide whether to cash out, see it resolve. It runs entirely in the browser. It never touches the chain and uses no real market data, so anyone can use it, signed out, as often as they like.
+
+- **Where:** a "How it works" entry on Home, and offered once to first-time visitors. No sign-in needed.
+- **Scrubbing:** a time slider (or swipe) moves freely forwards and backwards through the whole story. Every moment is a precomputed snapshot, so going back is instant and exact.
+- **Maths:** the same LMSR, fees, locked zone and pruning as the program, computed with the TypeScript reference model (`packages/reference`), so every price, cash-out figure and payout is what the real market would give. Only the story is scripted: the other traders' moves are fixed, not random, so it looks the same every time.
+- **Your pretend window:** the user drags and buys a window with pretend VCR, using the real buy sheet layout. If they pick a different window from the suggested one, the script still plays out and their figures follow the maths.
+- **Choices:** at the news beat, "cash out now" or "hold"; scrubbing back undoes the choice.
+- **Labelling:** a persistent "Practice · simulated prices" tag and no real balances anywhere on the screen, so it can't be mistaken for a live market. The same goes for the demo video.
+- **Screens:** reuses the timeline, select and buy sheet components, plus a caption card for each beat.
+
+**Draft script** (fictional event, edit freely): "When will Luna the cat have her kittens?" A 10-day window with daily atoms, a 1-day locked zone, b = 100, 20 VCR pretend stake.
+
+1. **The timeline.** "Each bar is a day. Its height is the crowd's odds that the kittens arrive then. The bar at the bottom is 'not by day 10'."
+2. **Pick a window.** "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." The suggested window is days 6–7, at about 10%.
+3. **Make the call.** "Predict the future │ 20 VCR." The multiplier shows about 5.7x after fees and price impact (114 shares).
+4. **Time passes.** Scrub forward two days. "Days that have passed grey out and drop away. The odds on the days left go up, and so does your window's value."
+5. **News.** "The vet says 'any day now'. Traders pile into the next few days, and your window jumps." The cash-out figure is at its high.
+6. **Your choice.** "Cash out now for 48 VCR, or hold for 114?" Both branches can be scrubbed.
+7. **Locked.** "Inside the last day before now, a window can't be bought or sold. That stops anyone trading on what they've just seen."
+8. **It happens.** Day 7, 3 a.m. "Windows that contain the moment pay 1 VCR per share. You win 114 VCR." If they cashed out: "You locked in 48 VCR early."
+
+(The figures are placeholders until the script is run through the reference model.)
+
 ## Onboarding
 
 A judge should go from opening the link to holding a position in under 60 seconds, without installing anything or seeing the words "seed phrase", "SOL" or "devnet".
@@ -171,7 +197,7 @@ The maths comes first and gets the most testing; the frontend is quicker and com
 | --- | --- | --- |
 | 1 | Off-chain reference model of LMSR, ranges, pruning and fees; fixed-point exp/ln; segment tree with lazy multiply; property tests. Create the VCR mint. Set up Privy (free tier) and prove email sign-in plus a first buy where the server pays fees and rent. Apply to the Actions registry. | On-chain maths matches the reference within rounding on 10,000 random trades; a test user signs in by email and opens a position from a wallet that has never held SOL |
 | 2 | Anchor program: all seven instructions, accounts, fee ledger, locked zone, live edge. Devnet deploy. Fee-payer server and sign-up airdrop. Trader-bot script. | Both demo markets live with bot trading; vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically |
-| 3 | Web app: home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link. | Link to first position in under 60 seconds on a phone, three times in a row |
+| 3 | Web app: home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link. Practice mode (scripted, simulated, scrubbable). | Link to first position in under 60 seconds on a phone, three times in a row |
 | 4 | One-command setup script and README. Seed markets. Demo video (~2:25). Rehearse. | A stranger can run the repo from the README; the demo script runs end to end twice without intervention |
 
 If anything overruns, cut in this order: sub-range sells (already a stretch goal), then the option to connect an existing wallet. Never cut onboarding: it's a judging criterion.
@@ -187,6 +213,8 @@ About 2:25 on one phone, two markets. The submission minimum is 2 minutes and th
 5. **Time passes (25s).** Switch to the fast market, move its clock offset forward a few hours and call advance time: elapsed hours grey out and the cash-out figure climbs. Cash out for a profit.
 6. **Resolution (20s).** Resolve inside the remaining chunk; the marker drops onto the timeline; claim.
 7. **Why Solana (20s).** One account holds the whole timeline; every trade costs the same whatever the width; every payout is fully backed on-chain.
+
+Practice mode isn't in the script above. If there's time, a few seconds of it after beat 1 can show the whole flow fast, clearly labelled as practice. The on-chain fast market stays in beats 5–6 as the proof that it's real.
 
 Record a backup video of the full run in week 4 in case devnet is slow on the day.
 

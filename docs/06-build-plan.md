@@ -120,3 +120,13 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 - Both markets are live on devnet and the bots have been trading for a day.
 - LiteSVM tests pass for every instruction and rejection path, with the invariant checked after each.
 - A fresh Privy user with 0 SOL can buy and sell through the trade endpoints.
+
+## Week 3: the web app
+
+The full week 3 checklist gets written when week 2 is signed off. Items decided so far:
+
+- [ ] **Practice mode** (hackathon spec, "Practice mode"): a scripted, simulated market that users scrub forwards and backwards, all in the browser.
+  - Run the script through `packages/reference` once per scenario (and per choice: cash out or hold) to produce snapshots of every atom's price, the user's position value and the caption, about one per simulated hour. The slider indexes the snapshots. The reference model is plain TypeScript with no dependencies, so the app can import or copy it.
+  - Fixed script, no randomness; the user's own window and stake feed into the same replay.
+  - Reuse the timeline, select and buy sheet components; add a caption card and the "Practice · simulated prices" tag.
+  - Replace the draft script's placeholder figures with the model's output, and agree the script with the user before building the screens.
