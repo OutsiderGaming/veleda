@@ -118,7 +118,7 @@ function Loaded({ market: m }: { market: MarketView }) {
       ) : (
         <div className={s.hint}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11V5a1.5 1.5 0 0 1 3 0v5" /><path d="M12 10V4a1.5 1.5 0 0 1 3 0v6" /><path d="M15 10.5V6a1.5 1.5 0 0 1 3 0v8a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.5 13a1.5 1.5 0 0 1 2.5-1.7L9 14" /></svg>
-          Tap a {unit}, or hold and drag across several
+          Tap {unit === "hour" ? "an" : "a"} {unit}, or hold and drag across several
         </div>
       )}
 

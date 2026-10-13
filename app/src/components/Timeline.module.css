@@ -37,7 +37,7 @@
 .barLabel {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   font: 700 18px var(--serif); letter-spacing: 0.22em; color: #f3e6d2; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  white-space: nowrap;
+  white-space: nowrap; pointer-events: none;
 }
 .selected .bar {
   background:
@@ -52,7 +52,7 @@
   border-color: #f6c792;
   box-shadow: 0 0 0 4px rgba(42, 34, 26, 0.9);
 }
-.selected.thick .barLabel { color: #1a120a; text-shadow: none; }
+.selected.thick .barLabel { color: #fffaf2; text-shadow: 0 1px 3px rgba(26, 18, 10, 0.9), 0 0 1px #1a120a; }
 .selected .mult { color: var(--copper-light); font-size: 24px; }
 
 .elapsed { opacity: 0.22; }

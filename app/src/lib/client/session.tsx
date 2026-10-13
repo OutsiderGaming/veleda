@@ -10,6 +10,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 
 export interface PositionView {
   address: string;
+  /** Market name. */
   market: string;
   from: number;
   to: number;
@@ -21,6 +22,8 @@ export interface PositionView {
   paid?: number | null;
   /** Window price when bought, 0..1, if known. */
   entryPrice?: number | null;
+  /** Window price now, 0..1. */
+  currentPrice?: number;
 }
 
 interface Session {

@@ -12,7 +12,7 @@
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { rangePrice } from "@/lib/veleda/market";
-import { buildBars, multiplierFor, pct, type Bar, type TimelineMarket, type Zoom } from "@/lib/veleda/timeline";
+import { buildBars, isThick, multiplierFor, pct, type Bar, type TimelineMarket, type Zoom } from "@/lib/veleda/timeline";
 import s from "./Timeline.module.css";
 
 export interface Range {
@@ -60,7 +60,7 @@ interface Gesture {
 export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lockLabel, readOnly }: Props) {
   const bars = useMemo(() => buildBars(market, zoom), [market, zoom]);
   const END = bars.length; // index of the "not by end date" row
-  const thick = zoom === "year" || zoom === "month";
+  const thick = isThick(zoom, bars.length);
   const maxPrice = useMemo(() => Math.max(1e-9, ...bars.filter((b) => b.state !== "elapsed").map((b) => b.price)), [bars]);
   const firstOpenBar = useMemo(() => {
     const i = bars.findIndex((b) => b.state === "open");
@@ -243,11 +243,10 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
                 className={`${s.row} ${thick ? s.thick : ""} ${sel ? s.selected : ""} ${sel && b.index === selLo ? s.frameTop : ""} ${sel && b.index === selHi ? s.frameBottom : ""} ${b.state === "elapsed" ? s.elapsed : ""} ${b.state === "locked" ? `${s.locked} ${s.lockedZone}` : ""}`}
                 style={{ height: rowHeight, padding: thick ? "6px 0" : "2px 0" }}
               >
-                <span className={`${s.side} ${sel ? s.sideStrong : ""}`}>{b.side}</span>
+                <span className={`${s.side} ${sel ? s.sideStrong : ""}`}>{thick ? null : b.side}</span>
                 <span className={`${s.track} ${isMine ? s.mine : ""}`}>
-                  <span className={s.bar} style={{ width: `${width}%` }}>
-                    {b.label && <span className={s.barLabel}>{b.label}</span>}
-                  </span>
+                  <span className={s.bar} style={{ width: `${width}%` }} />
+                  {thick && b.label && <span className={s.barLabel}>{b.label}</span>}
                   {!drag && !readOnly && sel && b.index === selLo && (
                     <span data-handle="top" className={s.handle} style={{ top: -13 }} />
                   )}
@@ -278,9 +277,8 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
         >
           <span className={s.side} />
           <span className={s.track}>
-            <span className={s.bar} style={{ width: `${Math.min(100, Math.max(22, (market.prices[market.atoms] / maxPrice) * 100))}%` }}>
-              <span className={s.barLabel} style={{ fontSize: 13 }}>NOT BY THE END</span>
-            </span>
+            <span className={s.bar} style={{ width: `${Math.min(100, Math.max(22, (market.prices[market.atoms] / maxPrice) * 100))}%` }} />
+            <span className={s.barLabel} style={{ fontSize: 14 }}>NOT BY THE END</span>
           </span>
           <span className={s.right}>
             <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, market.atoms, market.atoms))}</div>

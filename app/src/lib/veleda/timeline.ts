@@ -27,9 +27,9 @@ export interface Bar {
   /** First and last atom. */
   from: number;
   to: number;
-  /** Text engraved on the bar (Year and Month zoom). */
+  /** Text engraved on the bar (thick bars). */
   label?: string;
-  /** Text beside the bar (Day and Hour zoom), shown only on some bars. */
+  /** Text beside the bar (thin bars), shown only on some bars. */
   side?: string;
   /** A divider above this bar (a new year, month or day). */
   divider?: string;
@@ -66,7 +66,10 @@ export function zoomsFor(m: TimelineMarket): Zoom[] {
   });
 }
 
-export const defaultZoom = (m: TimelineMarket): Zoom => (isDaily(m) ? "month" : "day");
+export const defaultZoom = (m: TimelineMarket): Zoom => (isDaily(m) ? "month" : "hour");
+
+/** Short timelines get the thick, labelled bars of Month view, whatever the zoom level. */
+export const isThick = (zoom: Zoom, bars: number) => zoom === "year" || zoom === "month" || bars <= 31;
 
 /** The timeline's bars at one zoom level, timed atoms only ("not by end date" is drawn separately). */
 export function buildBars(m: TimelineMarket, zoom: Zoom): Bar[] {
@@ -92,6 +95,7 @@ function decorate(m: TimelineMarket, zoom: Zoom, from: number, first: boolean): 
   if (zoom === "month") return { label: MONTHS[p.mo].toUpperCase(), divider: first || prev?.y !== p.y ? `${p.y}` : undefined };
   if (zoom === "day") {
     return {
+      label: `${DAYS[p.dow].toUpperCase()} ${p.d}`,
       side: p.dow === 1 || first ? `${p.d} ${MONTHS[p.mo]}` : undefined,
       divider: first || prev?.mo !== p.mo ? `${MONTHS[p.mo]} ${p.y}` : undefined,
     };
