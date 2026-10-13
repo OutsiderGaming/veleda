@@ -12,7 +12,8 @@ import { PROGRAM_ID } from "../veleda/program";
 const MARKETS_FILE = process.env.MARKETS_FILE ?? path.resolve(process.cwd(), "..", "markets.json");
 
 interface MarketsFile { mint: string; markets: Record<string, { address: string; question: string; resolves?: string }> }
-const marketsFile = (): MarketsFile => JSON.parse(readFileSync(/*turbopackIgnore: true*/ MARKETS_FILE, "utf8"));
+/** markets.json, or MARKETS_JSON (the same JSON) where the repo root isn't deployed (Vercel). */
+const marketsFile = (): MarketsFile => JSON.parse(process.env.MARKETS_JSON || readFileSync(/*turbopackIgnore: true*/ MARKETS_FILE, "utf8"));
 
 /** The demo markets by name ("flagship", "fast"). */
 export function marketList(): { name: string; address: Address; question: string; resolves: string }[] {
