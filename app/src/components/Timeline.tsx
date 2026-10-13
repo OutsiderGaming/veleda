@@ -312,16 +312,16 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, on
           </span>
         </div>
       </div>
-      {drag && <DragTag market={market} range={rangeOf(drag.anchor, drag.current)} y={drag.y} unit={market.atomSeconds >= 86_400 ? "day" : "hour"} />}
+      {drag && <DragTag market={market} range={rangeOf(drag.anchor, drag.current)} unit={market.atomSeconds >= 86_400 ? "day" : "hour"} />}
     </>
   );
 }
 
-function DragTag({ market, range, y, unit }: { market: TimelineMarket; range: Range; y: number; unit: string }) {
+function DragTag({ market, range, unit }: { market: TimelineMarket; range: Range; unit: string }) {
   const n = range.to - range.from + 1;
   const p = rangePrice(market.prices, range.from, range.to);
   return (
-    <div className={s.tag} style={{ top: Math.min(Math.max(y, 90), window.innerHeight - 160) }}>
+    <div className={s.tag}>
       <div className={s.tagTop}>
         {n} {unit}{n === 1 ? "" : "s"} · {pct(p)}
       </div>
