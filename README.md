@@ -2,7 +2,7 @@
 
 **Veleda, the market of seers.** Fans argue about *when* things will happen. Veleda turns those arguments into calls you can stake, share and get credit for: buy any window of future time, from an hour to a year, in one trade, and cash out at the live price whenever the crowd moves your way.
 
-A prototype for the Colosseum hackathon, "Best Consumer App on Solana" track, on devnet. Work in progress.
+A prototype for the Encode Club Solana hackathon, "Best Consumer App on Solana" track, on devnet. Work in progress.
 
 ## Layout
 
