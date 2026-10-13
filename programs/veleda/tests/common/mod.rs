@@ -2,7 +2,7 @@
 //! `anchor build` first), a 6-decimal VCR-like mint, a funded admin and a
 //! separate fee payer.
 
-#![allow(dead_code, clippy::result_large_err)]
+#![allow(dead_code, clippy::result_large_err, clippy::too_many_arguments)]
 
 use anchor_lang::prelude::Pubkey;
 use anchor_lang::{AccountDeserialize, InstructionData, ToAccountMetas};
@@ -143,7 +143,6 @@ impl Env {
     }
 
     /// Buys into position `nonce`; the user signs only as token owner.
-    #[allow(clippy::too_many_arguments)]
     pub fn buy(&mut self, market: &Address, user: &User, nonce: u64, from: u32, to: u32, shares: u64, max_cost: u64) -> Result<TransactionMetadata, FailedTransactionMetadata> {
         let ix = self.buy_ix(market, user, nonce, from, to, shares, max_cost);
         self.send(&[ix], &[&user.key])
