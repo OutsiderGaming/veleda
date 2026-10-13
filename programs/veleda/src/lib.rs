@@ -192,6 +192,77 @@ pub mod veleda {
         }
         Ok(())
     }
+
+    /// Prunes every timed atom that ended before now − lag. Permissionless.
+    pub fn advance_time(ctx: Context<AdvanceTime>) -> Result<()> {
+        let info = ctx.accounts.market.to_account_info();
+        let mut data = info.try_borrow_mut_data()?;
+        let mut m = MarketData::load(&mut data)?;
+        let now = m.header.now()?;
+        let pruned = m.run(|e| e.advance_time(now))?;
+        msg!("pruned {} atoms; live edge {}", pruned, m.header.live_edge);
+        Ok(())
+    }
+
+    /// Demo markets only: moves the market's clock to chain time + `offset`. Never back.
+    pub fn set_clock_offset(ctx: Context<AdminOnly>, offset: i64) -> Result<()> {
+        let mut market = ctx.accounts.market.load_mut()?;
+        require!(market.demo != 0, VeledaError::NotDemo);
+        require!(offset >= market.clock_offset, VeledaError::ClockBackwards);
+        market.clock_offset = offset;
+        Ok(())
+    }
+
+    /// Records the winning atom (`atoms` for "not by end date") and stops trading.
+    pub fn resolve(ctx: Context<AdminOnly>, winner: u32) -> Result<()> {
+        let info = ctx.accounts.market.to_account_info();
+        let mut data = info.try_borrow_mut_data()?;
+        MarketData::load(&mut data)?.run(|e| e.resolve(winner))?;
+        msg!("resolved: atom {}", winner);
+        Ok(())
+    }
+
+    /// After resolution: pays one VCR per share if the position's range
+    /// contains the winner (nothing otherwise) and closes the position,
+    /// returning its rent to whoever paid it.
+    pub fn claim(ctx: Context<Claim>) -> Result<()> {
+        let p = &ctx.accounts.position;
+        let (from, to, shares) = (p.from, p.to, p.shares);
+        let info = ctx.accounts.market.to_account_info();
+        let (payout, authority_bump) = {
+            let mut data = info.try_borrow_mut_data()?;
+            let mut m = MarketData::load(&mut data)?;
+            (m.run(|e| e.claim(from, to, shares))?, m.header.authority_bump)
+        };
+
+        let accounts = &ctx.accounts;
+        let market_key = info.key();
+        if payout > 0 {
+            let seeds: &[&[u8]] = &[AUTHORITY_SEED, market_key.as_ref(), &[authority_bump]];
+            let cpi = TransferChecked {
+                from: accounts.vault.to_account_info(),
+                mint: accounts.mint.to_account_info(),
+                to: accounts.owner_token.to_account_info(),
+                authority: accounts.authority.to_account_info(),
+            };
+            token_interface::transfer_checked(
+                CpiContext::new_with_signer(accounts.token_program.key(), cpi, &[seeds]),
+                payout,
+                accounts.mint.decimals,
+            )?;
+        }
+        emit!(Claimed { market: market_key, owner: p.owner, position: p.key(), payout });
+        Ok(())
+    }
+}
+
+/// A position paid out, or closed with nothing to pay.
+#[event]
+pub struct Claimed {
+    pub market: Pubkey,
+    pub owner: Pubkey,
+    pub position: Pubkey,
+    pub payout: u64,
 }
 
 /// Every buy and sell, for the app's activity feed and price history.
@@ -272,6 +343,40 @@ pub struct SellRange<'info> {
     #[account(mut, has_one = market, has_one = owner, has_one = rent_payer)]
     pub position: Account<'info, Position>,
     /// CHECK: receives the position's rent if it closes; must match the position.
+    #[account(mut)]
+    pub rent_payer: UncheckedAccount<'info>,
+    pub mint: InterfaceAccount<'info, Mint>,
+    #[account(mut)]
+    pub vault: InterfaceAccount<'info, TokenAccount>,
+    /// CHECK: PDA with no data; signs for the vault.
+    #[account(seeds = [AUTHORITY_SEED, market.key().as_ref()], bump = market.load()?.authority_bump)]
+    pub authority: UncheckedAccount<'info>,
+    #[account(mut, token::mint = mint, token::authority = owner, token::token_program = token_program)]
+    pub owner_token: InterfaceAccount<'info, TokenAccount>,
+    pub token_program: Interface<'info, TokenInterface>,
+}
+
+#[derive(Accounts)]
+pub struct AdvanceTime<'info> {
+    #[account(mut)]
+    pub market: AccountLoader<'info, Market>,
+}
+
+#[derive(Accounts)]
+pub struct AdminOnly<'info> {
+    pub admin: Signer<'info>,
+    #[account(mut, has_one = admin)]
+    pub market: AccountLoader<'info, Market>,
+}
+
+#[derive(Accounts)]
+pub struct Claim<'info> {
+    pub owner: Signer<'info>,
+    #[account(mut, has_one = mint, has_one = vault)]
+    pub market: AccountLoader<'info, Market>,
+    #[account(mut, has_one = market, has_one = owner, has_one = rent_payer, close = rent_payer)]
+    pub position: Account<'info, Position>,
+    /// CHECK: receives the position's rent; must match the position.
     #[account(mut)]
     pub rent_payer: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,

@@ -27,6 +27,10 @@ pub enum VeledaError {
     BadPrior,
     #[msg("Position holds fewer shares than that")]
     NotEnoughShares,
+    #[msg("Only demo markets can move their clock")]
+    NotDemo,
+    #[msg("The clock can only move forward")]
+    ClockBackwards,
 }
 
 pub fn engine_error(e: engine::Error) -> Error {

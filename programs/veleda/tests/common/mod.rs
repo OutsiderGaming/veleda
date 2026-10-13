@@ -170,6 +170,62 @@ impl Env {
         self.send(&[ix], &[&user.key])
     }
 
+    pub fn advance_time(&mut self, market: &Address) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let ix = ix(veleda::accounts::AdvanceTime { market: pk(market) }, veleda::instruction::AdvanceTime {});
+        self.send(&[ix], &[])
+    }
+
+    fn admin_accounts(&self, market: &Address, admin: &Keypair) -> veleda::accounts::AdminOnly {
+        veleda::accounts::AdminOnly { admin: pk(&admin.pubkey()), market: pk(market) }
+    }
+
+    pub fn set_clock_offset_as(&mut self, admin: &Keypair, market: &Address, offset: i64) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let ix = ix(self.admin_accounts(market, admin), veleda::instruction::SetClockOffset { offset });
+        self.send(&[ix], &[admin])
+    }
+
+    pub fn set_clock_offset(&mut self, market: &Address, offset: i64) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let admin = self.admin.insecure_clone();
+        self.set_clock_offset_as(&admin, market, offset)
+    }
+
+    pub fn resolve_as(&mut self, admin: &Keypair, market: &Address, winner: u32) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let ix = ix(self.admin_accounts(market, admin), veleda::instruction::Resolve { winner });
+        self.send(&[ix], &[admin])
+    }
+
+    pub fn resolve(&mut self, market: &Address, winner: u32) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let admin = self.admin.insecure_clone();
+        self.resolve_as(&admin, market, winner)
+    }
+
+    pub fn claim_ix(&self, market: &Address, user: &User, position: &Address) -> Instruction {
+        let accounts = veleda::accounts::Claim {
+            owner: pk(&user.key.pubkey()),
+            market: pk(market),
+            position: pk(position),
+            rent_payer: pk(&self.fee_payer.pubkey()),
+            mint: pk(&self.mint),
+            vault: pk(&vault(market)),
+            authority: pk(&authority(market)),
+            owner_token: pk(&user.token),
+            token_program: pk(&self.token_program),
+        };
+        ix(accounts, veleda::instruction::Claim {})
+    }
+
+    pub fn claim(&mut self, market: &Address, user: &User, nonce: u64) -> Result<TransactionMetadata, FailedTransactionMetadata> {
+        let ix = self.claim_ix(market, user, &position(market, &user.key.pubkey(), nonce));
+        self.send(&[ix], &[&user.key])
+    }
+
+    /// Moves chain time forward.
+    pub fn warp(&mut self, seconds: i64) {
+        let mut clock = self.svm.get_sysvar::<Clock>();
+        clock.unix_timestamp += seconds;
+        self.svm.set_sysvar(&clock);
+    }
+
     /// The position's state, or None once it's closed.
     pub fn position(&self, market: &Address, owner: &Address, nonce: u64) -> Option<Position> {
         let account = self.svm.get_account(&position(market, owner, nonce)).filter(|a| a.lamports > 0)?;
