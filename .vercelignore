@@ -1,0 +1,8 @@
+# Never upload secrets or build output if anything is ever deployed from this folder.
+keys/
+.env
+.env.*
+target/
+**/node_modules/
+.next/
+*.log
