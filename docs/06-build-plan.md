@@ -75,14 +75,20 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 | Program | Replace the `probe_*` instructions in `programs/veleda` with the seven real ones; same program ID (upgrade in place). Each instruction is a thin wrapper: load accounts, call `veleda_math::engine`, move tokens |
 | Market account | Zero-copy, created by the client with `createAccount` (it's over the 10 KB CPI limit), then initialised by `create_market`. Layout: header (params, admin, mint, vault, live edge, status, winner, balance, LP and platform fees, clock offset, demo flag), then tree sums, tree multipliers, owed shares |
 | Positions | PDA `["position", market, owner, nonce]` holding range and shares. The fee payer is the rent payer; `claim` closes it and returns the rent to the fee payer. Nonce chosen by the client |
-| Vault | Token account PDA `["vault", market]` owned by the market. Holds subsidy + stakes + fees |
+| Vault | Token account PDA `["vault", market]`, owned by the data-less PDA `["authority", market]`, which signs payouts (the market account itself can't sign). Holds subsidy + stakes + fees |
 | Tokens | Anchor `token_interface` with `transfer_checked`, so classic SPL Token (VCR) and Token-2022 both work |
 | Fee payer | Every instruction takes a separate `fee_payer` signer for rent; the user signs only as token owner |
 | Tests | LiteSVM (Rust, in-process, no validator): every instruction, every rejection path, invariant after each step, a user with zero SOL |
 
 ### Steps
 
-- [ ] **Account layout + `create_market`**: header struct, size helper shared with scripts, prior from presets, subsidy deposited into the vault from the admin's VCR. LiteSVM harness with the VCR mint and funded test users.
+- [x] **Account layout + `create_market`**: header struct, size helper shared with scripts, prior from presets, subsidy deposited into the vault from the admin's VCR. LiteSVM harness with the VCR mint and funded test users. Done 13 Oct 2026:
+  - Layout in `programs/veleda/src/state.rs`: 8-byte discriminator + 184-byte header, then tree sums, multipliers and owed shares. `market_account_len(atoms)` gives the size (flagship 107,272 bytes, fast 13,832); `scripts/` will mirror it.
+  - Prior preset (`prior.rs`): "not by end date" price, per-atom floor and a shape given as a few control points joined by straight lines; each timed atom gets the floor plus its shape share of the rest, so "not by end date" opens at exactly its price. Fits in one instruction at any size. Max 1,500 atoms (the opening prices are built on the 32 KB heap).
+  - Atom 0 starts at the current atom boundary (UTC midnight for the flagship, the hour for the fast market).
+  - Compute: flagship `create_market` 664K CU (prior ~200K, engine ~450K), fast 117K. Needs a 1.4M compute-budget request. Signed division and overflow-checked u128 multiplies are slow on-chain; the prior avoids both.
+  - Tests (`programs/veleda/tests`, LiteSVM, run `anchor build` first): both presets, Token-2022 mint, wrong account size, bad parameters and priors, double initialisation.
+  - `scripts/probe-cu.ts` retired with the probe instructions; compute is now measured in the LiteSVM tests.
 - [ ] **`buy_range` / `sell_range`**: positions, `transfer_checked` in and out of the vault (vault PDA signs), `max_cost` / `min_proceeds`, fee payer pays position rent.
 - [ ] **`advance_time`, `resolve`, `claim`, `set_clock_offset`**: clock offset only on markets created as demo markets, forward only; "now" = chain time + offset everywhere.
 - [ ] **Tests**: full lifecycle per market type; locked/pruned/slippage/too-large/resolved rejections; claim on fully pruned positions; a user with 0 SOL buys and sells; invariant after every instruction. Re-run the compute measurement.

@@ -1,153 +1,126 @@
 //! Veleda on-chain program.
 //!
-//! WEEK 1 ONLY: this holds temporary `probe_*` instructions that run the real
-//! `veleda_math::engine` on one raw account so we can measure compute units on
-//! devnet (scripts/probe-cu.ts). Week 2 replaces them with the real
-//! instructions from docs/02-hackathon-spec.md.
+//! Each instruction is a thin wrapper: load accounts, run `veleda_math::engine`
+//! over the market account, move tokens. Market layout: `state.rs`.
 
 use anchor_lang::prelude::*;
-use veleda_math::engine::{self, Market, Params, State, BASE};
-use veleda_math::fixed::ONE;
-use veleda_math::tree::{storage_len, Tree};
+use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
+
+mod error;
+pub mod prior;
+pub mod state;
+
+pub use error::VeledaError;
+pub use prior::ShapePoint;
+pub use state::{market_account_len, Market, MarketData, HEADER_LEN, MAX_ATOMS};
 
 declare_id!("7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx");
 
-/// Logs the remaining compute units ("Program consumption: N units remaining").
-fn sol_log_compute_units() {
-    #[cfg(target_os = "solana")]
-    // SAFETY: a syscall with no arguments that only writes to the program log.
-    unsafe {
-        solana_msg::syscalls::sol_log_compute_units_()
-    };
-}
+pub const VAULT_SEED: &[u8] = b"vault";
+/// PDA that owns the vault and signs payouts.
+pub const AUTHORITY_SEED: &[u8] = b"authority";
 
-/// Probe account layout: a 64-byte header, then tree sums (u128), tree
-/// pending multipliers (u128), then owed shares per atom (u64).
-const HEADER: usize = 64;
-
-pub fn probe_account_len(atoms: u32) -> usize {
-    let n = atoms as usize + 1;
-    let (s, l) = storage_len(n);
-    HEADER + (s + l) * 16 + n * 8
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct CreateMarketArgs {
+    /// Timed atoms; the market adds "not by end date" after them.
+    pub atoms: u32,
+    pub atom_seconds: i64,
+    /// Depth, in base units.
+    pub b: u64,
+    pub lock_seconds: i64,
+    pub lag_seconds: i64,
+    /// Demo markets let the admin move the clock forward.
+    pub demo: bool,
+    /// Opening "not by end date" price, parts per million.
+    pub end_price_ppm: u32,
+    /// Lowest opening price of any timed atom, parts per million.
+    pub floor_ppm: u32,
+    /// Opening shape of the timed atoms (see `prior.rs`); empty for flat.
+    pub shape: Vec<ShapePoint>,
 }
 
 #[program]
 pub mod veleda {
     use super::*;
 
-    /// Creates a flat-prior market with `atoms` daily atoms starting tomorrow (b = 1,000 tokens).
-    pub fn probe_init(ctx: Context<Probe>, atoms: u32) -> Result<()> {
+    /// Writes the parameters and opening prices, then moves the subsidy
+    /// (b · ln(1 / lowest opening price)) from the admin into the vault.
+    /// Atom 0 starts at the current atom boundary (UTC midnight for daily markets).
+    pub fn create_market(ctx: Context<CreateMarket>, args: CreateMarketArgs) -> Result<()> {
+        let a = &args;
+        require!(
+            (1..=MAX_ATOMS).contains(&a.atoms) && a.atom_seconds > 0 && a.b > 0 && a.lock_seconds >= 0 && a.lag_seconds >= 0,
+            VeledaError::BadParams
+        );
+        let prior = prior::opening_prices(a.atoms, a.end_price_ppm, a.floor_ppm, &a.shape).ok_or(VeledaError::BadPrior)?;
         let now = Clock::get()?.unix_timestamp;
-        let mut data = ctx.accounts.market.try_borrow_mut_data()?;
-        require!(data.len() == probe_account_len(atoms), ProbeError::BadAccount);
-        data[0..4].copy_from_slice(&atoms.to_le_bytes());
-        data[8..16].copy_from_slice(&(now + 86_400).to_le_bytes());
-        let n = atoms as usize + 1;
-        let prior = vec![ONE / n as u128; n];
-        with_market(&mut data, |m| {
-            sol_log_compute_units();
-            let subsidy = m.create(&prior)?;
-            sol_log_compute_units();
-            msg!("created: {} atoms, subsidy {}", atoms, subsidy);
-            Ok(())
-        })
-    }
 
-    pub fn probe_buy(ctx: Context<Probe>, from: u32, to: u32, shares: u64) -> Result<()> {
-        let now = Clock::get()?.unix_timestamp;
-        let mut data = ctx.accounts.market.try_borrow_mut_data()?;
-        with_market(&mut data, |m| {
-            sol_log_compute_units();
-            let r = m.buy(from, to, shares, u64::MAX, now)?;
-            sol_log_compute_units();
-            msg!("buy [{}, {}] {} shares: cost {} stake {}", from, to, shares, r.cost, r.stake);
-            Ok(())
-        })
-    }
+        let market_info = ctx.accounts.market.to_account_info();
+        let subsidy = {
+            let mut data = market_info.try_borrow_mut_data()?;
+            let mut m = MarketData::split(&mut data, a.atoms)?;
+            *m.header = Market {
+                admin: ctx.accounts.admin.key(),
+                mint: ctx.accounts.mint.key(),
+                vault: ctx.accounts.vault.key(),
+                b: a.b,
+                atom_seconds: a.atom_seconds,
+                start_time: now - now.rem_euclid(a.atom_seconds),
+                lock_seconds: a.lock_seconds,
+                lag_seconds: a.lag_seconds,
+                clock_offset: 0,
+                balance: 0,
+                lp_fees: 0,
+                platform_fees: 0,
+                atoms: a.atoms,
+                live_edge: 0,
+                winner: 0,
+                resolved: 0,
+                demo: a.demo as u8,
+                authority_bump: ctx.bumps.authority,
+                vault_bump: ctx.bumps.vault,
+            };
+            m.run(|e| e.create(&prior))?
+        };
 
-    pub fn probe_sell(ctx: Context<Probe>, from: u32, to: u32, shares: u64) -> Result<()> {
-        let now = Clock::get()?.unix_timestamp;
-        let mut data = ctx.accounts.market.try_borrow_mut_data()?;
-        with_market(&mut data, |m| {
-            sol_log_compute_units();
-            let r = m.sell(from, to, shares, 0, now)?;
-            sol_log_compute_units();
-            msg!("sell [{}, {}] {} shares: net {}", from, to, shares, r.net);
-            Ok(())
-        })
-    }
-
-    /// Prunes as if the clock read `now` (probe only: lets us measure pruning without waiting).
-    pub fn probe_advance(ctx: Context<Probe>, now: i64) -> Result<()> {
-        let mut data = ctx.accounts.market.try_borrow_mut_data()?;
-        with_market(&mut data, |m| {
-            sol_log_compute_units();
-            let pruned = m.advance_time(now)?;
-            sol_log_compute_units();
-            msg!("pruned {}", pruned);
-            Ok(())
-        })
+        let accounts = &ctx.accounts;
+        let cpi = TransferChecked {
+            from: accounts.admin_token.to_account_info(),
+            mint: accounts.mint.to_account_info(),
+            to: accounts.vault.to_account_info(),
+            authority: accounts.admin.to_account_info(),
+        };
+        token_interface::transfer_checked(CpiContext::new(accounts.token_program.key(), cpi), subsidy, accounts.mint.decimals)?;
+        msg!("market created: {} atoms, subsidy {}", a.atoms, subsidy);
+        Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct Probe<'info> {
-    /// CHECK: raw probe market data, owned by this program; layout checked by length.
-    #[account(mut, owner = crate::ID)]
-    pub market: UncheckedAccount<'info>,
-}
-
-#[error_code]
-pub enum ProbeError {
-    #[msg("Probe account has the wrong size or alignment")]
-    BadAccount,
-    #[msg("Engine rejected the operation (see logs)")]
-    Engine,
-}
-
-/// Splits the account into header and slices, runs `f` on the market, saves the state.
-fn with_market(data: &mut [u8], f: impl FnOnce(&mut Market) -> core::result::Result<(), engine::Error>) -> Result<()> {
-    let atoms = u32::from_le_bytes(data[0..4].try_into().unwrap());
-    let start_time = i64::from_le_bytes(data[8..16].try_into().unwrap());
-    require!(data.len() == probe_account_len(atoms), ProbeError::BadAccount);
-    let n = atoms as usize + 1;
-    let (s, l) = storage_len(n);
-    let (header, rest) = data.split_at_mut(HEADER);
-    let (sums, rest) = rest.split_at_mut(s * 16);
-    let (lazy, owed) = rest.split_at_mut(l * 16);
-    let sums: &mut [u128] = bytemuck::try_cast_slice_mut(sums).map_err(|_| error!(ProbeError::BadAccount))?;
-    let lazy: &mut [u128] = bytemuck::try_cast_slice_mut(lazy).map_err(|_| error!(ProbeError::BadAccount))?;
-    let owed: &mut [u64] = bytemuck::try_cast_slice_mut(owed).map_err(|_| error!(ProbeError::BadAccount))?;
-
-    let params = Params { b: 1000 * BASE, atom_seconds: 86_400, start_time, atoms, lock_seconds: 3 * 86_400, lag_seconds: 86_400 };
-    let mut state = read_state(header);
-    let tree = Tree::new(sums, lazy, n).ok_or(error!(ProbeError::BadAccount))?;
-    let mut market = Market::new(&params, &mut state, tree, owed).map_err(|_| error!(ProbeError::BadAccount))?;
-    f(&mut market).map_err(|e| {
-        msg!("engine error: {:?}", e);
-        error!(ProbeError::Engine)
-    })?;
-    write_state(header, &state);
-    Ok(())
-}
-
-fn read_state(h: &[u8]) -> State {
-    let u64_at = |i: usize| u64::from_le_bytes(h[i..i + 8].try_into().unwrap());
-    State {
-        live_edge: u32::from_le_bytes(h[16..20].try_into().unwrap()),
-        resolved: h[20] != 0,
-        winner: u32::from_le_bytes(h[24..28].try_into().unwrap()),
-        balance: u64_at(32),
-        lp_fees: u64_at(40),
-        platform_fees: u64_at(48),
-    }
-}
-
-fn write_state(h: &mut [u8], s: &State) {
-    h[16..20].copy_from_slice(&s.live_edge.to_le_bytes());
-    h[20] = s.resolved as u8;
-    h[24..28].copy_from_slice(&s.winner.to_le_bytes());
-    h[32..40].copy_from_slice(&s.balance.to_le_bytes());
-    h[40..48].copy_from_slice(&s.lp_fees.to_le_bytes());
-    h[48..56].copy_from_slice(&s.platform_fees.to_le_bytes());
+pub struct CreateMarket<'info> {
+    pub admin: Signer<'info>,
+    /// Pays rent for the vault; the user-facing fee payer elsewhere.
+    #[account(mut)]
+    pub fee_payer: Signer<'info>,
+    /// Pre-allocated by the client at `market_account_len(atoms)` bytes, owned by this program.
+    #[account(zero)]
+    pub market: AccountLoader<'info, Market>,
+    pub mint: InterfaceAccount<'info, Mint>,
+    /// CHECK: PDA with no data; owns the vault.
+    #[account(seeds = [AUTHORITY_SEED, market.key().as_ref()], bump)]
+    pub authority: UncheckedAccount<'info>,
+    #[account(
+        init,
+        payer = fee_payer,
+        seeds = [VAULT_SEED, market.key().as_ref()],
+        bump,
+        token::mint = mint,
+        token::authority = authority,
+        token::token_program = token_program,
+    )]
+    pub vault: InterfaceAccount<'info, TokenAccount>,
+    #[account(mut, token::mint = mint, token::authority = admin, token::token_program = token_program)]
+    pub admin_token: InterfaceAccount<'info, TokenAccount>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
 }

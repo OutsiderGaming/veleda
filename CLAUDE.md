@@ -2,7 +2,7 @@
 
 Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype for the **Colosseum hackathon, "Best Consumer App on Solana" track** (October 2026), deployed on devnet.
 
-**Status: week 1 done (12 Oct 2026).** Reference model, Rust maths and engine (cross-checked on 26,000 trades), devnet program probe with compute measurements, VCR mint, and the Privy onboarding proof are all in. Week 2 (the real Anchor program) is next; work from `docs/06-build-plan.md`.
+**Status: week 2 in progress (13 Oct 2026); `create_market` done.** Reference model, Rust maths and engine (cross-checked on 26,000 trades), devnet program probe with compute measurements, VCR mint, and the Privy onboarding proof are all in. Next: `buy_range` / `sell_range`; work from `docs/06-build-plan.md`.
 
 ## Read in this order
 
@@ -41,7 +41,7 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 
 - `packages/reference`: TypeScript f64 reference model. `npm test` (Node's built-in runner, no dependencies; Node runs `.ts` directly).
 - `crates/veleda-math`: Rust maths (`fixed`, `float`, `lmsr`, `tree`) and `engine` (the program's instructions as plain Rust over borrowed state), `no_std`, used by the Anchor program. `cargo test -p veleda-math`; `scripts/cross-check.sh` replays 15,000 random reference-model actions through the engine.
-- `programs/veleda`: Anchor 1.x program, deployed on devnet at `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`. Week 1 holds only temporary `probe_*` instructions (compute-unit measurement); the real instructions come in week 2. Build with `anchor build`; `scripts/probe-cu.ts` measures compute units.
+- `programs/veleda`: Anchor 1.x program, deployed on devnet at `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx` (devnet still runs the week 1 probe build until the week 2 deploy). Instructions so far: `create_market`; layout in `src/state.rs`, opening-price presets in `src/prior.rs`. Tests are LiteSVM in `tests/`: `anchor build && cargo test -p veleda` (they load `target/deploy/veleda.so`).
 - `app/`: standalone Next.js 16 project (own `node_modules`, outside the root workspace because Privy's server SDK pins `@solana/kit` 5.x). Privy sign-in, sign-up airdrop and a fee-payer-signed transfer; `cd app && npm run dev`. Reads the root `.env` and `keys/`. Privy draws its modal inside the page, so keep global CSS scoped (e.g. under `main`).
 - Devnet VCR mint: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` (6 decimals, classic SPL Token).
 - `keys/`: devnet keypairs, gitignored. Never commit or print private keys.
