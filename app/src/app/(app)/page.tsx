@@ -12,6 +12,12 @@ export default function Home() {
     <>
       <h1 className={s.title}>Call when it happens.</h1>
       <p className={s.tagline}>Pick any window of time. The narrower it is, the more it pays.</p>
+      <Link href="/practice" className={s.practice}>
+        <span>
+          <strong>New here?</strong> See how it works in a minute, with pretend money.
+        </span>
+        <span className={s.open}>Try it →</span>
+      </Link>
       {error && !markets && <p className={s.error}>Couldn&apos;t load the markets. Retrying…</p>}
       {!markets && !error && [0, 1].map((i) => <div key={i} className={s.skeleton} />)}
       {markets?.map((m) => (
