@@ -2,7 +2,7 @@
 
 Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype for the **Colosseum hackathon, "Best Consumer App on Solana" track** (October 2026), deployed on devnet.
 
-**Status: week 2 in progress (13 Oct 2026); all seven instructions live on devnet; both markets created (`markets.json`).** Reference model, Rust maths and engine (cross-checked on 26,000 trades), devnet program probe with compute measurements, VCR mint, and the Privy onboarding proof are all in. Next: run the bots for a day, then the Privy buy/sell check on the test page; then week 3. Work from `docs/06-build-plan.md`.
+**Status: week 2 done (13 Oct 2026); week 3 next.** Weeks 1–2: reference model, Rust maths and engine (cross-checked on 26,000 trades), the Anchor program with all seven instructions live on devnet, both markets created (`markets.json`), trade endpoints, trader bots, and the Privy onboarding proof. Week 2 checks passed (Privy buy/sell on 13 Oct; bots trading). Next: week 3, the web app (checklist in the build plan). Work from `docs/06-build-plan.md`.
 
 ## Read in this order
 
@@ -62,7 +62,6 @@ Anchor program on devnet · React mobile-first PWA with the Solana wallet adapte
 
 - Whether 5 of 10 is the right quorum (it can be tuned).
 - Final list of the 10 flagship resolution sources (a draft is in the hackathon spec).
-- Month view (screen 1) vs day view (screen 2) sequencing in the flow.
 
 ## Flagship resolution
 

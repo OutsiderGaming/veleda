@@ -137,20 +137,21 @@ Goal from the hackathon spec: the real app on a phone (home, timeline band, drag
 | Time and dates | The flagship's atoms are UTC days and the fast market's are UTC hours; the app labels them in the viewer's local time. Share links use atom indexes (`/m/flagship?from=300&to=330`): short and exact |
 | Sign-up airdrop | Automatic: the app calls `/api/airdrop` once after the first sign-in (it's already idempotent). The 100 VCR is there before the buy sheet asks for it |
 | Positions data | Open positions from `/api/positions` (built). "Paid" and entry odds come from the buy's `Trade` event, read once per position from its first transaction and cached server-side; no program change. Settled positions come from the wallet's recent transactions (`Trade` sells and `Claimed` events). Total traded on Home = accrued fees ÷ 3.5% |
-| Sparklines | Proposed: drop them from position cards for the hackathon (they'd need stored price history). Show entry odds → current odds instead |
-| External wallets | Proposed: email/Google embedded wallets only for the demo; Phantom/Solflare via Privy's connectors as a stretch goal, because the server currently only trusts the embedded wallet |
+| Sparklines | Decided 13 Oct 2026: dropped from position cards for the hackathon (they'd need stored price history). Cards show entry odds → current odds instead |
+| External wallets | Decided 13 Oct 2026: email/Google embedded wallets only for the demo; Phantom/Solflare via Privy's connectors is a stretch goal, because the server currently only trusts the embedded wallet |
 | Keys on Vercel | Fee payer and mint authority as environment secrets (JSON arrays), read when `keys/` isn't there. Devnet only |
-| Bots | Proposed: keep running them locally in bursts; move them to a free GitHub Actions schedule only if the markets look stale before recording |
+| Bots | Decided 13 Oct 2026: a scheduled GitHub Actions job runs one bot round every 30 minutes. The repo is private (2,000 free minutes a month, at least 1 billed minute per run), so 30 minutes is about 1,440 minutes a month; tighten it if the repo goes public. Admin, mint-authority and bot keys go in as repo secrets, set with `gh secret set` straight from the key files so they're never printed |
 
 ### Steps
 
 In build order; each step should leave the app working.
 
+- [ ] **Bots on GitHub Actions**: `bots.ts` reads keys from environment secrets when `keys/` isn't there; a workflow on a 30-minute schedule (plus manual trigger) installs `@solana/web3.js` and runs `--rounds 1`. Set the secrets with `gh secret set` from the key files (ask before running it). Stop the local run once it's going.
 - [ ] **Shell and design system**: routes, bottom nav, tokens, fonts, Home/Account placeholders; test page moved to `/dev`; PWA manifest and icons from `design/logo.png` so it can be added to a home screen.
 - [ ] **Data layer**: market polling hook, browser-side quotes, atom ↔ date helpers (local time, locked zone, elapsed), session hook with the automatic airdrop and the VCR balance with its "test money" label.
 - [ ] **Home**: both markets as cards with question, total traded and a mini band; tap to open.
-- [ ] **Timeline**: vertical, now at the top, Year / Month / Day / Hour tabs (Hour hidden on the flagship), bars sized by crowd odds with stippled copper styling, month view with engraved month names and per-month odds and multiplier, elapsed time greyed, shaded "Locked" zone, "not by end date" at the bottom, the user's open positions as coloured bands. Opens on Month for the flagship, Day for the fast market (see open question).
-- [ ] **Select**: long-press and drag with auto-scroll at the edges, tap to select one bar, handles to adjust, a floating tag with length, % and multiplier for 20 VCR; snaps out of the locked zone.
+- [ ] **Timeline**: vertical, now at the top, Year / Month / Day / Hour tabs (Hour hidden on the flagship), bars sized by crowd odds with stippled copper styling, month view with engraved month names and per-month odds and multiplier, elapsed time greyed, shaded "Locked" zone, "not by end date" at the bottom, the user's open positions as coloured bands. Opens on Month for the flagship, Day for the fast market.
+- [ ] **Select**: works in every zoom level, selecting whole bars of that level (months in Month view, days in Day view, hours in Hour view); long-press and drag with auto-scroll at the edges, tap to select one bar, handles to adjust, a floating tag with length, % and multiplier for 20 VCR; snaps out of the locked zone.
 - [ ] **Buy sheet**: dates and length, multiplier after fees and price impact, crowd odds, stake chips 5 / 20 / 50 / Other, "Wins if it lands", detail line (shares · fee · cancels if the price passes X%), "predict the future │ 20 VCR", "Share this window as a link"; swipe down to close. Signed-out: the button opens Privy sign-in and the sheet is still there afterwards. On a slippage rejection, re-quote and ask once more.
 - [ ] **Positions**: hero total value, P&L, paid and count; Open / Settled tabs; cards with window, paid / worth now (after fee) / if it lands, entry vs current odds, "cash out │ amount VCR"; locked state "Locked · within 72h of now" (fast: "within 1h"); claim button after resolution. Needs the `Trade`-event lookup in `/api/positions`.
 - [ ] **Share link**: `/m/<market>?from=&to=` opens the market with that window selected and the buy sheet open, signed in or not.
@@ -166,7 +167,7 @@ In build order; each step should leave the app working.
 
 ### Open before starting
 
-- Month view (screen 1) vs day view (screen 2): the mockups jump zoom level between dragging and selecting. Proposed: the flagship opens on Month, and dragging works in any zoom level, selecting whole months in Month view and days in Day view. Needs your call (it's in CLAUDE.md's open decisions).
+- Month view vs day view: decided 13 Oct 2026. The flagship opens on Month, and dragging works in any zoom level, selecting whole bars of that level; no forced jump between levels.
 - Practice mode script: agree the 8 beats and their figures before building the screens.
 - The fast market's 7-day window ends 20 Oct 2026. Re-create it (`node scripts/create-markets.ts fast`) whenever testing needs a fresh one, and again just before the week 4 recording.
 
