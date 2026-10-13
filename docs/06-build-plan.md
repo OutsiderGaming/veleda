@@ -124,10 +124,55 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 
 ## Week 3: the web app
 
-The full week 3 checklist gets written when week 2 is signed off. Items decided so far:
+Goal from the hackathon spec: the real app on a phone (home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link), plus practice mode. Done when a link opens to a first position in under 60 seconds on a phone, three times in a row.
 
+### Decisions
+
+| Area | Decision |
+| --- | --- |
+| Where | The existing Next.js project in `app/`, deployed to Vercel's free tier. The week 1/2 test page moves to `/dev` and stays out of navigation |
+| Routes | `/` Home (market cards) · `/m/[market]` timeline, select and buy sheet · `/positions` · `/account` · `/practice`. Bottom nav: Markets / Positions / Account, as in the mockups |
+| Look | Mockup tokens from `design/README.md` as CSS variables; Cinzel and Manrope self-hosted from `design/fonts/` with `next/font/local`; global CSS stays scoped under `main` so Privy's modal keeps its own styles. Mobile first; desktop just centres the phone-width column |
+| Live data | `GET /api/markets` (already built: header plus every atom's price) polled every ~10 s on the open market, and straight after each trade. Quotes and multipliers are computed in the browser with `app/src/lib/veleda/market.ts`, so dragging updates instantly with no network |
+| Time and dates | The flagship's atoms are UTC days and the fast market's are UTC hours; the app labels them in the viewer's local time. Share links use atom indexes (`/m/flagship?from=300&to=330`): short and exact |
+| Sign-up airdrop | Automatic: the app calls `/api/airdrop` once after the first sign-in (it's already idempotent). The 100 VCR is there before the buy sheet asks for it |
+| Positions data | Open positions from `/api/positions` (built). "Paid" and entry odds come from the buy's `Trade` event, read once per position from its first transaction and cached server-side; no program change. Settled positions come from the wallet's recent transactions (`Trade` sells and `Claimed` events). Total traded on Home = accrued fees ÷ 3.5% |
+| Sparklines | Proposed: drop them from position cards for the hackathon (they'd need stored price history). Show entry odds → current odds instead |
+| External wallets | Proposed: email/Google embedded wallets only for the demo; Phantom/Solflare via Privy's connectors as a stretch goal, because the server currently only trusts the embedded wallet |
+| Keys on Vercel | Fee payer and mint authority as environment secrets (JSON arrays), read when `keys/` isn't there. Devnet only |
+| Bots | Proposed: keep running them locally in bursts; move them to a free GitHub Actions schedule only if the markets look stale before recording |
+
+### Steps
+
+In build order; each step should leave the app working.
+
+- [ ] **Shell and design system**: routes, bottom nav, tokens, fonts, Home/Account placeholders; test page moved to `/dev`; PWA manifest and icons from `design/logo.png` so it can be added to a home screen.
+- [ ] **Data layer**: market polling hook, browser-side quotes, atom ↔ date helpers (local time, locked zone, elapsed), session hook with the automatic airdrop and the VCR balance with its "test money" label.
+- [ ] **Home**: both markets as cards with question, total traded and a mini band; tap to open.
+- [ ] **Timeline**: vertical, now at the top, Year / Month / Day / Hour tabs (Hour hidden on the flagship), bars sized by crowd odds with stippled copper styling, month view with engraved month names and per-month odds and multiplier, elapsed time greyed, shaded "Locked" zone, "not by end date" at the bottom, the user's open positions as coloured bands. Opens on Month for the flagship, Day for the fast market (see open question).
+- [ ] **Select**: long-press and drag with auto-scroll at the edges, tap to select one bar, handles to adjust, a floating tag with length, % and multiplier for 20 VCR; snaps out of the locked zone.
+- [ ] **Buy sheet**: dates and length, multiplier after fees and price impact, crowd odds, stake chips 5 / 20 / 50 / Other, "Wins if it lands", detail line (shares · fee · cancels if the price passes X%), "predict the future │ 20 VCR", "Share this window as a link"; swipe down to close. Signed-out: the button opens Privy sign-in and the sheet is still there afterwards. On a slippage rejection, re-quote and ask once more.
+- [ ] **Positions**: hero total value, P&L, paid and count; Open / Settled tabs; cards with window, paid / worth now (after fee) / if it lands, entry vs current odds, "cash out │ amount VCR"; locked state "Locked · within 72h of now" (fast: "within 1h"); claim button after resolution. Needs the `Trade`-event lookup in `/api/positions`.
+- [ ] **Share link**: `/m/<market>?from=&to=` opens the market with that window selected and the buy sheet open, signed in or not.
+- [ ] **Deploy**: Vercel free tier, keys and Privy secrets as environment variables, the Vercel domain added to Privy's allowed origins. Check nothing on the way needs a paid plan.
 - [ ] **Practice mode** (hackathon spec, "Practice mode"): a scripted, simulated market that users scrub forwards and backwards, all in the browser.
   - Run the script through `packages/reference` once per scenario (and per choice: cash out or hold) to produce snapshots of every atom's price, the user's position value and the caption, about one per simulated hour. The slider indexes the snapshots. The reference model is plain TypeScript with no dependencies, so the app can import or copy it.
   - Fixed script, no randomness; the user's own window and stake feed into the same replay.
   - Reuse the timeline, select and buy sheet components; add a caption card and the "Practice · simulated prices" tag.
   - Replace the draft script's placeholder figures with the model's output, and agree the script with the user before building the screens.
+  - Built last, on top of the finished timeline, select and buy sheet.
+- [ ] **Copy audit**: no "SOL", "devnet" or "seed phrase" anywhere a user can see (the `/dev` page excepted); "window", never "chunk"; "test money" beside every balance; VCR, not USDC; the brand is never shortened to "Veda".
+- [ ] **Stopwatch test**: on a phone, from opening a share link to holding a position, three times in a row, each under 60 seconds, with fresh accounts.
+
+### Open before starting
+
+- Month view (screen 1) vs day view (screen 2): the mockups jump zoom level between dragging and selecting. Proposed: the flagship opens on Month, and dragging works in any zoom level, selecting whole months in Month view and days in Day view. Needs your call (it's in CLAUDE.md's open decisions).
+- Practice mode script: agree the 8 beats and their figures before building the screens.
+- The fast market's 7-day window ends 20 Oct 2026. Re-create it (`node scripts/create-markets.ts fast`) whenever testing needs a fresh one, and again just before the week 4 recording.
+
+### Week 3 is done when
+
+- Every screen above works on the deployed URL against both devnet markets, on a phone.
+- Link to first position in under 60 seconds, three times in a row.
+- Practice mode plays the whole story and scrubs both ways.
+- The copy audit passes.
