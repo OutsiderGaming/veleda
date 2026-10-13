@@ -155,9 +155,9 @@ In build order; each step should leave the app working.
   - Swipe scrolls the timeline.
   - Press and hold a bar (~0.3 s, haptic tick where supported) anchors a selection there; dragging without lifting extends it up or down from the anchor, with a floating tag (length · % · multiplier for 20 VCR) and auto-scroll near the top and bottom edges.
   - Releasing opens the buy sheet ("Release to see your price"). Swiping the sheet down returns to the timeline with the selection kept.
-  - Tap selects a single bar; handles on the ends adjust the selection afterwards.
+  - Tapping a bar (or its odds) selects that bar; tapping the blank space beside the bars clears the selection (changed 13 Oct 2026 at the user's request; thin bars get a little slack so they're still easy to hit). Handles on the ends adjust the selection afterwards.
   - A selection stops at the first open bar: it can't extend into the locked zone or elapsed time. Holding on a locked bar shows a short hint instead.
-  - Fixing a mistake: while dragging, moving back towards the anchor shrinks the selection and moving past it flips direction (the anchor stays put). After release, swipe the sheet down and drag the start or end handle. To start over, press and hold or tap elsewhere: the new selection replaces the old one. A small × on the floating tag clears the selection entirely (tap always selects a bar, so it never means "deselect").
+  - Fixing a mistake: while dragging, moving back towards the anchor shrinks the selection and moving past it flips direction (the anchor stays put). After release, swipe the sheet down and drag the start or end handle. To start over, press and hold or tap elsewhere: the new selection replaces the old one. A small × on the floating tag also clears the selection.
 - [x] **Buy sheet**: dates and length, multiplier after fees and price impact, crowd odds, stake chips 5 / 20 / 50 / Other, "Wins if it lands", detail line (shares · fee · cancels if the price passes X%), "predict the future │ 20 VCR", "Share this window as a link"; swipe down to close. Signed-out: the button opens Privy sign-in and the sheet is still there afterwards. On a slippage rejection, re-quote and ask once more. Done 13 Oct 2026; a real buy through it still to check with a Privy account.
 - [x] **Positions**: hero total value, P&L, paid and count; Open / Settled tabs; cards with window, paid / worth now (after fee) / if it lands, entry vs current odds, "cash out │ amount VCR"; locked state "Locked · within 72h of now" (fast: "within 1h"); claim button after resolution. Needs the `Trade`-event lookup in `/api/positions`. Done 13 Oct 2026: paid and entry odds from each position's buy event, Settled from recent sells and claims (transaction logs, cached, retried on rate limits). Cards with positions still to check with a Privy account.
 - [x] **Share link**: `/m/<market>?from=&to=` opens the market with that window selected and the buy sheet open, signed in or not. Done 13 Oct 2026.
@@ -175,6 +175,7 @@ In build order; each step should leave the app working.
 
 - The fast market's question is still the placeholder "Fast demo market" (the spec only says "a staged event"). Suggestion: something we can stage on camera, e.g. "When will we ring the Veleda bell?".
 - The public devnet RPC rate-limits bursts (429s). Fine for the demo with retries, but a free RPC tier (e.g. Helius's free plan) in `SOLANA_RPC_URL` would make positions and history snappier. It needs a sign-up, so it's the user's call.
+- "Not by end date" is labelled with its cutoff ("Not by 12 October 2029"; hourly markets give the end time), on the timeline, the window text and the Home cards (13 Oct 2026, user request).
 - Releasing a drag opens the buy sheet straight away (mockup: "Release to see your price"); the alternative is a tag that needs one more tap.
 
 ### Open before starting

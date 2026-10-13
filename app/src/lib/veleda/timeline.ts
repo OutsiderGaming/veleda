@@ -40,6 +40,7 @@ export interface Bar {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const isDaily = (m: Pick<TimelineMarket, "atomSeconds">) => m.atomSeconds >= 86_400;
@@ -120,9 +121,9 @@ export function selectionRange(bars: Bar[], a: number, b: number, firstOpenAtom:
   return { from: Math.max(bars[lo].from, firstOpenAtom), to: bars[hi].to };
 }
 
-/** "14 Mar – 2 Apr 2028 · 20 days", "Tue 14 Oct, 15:00–21:00 · 6 hours", or "Not by 12 Oct 2029". */
+/** "14 Mar – 2 Apr 2028 · 20 days", "Tue 14 Oct, 15:00–21:00 · 6 hours", or "Not by 12 October 2029". */
 export function formatWindow(m: Pick<TimelineMarket, "atoms" | "atomSeconds" | "startTime">, from: number, to: number): string {
-  if (from === m.atoms) return `Not by ${formatDate(m, m.atoms - 1)}`;
+  if (from === m.atoms) return endLabel(m);
   const n = to - from + 1;
   if (isDaily(m)) {
     const a = parts(m, atomStart(m, from)), b = parts(m, atomStart(m, to));
@@ -135,6 +136,20 @@ export function formatWindow(m: Pick<TimelineMarket, "atoms" | "atomSeconds" | "
   const day = (p: typeof a) => `${DAYS[p.dow]} ${p.d} ${MONTHS[p.mo]}`;
   const range = a.d === b.d || (b.h === 0 && to - from < 24) ? `${day(a)}, ${hh(a.h)}–${hh(b.h)}` : `${day(a)} ${hh(a.h)} – ${day(b)} ${hh(b.h)}`;
   return `${range} · ${n} hour${n === 1 ? "" : "s"}`;
+}
+
+/**
+ * The "not by end date" atom, named by its cutoff: "Not by 12 October 2029"
+ * (the last day, inclusive) or, on hourly markets, "Not by Tue 20 Oct, 10:00"
+ * (when the window ends).
+ */
+export function endLabel(m: Pick<TimelineMarket, "atoms" | "atomSeconds" | "startTime">): string {
+  if (isDaily(m)) {
+    const p = parts(m, atomStart(m, m.atoms - 1));
+    return `Not by ${p.d} ${MONTHS_FULL[p.mo]} ${p.y}`;
+  }
+  const p = parts(m, atomStart(m, m.atoms));
+  return `Not by ${DAYS[p.dow]} ${p.d} ${MONTHS[p.mo]}, ${String(p.h).padStart(2, "0")}:00`;
 }
 
 /** Calendar date of an atom, "12 Oct 2029" (with the hour on hourly markets). */

@@ -4,7 +4,7 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-  padding-bottom: 8px;
+  padding-bottom: 96px; /* clears the hint pill at the bottom */
 }
 .selecting { touch-action: none; }
 

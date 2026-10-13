@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MiniBand } from "@/components/MiniBand";
 import { useMarkets } from "@/lib/client/markets";
-import { pct } from "@/lib/veleda/timeline";
+import { endLabel, pct } from "@/lib/veleda/timeline";
 import s from "./home.module.css";
 
 export default function Home() {
@@ -32,7 +32,7 @@ export default function Home() {
             <MiniBand market={m} zoom={m.atomSeconds >= 86_400 ? "month" : "hour"} />
           </div>
           <div className={s.foot}>
-            <span className={s.never}>Not by the end: {pct(m.prices[m.atoms])}</span>
+            <span className={s.never}>{endLabel(m)}: {pct(m.prices[m.atoms])}</span>
             <span className={s.open}>{m.resolved ? "Resolved" : "Open →"}</span>
           </div>
         </Link>

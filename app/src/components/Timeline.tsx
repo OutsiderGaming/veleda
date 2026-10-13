@@ -12,7 +12,7 @@
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { rangePrice } from "@/lib/veleda/market";
-import { buildBars, isThick, multiplierFor, pct, type Bar, type TimelineMarket, type Zoom } from "@/lib/veleda/timeline";
+import { buildBars, endLabel as cutoffLabel, isThick, multiplierFor, pct, type Bar, type TimelineMarket, type Zoom } from "@/lib/veleda/timeline";
 import s from "./Timeline.module.css";
 
 export interface Range {
@@ -30,11 +30,13 @@ interface Props {
   onSelect: (range: Range, done: boolean) => void;
   /** The user pressed a bar that can't be traded. */
   onLocked: () => void;
+  /** The user tapped blank space beside the bars: clear the selection. */
+  onClear?: () => void;
   /** "72h", "1h": the locked zone's length. */
   lockLabel: string;
   /** Hide gestures (resolved markets). */
   readOnly?: boolean;
-  /** Label for the "not by end date" row. */
+  /** Label for the "not by end date" row (default: its cutoff date). */
   endLabel?: string;
   /** The winning atom, once resolved. */
   winner?: number | null;
@@ -65,7 +67,7 @@ interface Gesture {
   raf?: number;
 }
 
-export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lockLabel, readOnly, endLabel = "NOT BY THE END", winner = null, rowHeight: thickRow = 76, handles = true }: Props) {
+export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, onClear, lockLabel, readOnly, endLabel, winner = null, rowHeight: thickRow = 76, handles = true }: Props) {
   const bars = useMemo(() => buildBars(market, zoom), [market, zoom]);
   const END = bars.length; // index of the "not by end date" row
   const thick = isThick(zoom, bars.length);
@@ -204,12 +206,23 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
     if (gg.selecting) return finish();
     clearTimeout(gg.timer);
     g.current = null;
-    if (gg.moved || gg.bar === null) return;
-    // A tap selects one bar.
+    if (gg.moved) return;
+    // A tap on a bar (or its odds) selects it; a tap on the blank space beside the bars clears the selection.
+    if (gg.bar === null || !hitsBar(gg.bar, e.clientX, e.target as HTMLElement)) return onClear?.();
     const { bars, END, onSelect, onLocked, market } = live.current;
     if (gg.bar === END) return onSelect({ from: market.atoms, to: market.atoms }, true);
     if (bars[gg.bar].state !== "open") return onLocked();
     onSelect(rangeOf(gg.bar, gg.bar), true);
+  };
+
+  /** Whether a tap at x lands on bar `index`: the bar itself (with a little slack for thin bars) or its odds column. */
+  const hitsBar = (index: number, x: number, target: HTMLElement): boolean => {
+    if (target.closest("[data-odds]")) return true;
+    const bar = listRef.current?.querySelector<HTMLElement>(`[data-bar="${index}"] [data-hit]`);
+    if (!bar) return false;
+    const r = bar.getBoundingClientRect();
+    const slack = r.height < 30 ? 16 : 4;
+    return x >= r.left - slack && x <= r.right + slack;
   };
 
   const onPointerCancel = () => {
@@ -236,7 +249,7 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
         {bars.map((b) => {
           const sel = isSel(b);
           const isMine = mine.some((r) => b.from <= r.to && b.to >= r.from);
-          const width = b.state === "elapsed" ? 30 : Math.max(thick ? 22 : 6, (b.price / maxPrice) * 100);
+          const width = b.state === "elapsed" ? 30 : Math.max(thick ? 30 : 6, (b.price / maxPrice) * 100);
           return (
             <div key={`${zoom}-${b.from}`}>
               {winner === null && b.index === firstLive && (
@@ -253,7 +266,7 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
               >
                 <span className={`${s.side} ${sel ? s.sideStrong : ""}`}>{thick ? null : b.side}</span>
                 <span className={`${s.track} ${isMine ? s.mine : ""}`}>
-                  <span className={s.bar} style={{ width: `${width}%` }} />
+                  <span data-hit className={s.bar} style={{ width: `${width}%` }} />
                   {winner !== null && b.from <= winner && winner <= b.to && <span className={s.winner}>★</span>}
                   {thick && b.label && <span className={s.barLabel}>{b.label}</span>}
                   {handles && !drag && !readOnly && sel && b.index === selLo && (
@@ -265,7 +278,7 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
                 </span>
                 {!thick && <span className={s.right} />}
                 {thick && (
-                  <span className={s.right}>
+                  <span className={s.right} data-odds>
                     {b.state === "open" && winner === null && (
                       <>
                         <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, Math.max(b.from, market.firstOpenAtom), b.to))}</div>
@@ -286,10 +299,10 @@ export function Timeline({ market, zoom, selection, mine, onSelect, onLocked, lo
         >
           <span className={s.side} />
           <span className={s.track}>
-            <span className={s.bar} style={{ width: `${Math.min(100, Math.max(22, (market.prices[market.atoms] / maxPrice) * 100))}%` }} />
-            <span className={s.barLabel} style={{ fontSize: 14 }}>{endLabel}</span>
+            <span data-hit className={s.bar} style={{ width: `${Math.min(100, Math.max(30, (market.prices[market.atoms] / maxPrice) * 100))}%` }} />
+            <span className={s.barLabel} style={{ fontSize: 13, letterSpacing: "0.1em" }}>{(endLabel ?? cutoffLabel(market)).toUpperCase()}</span>
           </span>
-          <span className={s.right}>
+          <span className={s.right} data-odds>
             {winner === null && (
               <>
                 <div className={s.mult}><small>×</small>{fmtMult(multiplierFor(market, market.atoms, market.atoms))}</div>

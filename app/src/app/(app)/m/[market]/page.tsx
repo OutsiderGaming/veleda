@@ -104,6 +104,7 @@ function Loaded({ market: m }: { market: MarketView }) {
           setSelection(r);
           if (done) setSheet(true);
         }}
+        onClear={() => setSelection(null)}
         onLocked={() => setToast(`Windows must start at least ${lock} from now, so this one is locked.`)}
       />
 
@@ -111,7 +112,7 @@ function Loaded({ market: m }: { market: MarketView }) {
         <div className={s.toast}>{toast}</div>
       ) : sheet || market.resolved ? null : selection ? (
         <div className={s.pill}>
-          <span className={s.pillText}>{formatWindow(market, selection.from, selection.to).split(" · ")[1] ?? "Not by the end"}</span>
+          <span className={s.pillText}>{pillText(formatWindow(market, selection.from, selection.to))}</span>
           <span className={s.pillMult}>×{fmtMult(multiplierFor(market, selection.from, selection.to))}</span>
           <button className={s.pillOpen} onClick={() => setSheet(true)}>PRICE</button>
           <button className={s.pillClear} aria-label="Clear selection" onClick={() => setSelection(null)}>×</button>
@@ -127,3 +128,6 @@ function Loaded({ market: m }: { market: MarketView }) {
     </>
   );
 }
+
+/** The length part of a window ("20 days"), or the whole label for "not by …". */
+const pillText = (w: string) => (w.includes(" · ") ? w.split(" · ")[1] : w);
