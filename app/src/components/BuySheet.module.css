@@ -37,7 +37,7 @@
 .winsValue small { font-size: 0.55em; color: var(--text-2); font-weight: 500; margin-left: 4px; }
 .detail { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
 .primary {
-  width: 100%; height: 60px; border: 0; border-radius: 16px; padding: 0 20px; background: var(--primary); color: var(--primary-text);
+  width: 100%; height: 60px; margin: 10px 0; border: 0; border-radius: 16px; padding: 0 20px; background: var(--primary); color: var(--primary-text);
   font: 700 clamp(13px, 3.7vw, 16px) var(--serif); letter-spacing: 0.1em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
 }
 .primary:disabled { opacity: 0.5; cursor: default; }
