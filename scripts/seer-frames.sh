@@ -16,7 +16,7 @@ rm -rf "$out" && mkdir -p "$out"
 
 # Evenly sample `frames` frames across the whole turn, first and last exactly included.
 all=$(mktemp -d)
-ffmpeg -v error -i "$src/turn.mp4" -vf "scale=$width:-2" -q:v 4 "$all/%05d.jpg"
+ffmpeg -v error -i "$src/turn.mp4" -vf "scale=$width:-2" -q:v 8 "$all/%05d.jpg" # q8 keeps the engraving texture at about half the size of q4
 total=$(ls "$all" | wc -l | tr -d ' ')
 n=$(( frames < total ? frames : total ))
 for ((i = 0; i < n; i++)); do

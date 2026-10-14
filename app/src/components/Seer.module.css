@@ -1,13 +1,15 @@
-/* Full-bleed across the app column (Shell pads it by 20px), about 45% of the screen tall. */
+/* Square, full-bleed across the app column (Shell pads it by 20px), at most half the screen tall;
+   centred when the height limit makes it narrower than the column. Sticky: the page slides over it. */
 .hero {
-  position: relative; overflow: hidden;
-  margin: -6px -20px 18px;
-  height: min(46svh, 600px);
+  --side: min(calc(100% + 40px), 50svh);
+  position: sticky; top: 0; z-index: 0; overflow: hidden;
+  width: var(--side); aspect-ratio: 1;
+  margin: -6px calc((100% - var(--side)) / 2) 0;
   background: var(--bg);
-  /* Soften the bottom edge into the page. */
-  mask-image: linear-gradient(to bottom, #000 82%, transparent);
+  /* Soften the bottom and side edges into the page. */
+  mask-image: linear-gradient(to bottom, #000 90%, transparent), linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-composite: intersect;
 }
-.stage { position: absolute; inset: 0; will-change: transform; }
-.layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .idle, .end { opacity: 0; transition: opacity 150ms linear; }
 .hero[data-phase="idle"] .idle, .hero[data-phase="end"] .end { opacity: 1; }
