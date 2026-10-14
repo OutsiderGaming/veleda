@@ -3,24 +3,22 @@
 import Link from "next/link";
 import { MiniBand } from "@/components/MiniBand";
 import { Seer } from "@/components/Seer";
+import { useFirstVisit } from "@/lib/client/first-visit";
 import { useMarkets } from "@/lib/client/markets";
 import { endLabel, pct } from "@/lib/veleda/timeline";
 import s from "./home.module.css";
 
 export default function Home() {
   const { markets, error } = useMarkets();
+  // The tutorial link only shows on a first visit; after that it lives under Account → How it works.
+  const firstVisit = useFirstVisit();
   return (
     <>
       <Seer />
       <div className={s.below}>
-        <h1 className={s.title}>Call when it happens.</h1>
-        <p className={s.tagline}>Pick any window of time. The narrower it is, the more it pays.</p>
-        <Link href="/practice" className={s.practice}>
-          <span>
-            <strong>New here?</strong> See how it works in a minute, with pretend money.
-          </span>
-          <span className={s.open}>Try it →</span>
-        </Link>
+        <h1 className={s.title}>Predict the future</h1>
+        {firstVisit && <Link href="/practice" className={s.practice}>View the tutorial</Link>}
+        <h2 className={s.section}>Top markets</h2>
         {error && !markets && <p className={s.error}>Couldn&apos;t load the markets. Retrying…</p>}
         {!markets && !error && [0, 1].map((i) => <div key={i} className={s.skeleton} />)}
         {markets?.map((m) => (
