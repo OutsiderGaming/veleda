@@ -8,7 +8,9 @@ import s from "./Intro.module.css";
 // The root layout's inline script marks <html data-intro="seen"> before first paint on later loads
 // in the session, or when the viewer prefers reduced motion, so the overlay never flashes up.
 // Source: design/source/VeledaIntro.mov →
-//   ffmpeg -i VeledaIntro.mov -map 0:v:0 -an -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 24 -preset slow -movflags +faststart app/public/intro.mp4
+//   ffmpeg -i VeledaIntro.mov -map 0:v:0 -an -frames:v 96 -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 24 -preset slow -movflags +faststart app/public/intro.mp4
+//   (-frames:v 96 drops the last frame, where the VELEDA text has begun to fade but the image hasn't;
+//   the fade-out holds the final frame, so it must show both)
 
 export function Intro() {
   const [state, setState] = useState<"on" | "leaving" | "gone">("on");
