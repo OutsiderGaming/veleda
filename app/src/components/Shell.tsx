@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { Intro } from "./Intro";
 import { useSession } from "@/lib/client/session";
 import { vcr } from "@/lib/veleda/timeline";
 import s from "./Shell.module.css";
@@ -10,6 +11,7 @@ import s from "./Shell.module.css";
 export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className={s.app}>
+      <Intro />
       <Header />
       {children}
       <BottomNav />

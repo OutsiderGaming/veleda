@@ -1,0 +1,17 @@
+/* Background matches the clip's own (#161b1a), so letterboxing on wide screens is invisible. */
+.intro {
+  position: fixed; inset: 0; z-index: 100; background: #161b1a; cursor: pointer; touch-action: none;
+  display: flex; align-items: center; justify-content: center;
+}
+:global(html[data-intro="seen"]) .intro:not(.leaving) { display: none; }
+.leaving { animation: out 400ms ease forwards; pointer-events: none; }
+@keyframes out { to { opacity: 0; } }
+/* Portrait phones fill the screen (the clip is 9:16); anything wider shows the whole clip. */
+.video { width: 100%; height: 100%; object-fit: contain; }
+@media (max-aspect-ratio: 3/4) { .video { object-fit: cover; } }
+.skip {
+  position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 28px); text-align: center;
+  font: 600 12px var(--serif); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(237, 228, 214, 0.55);
+  opacity: 0; animation: hint 400ms ease 800ms forwards;
+}
+@keyframes hint { to { opacity: 1; } }

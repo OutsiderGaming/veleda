@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
+import { INTRO_KEY } from "@/components/intro-key";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -22,7 +23,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${manrope.variable}`}>
+    // suppressHydrationWarning: the script below may set data-intro on <html> before React hydrates.
+    <html lang="en" className={`${cinzel.variable} ${manrope.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Skip the intro (components/Intro.tsx) before first paint if it already played this session. */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("${INTRO_KEY}")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.dataset.intro="seen"}catch(e){}` }} />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>
