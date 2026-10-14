@@ -31,7 +31,7 @@ Build the core loop end to end; present everything about outside LPs and decentr
 | Admin resolution + claim | Native iOS/Android apps |
 | | Halt on first report; void and refunds; AI halt watcher; AI or multi-model resolution |
 | Mobile web app: home, timeline, select, buy, cash out | Partial sells of a sub-range (stretch goal) |
-| Share a window as a plain link | One Blink for buying a chunk (stretch goal if week 4 has room) |
+| Share a window as a plain link | One Blink for buying a chunk (roadmap only; dropped 14 Oct 2026) |
 | Practice mode: an interactive tutorial with a scripted, simulated market you can scrub forwards and backwards | A time machine over live market data; user-controlled clocks on real markets |
 | | Buying several unconnected windows in one tap (a basket: one transaction, several `buy_range` instructions) |
 
@@ -116,7 +116,7 @@ A mobile-first web app (installable PWA) rather than native apps, built in React
 
 **Share link:** `/m/<market>?from=&to=` opens the app on that market with the window selected and the buy sheet open. Signed-out visitors can browse it and sign in when they tap Buy, as in onboarding.
 
-**Blink (roadmap; stretch goal if week 4 has room):** one Solana Action at `/api/actions/chunk?market=&from=&to=`.
+**Blink (roadmap only):** dropped from the hackathon on 14 Oct 2026. A Blink fixes the window to whoever shared it, while Veleda is about building your own window on the timeline; the share link already opens the app with the window selected, ready to adjust. If it's built later: one Solana Action at `/api/actions/chunk?market=&from=&to=`.
 
 - GET returns a card: an image of the timeline with the chunk highlighted, the live multiplier, and 5 / 20 / custom stake buttons.
 - POST builds a `buy_range` transaction at request time with `max_cost` set 2% above the quote.
@@ -197,7 +197,7 @@ The maths comes first and gets the most testing; the frontend is quicker and com
 
 | Week | Build | Done when |
 | --- | --- | --- |
-| 1 | Off-chain reference model of LMSR, ranges, pruning and fees; fixed-point exp/ln; segment tree with lazy multiply; property tests. Create the VCR mint. Set up Privy (free tier) and prove email sign-in plus a first buy where the server pays fees and rent. Apply to the Actions registry. | On-chain maths matches the reference within rounding on 10,000 random trades; a test user signs in by email and opens a position from a wallet that has never held SOL |
+| 1 | Off-chain reference model of LMSR, ranges, pruning and fees; fixed-point exp/ln; segment tree with lazy multiply; property tests. Create the VCR mint. Set up Privy (free tier) and prove email sign-in plus a first buy where the server pays fees and rent. | On-chain maths matches the reference within rounding on 10,000 random trades; a test user signs in by email and opens a position from a wallet that has never held SOL |
 | 2 | Anchor program: all seven instructions, accounts, fee ledger, locked zone, live edge. Devnet deploy. Fee-payer server and sign-up airdrop. Trader-bot script. | Both demo markets live with bot trading; vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically |
 | 3 | Web app: home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link. Practice mode (scripted, simulated, scrubbable). | Link to first position in under 60 seconds on a phone, three times in a row |
 | 4 | One-command setup script and README. Seed markets. Demo video (~2:25). Rehearse. | A stranger can run the repo from the README; the demo script runs end to end twice without intervention |
@@ -242,7 +242,7 @@ What the design already answers but the prototype doesn't build, framed for judg
 - **"What stops LPs being picked off?"** Depth grows with volume, so the long-shot phase is shallow and cheap to run; a fee that rises with volatility recovers part of any news jump; a higher fee near now prices late information. All rules depend on market data and time, never on platform judgement.
 - **"What about insiders?"** Markets are listed by who controls the timing and resolve on the natural event (date of birth, not the announcement).
 - **"Who decides the outcome?"** An optimistic oracle with bonded proposals and a dispute window. Already specced: halt on the first report (an AI watcher can trigger it around the clock) and void-if-already-happened with refunds.
-- **"Can people trade where it's shared?"** Blinks: every shared window becomes a tradable card on X, built from one Solana Action.
+- **"Can people trade where it's shared?"** Every shared link opens the app with that window already selected, so a friend can back it or adjust it in a couple of taps. Later, Blinks could turn a shared window into a tradable card on X, built from one Solana Action.
 - **Later features:** a daytime-only filter, permissionless market creation with review, native apps, mainnet after regulatory advice.
 
 ## Submission checklist
