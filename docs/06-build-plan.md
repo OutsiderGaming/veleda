@@ -151,7 +151,7 @@ In build order; each step should leave the app working.
 - [x] **Data layer**: market polling hook, browser-side quotes, atom ↔ date helpers (local time, locked zone, elapsed), session hook with the automatic airdrop and the VCR balance with its "test money" label. Done 13 Oct 2026.
 - [x] **Home**: both markets as cards with question, total traded and a mini band; tap to open. Done 13 Oct 2026, plus a "New here? See how it works" link to practice mode.
 - [x] **Timeline**: vertical, now at the top, Year / Month / Day / Hour tabs (Hour hidden on the flagship), bars sized by crowd odds with stippled copper styling, month view with engraved month names and per-month odds and multiplier, elapsed time greyed, shaded "Locked" zone, "not by end date" at the bottom, the user's open positions as coloured bands. Opens on Month for the flagship, Day for the fast market. Done 13 Oct 2026. Timelines of 31 bars or fewer (the fast market's Day view, Year view) use the thick labelled bars; the fast market opens on Hour.
-- [x] **Select**: works in every zoom level, selecting whole bars of that level (months in Month view, days in Day view, hours in Hour view). Gestures (agreed 13 Oct 2026): Done 13 Oct 2026 (checked with a mouse in Chrome; touch long-press still to check on a phone).
+- [x] **Select**: works in every zoom level, selecting whole bars of that level (months in Month view, days in Day view, hours in Hour view). Gestures (agreed 13 Oct 2026): Done 13 Oct 2026 (checked with a mouse in Chrome; touch long-press checked on a phone 14 Oct 2026).
   - Swipe scrolls the timeline.
   - Press and hold a bar (~0.3 s, haptic tick where supported) anchors a selection there; dragging without lifting extends it up or down from the anchor, with a floating tag (length · % · multiplier for 20 VCR) and auto-scroll near the top and bottom edges.
   - Releasing opens the buy sheet ("Release to see your price"). Swiping the sheet down returns to the timeline with the selection kept.
@@ -168,6 +168,7 @@ In build order; each step should leave the app working.
   - Reuse the timeline, select and buy sheet components; add a caption card and the "Practice · simulated prices" tag.
   - Replace the draft script's placeholder figures with the model's output, and agree the script with the user before building the screens.
   - Built last, on top of the finished timeline, select and buy sheet.
+  - 14 Oct 2026 (user request): the pick step only accepts days 6–7, the window the script is written for. Other windows broke the story. A hint says "Press and hold Day 6, then drag down to Day 7", and the predict button appears only once days 6–7 are selected.
 - [x] **Copy audit**: no "SOL", "devnet" or "seed phrase" anywhere a user can see (the `/dev` page excepted); "window", never "chunk"; "test money" beside every balance; VCR, not USDC; the brand is never shortened to "Veda". First pass 13 Oct 2026: clean. Re-run before the stopwatch test.
 - [x] **Stopwatch test**: on a phone, from opening a share link to holding a position, three times in a row, each under 60 seconds, with fresh accounts. Passed 14 Oct 2026 (user's call): sign-in, airdrop and buy are near instant; nearly all the time is typing the email and the code in Privy's window.
 

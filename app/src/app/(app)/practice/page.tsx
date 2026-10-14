@@ -16,10 +16,13 @@ import s from "./practice.module.css";
 const HOUR = 3_600;
 const LABELS = Array.from({ length: S.atoms }, (_, i) => `DAY ${i + 1}`);
 const days = (w: Range) => (w.from === w.to ? `Day ${w.from + 1}` : `Days ${w.from + 1}–${w.to + 1}`);
+/** The script needs the window it's written for, so the pick step only accepts days 6–7 (or part of it on the way there). */
+const W = S.window;
+const isScripted = (w: Range | null) => w?.from === W.from && w.to === W.to;
 
 export default function Practice() {
   const [t, setT] = useState(0);
-  const [window, setWindow] = useState<Range>(S.window);
+  const [picked, setPicked] = useState<Range | null>(null);
   const [cashOut, setCashOut] = useState(false);
   const buyAt = beatById("buy").at;
   const choiceAt = beatById("choice").at;
@@ -31,8 +34,11 @@ export default function Practice() {
     setT(next);
   };
 
-  const snap = useMemo(() => replay(t, window, cashOut), [t, window, cashOut]);
-  const quote = useMemo(() => quoteAtBuy(window), [window]);
+  const snap = useMemo(() => replay(t, W, cashOut), [t, cashOut]);
+  const quote = useMemo(() => quoteAtBuy(W), []);
+  const picking = t < buyAt && snap.beat.id === "pick";
+  // From the buy on, the window is always the scripted one, even if the user skipped ahead with the scrubber.
+  const selection = t >= buyAt ? W : picking ? picked : null;
   const beatIndex = BEATS.findIndex((b) => b.id === snap.beat.id);
 
   // Scroll to what the caption talks about: the question first, then the start of the
@@ -40,7 +46,7 @@ export default function Practice() {
   useEffect(() => {
     const id = snap.beat.id;
     if (id === "question") { scrollTo({ top: 0, behavior: "smooth" }); return; }
-    const row = document.querySelector<HTMLElement>(`[data-bar="${id === "timeline" ? 0 : window.from}"]`);
+    const row = document.querySelector<HTMLElement>(`[data-bar="${id === "timeline" ? 0 : W.from}"]`);
     if (!row) return;
     const top = row.getBoundingClientRect().top + scrollY - innerHeight * 0.22;
     scrollTo({ top: Math.max(0, top), behavior: "smooth" });
@@ -57,7 +63,7 @@ export default function Practice() {
     <>
       <div className={s.top}>
         <span className={s.tag}>PRACTICE · SIMULATED PRICES</span>
-        <button className={s.restart} onClick={() => { setT(0); setCashOut(false); setWindow(S.window); }}>Restart</button>
+        <button className={s.restart} onClick={() => { setT(0); setCashOut(false); setPicked(null); }}>Restart</button>
       </div>
       <h1 className={`${s.question} ${snap.beat.id === "question" ? s.spotlight : ""}`}>{S.question}</h1>
       <div className={s.clock}>{clock}</div>
@@ -66,10 +72,13 @@ export default function Practice() {
         <div className={s.step}>STEP {beatIndex + 1} OF {BEATS.length}</div>
         <p className={s.text}>{snap.beat.caption}</p>
 
-        {t < buyAt && snap.beat.id === "pick" && (
+        {picking && !isScripted(picked) && (
+          <p className={s.hint}>Press and hold {days({ from: W.from, to: W.from })}, then drag down to {days({ from: W.to, to: W.to })}.</p>
+        )}
+        {picking && isScripted(picked) && (
           <>
             <div className={s.figures}>
-              <Fig label="Your window" value={days(window)} />
+              <Fig label="Your window" value={days(W)} />
               <Fig label="Crowd odds" value={pct(quote.price)} />
               <Fig label="Pays" value={`×${fmtMult(quote.multiplier)}`} copper />
             </div>
@@ -121,15 +130,20 @@ export default function Practice() {
       <Timeline
         market={market}
         zoom="day"
-        selection={window}
-        mine={pos && pos.cashedOut === null ? [window] : []}
+        selection={selection}
+        mine={pos && pos.cashedOut === null ? [W] : []}
         lockLabel="24h"
         rowHeight={46}
         handles={false}
         endLabel="NOT BY DAY 10"
         winner={snap.winner}
-        readOnly={t >= buyAt}
-        onSelect={(r) => r.from < S.atoms && setWindow(r)}
+        readOnly={!picking}
+        onSelect={(r, done) => {
+          // Mid-drag, anything goes; on release, keep it only if it's days 6–7 or part of the way there.
+          if (!done) return;
+          setPicked(r.from >= W.from && r.to <= W.to ? r : null);
+        }}
+        onClear={() => setPicked(null)}
         onLocked={() => {}}
       />
       <div className={s.spacer} />

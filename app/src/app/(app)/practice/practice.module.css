@@ -33,3 +33,4 @@
 .ticks { position: absolute; left: 0; right: 0; top: -6px; height: 6px; pointer-events: none; }
 .tick { position: absolute; width: 2px; height: 6px; background: var(--copper); opacity: 0.6; }
 .spacer { height: 300px; }
+.hint { margin: 10px 0 2px; padding: 10px 14px; border-radius: 14px; background: var(--inset); color: var(--copper-light); font: 600 15px/1.35 var(--sans); }
