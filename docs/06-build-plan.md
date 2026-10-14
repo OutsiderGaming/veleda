@@ -203,7 +203,7 @@ Goal from the hackathon spec: one-command setup script and README, seeded market
 | Setup script | `npm run setup` runs `scripts/setup.sh`. Default mode: install both projects, check `.env`, run the app against the live devnet markets (README step 3). `--own` mode: everything in README step 4 (keys, devnet SOL, build and deploy, mint and metadata, both markets, one bot round). It updates the program address in the four files listed in step 4 itself, so a stranger doesn't have to |
 | Repo visibility | Open (14 Oct 2026): the repo is private and judges need to read it. Making it public also makes the bots' GitHub Actions minutes free (tighten the schedule then, as the week 3 Bots decision says). Only `keys/README.md` and `.env.example` are committed (checked 14 Oct 2026), but scan the history once more before switching |
 | Recording | Open: phone screen recording plus voiceover, or a capture of a phone-width browser window; which editor; whether to use the news-broadcast framing (hackathon spec, "Demo script") |
-| Deadline | Open: confirm the Encode submission deadline and portal, and work back from it |
+| Deadline | Final submissions close 9 Nov 2026 (confirmed by the user 14 Oct 2026). Portal still to confirm. Aim to have the video recorded a week early, leaving time for a re-record and devnet trouble |
 
 ### Steps
 
