@@ -97,11 +97,8 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
         <div className={s.grab} style={{ touchAction: "none" }} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} />
         {done ? (
           <div className={s.done}>
-            <div className={`${s.raysArea} ${s.doneHead}`}>
-              <Rays />
-              <div className={s.doneTick}>✓</div>
-              <div className={s.doneTitle}>You&apos;ve called it</div>
-            </div>
+            <div className={s.doneTick}>✓</div>
+            <div className={s.doneTitle}>May Fortune Smile upon You</div>
             <p className={s.doneText}>
               {formatWindow(market, range.from, range.to)}
               <br />

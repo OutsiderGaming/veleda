@@ -12,10 +12,9 @@
 .grab::before { content: ""; width: 44px; height: 5px; border-radius: 3px; background: #3a3730; }
 /* The burst fills the sheet from its top edge down to a horizontal cut at the bottom of .raysArea
    (plus --rays-below), so it never runs under the figures beneath. z-index -1 keeps it above the
-   sheet's background but behind all of the sheet's content. */
+   sheet's background but behind all of the sheet's content. The "done" screen has no burst. */
 .raysArea { position: relative; --rays-top: 33px; --rays-below: 0px; } /* 33px = sheet padding 10 + grab handle 23 */
 .tradeHead { --rays-below: 11px; } /* half the 22px gap above "Wins if it lands" */
-.doneHead { --rays-top: 41px; --rays-below: 3px; } /* .done adds 8px of padding; half the 6px gap under the title */
 .raysClip { position: absolute; z-index: -1; top: calc(-1 * var(--rays-top)); bottom: calc(-1 * var(--rays-below)); left: -20px; right: -20px; overflow: hidden; pointer-events: none; }
 .rays { position: absolute; top: -20px; right: -40px; width: 320px; height: 340px; opacity: 0.5; }
 .window { color: var(--text-2); font-size: 15px; position: relative; }
@@ -51,5 +50,5 @@
 .error { color: var(--loss); font-size: 14px; margin: -6px 0 12px; }
 .done { text-align: center; padding: 8px 0 4px; position: relative; }
 .doneTick { font: 700 40px var(--serif); color: var(--gain); }
-.doneTitle { font: 700 26px var(--serif); color: var(--copper-light); margin: 2px 0 6px; }
+.doneTitle { font: 700 26px/1.2 var(--serif); color: var(--copper-light); margin: 2px 0 10px; text-wrap: balance; }
 .doneText { color: var(--text-2); margin: 0 0 18px; }
