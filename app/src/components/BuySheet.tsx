@@ -144,7 +144,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
               </div>
             </div>
             <div className={s.wins}>
-              <span className={s.winsLabel}>Wins if it lands</span>
+              <span className={s.winsLabel}>Win if it lands:</span>
               <span className={s.winsValue}>{vcr(shares)}<small>VCR</small></span>
             </div>
             <div className={s.detail}>

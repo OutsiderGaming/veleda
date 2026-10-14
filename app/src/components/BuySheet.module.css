@@ -14,7 +14,7 @@
    (plus --rays-below), so it never runs under the figures beneath. z-index -1 keeps it above the
    sheet's background but behind all of the sheet's content. The "done" screen has no burst. */
 .raysArea { position: relative; --rays-top: 33px; --rays-below: 0px; } /* 33px = sheet padding 10 + grab handle 23 */
-.tradeHead { --rays-below: 11px; } /* half the 22px gap above "Wins if it lands" */
+.tradeHead { --rays-below: 11px; } /* half the 22px gap above "Win if it lands:" */
 .raysClip { position: absolute; z-index: -1; top: calc(-1 * var(--rays-top)); bottom: calc(-1 * var(--rays-below)); left: -20px; right: -20px; overflow: hidden; pointer-events: none; }
 .rays { position: absolute; top: -20px; right: -40px; width: 320px; height: 340px; opacity: 0.5; }
 .window { color: var(--text-2); font-size: 15px; position: relative; }
