@@ -19,7 +19,7 @@
 .practice {
   display: block; text-align: center; text-decoration: none; color: var(--copper);
   font: 600 13px var(--serif); text-transform: uppercase; letter-spacing: 0.18em;
-  border: 1px dashed var(--btn-border); border-radius: 999px; padding: 10px 16px; margin-bottom: 22px;
+  border: 1px dashed var(--btn-border); border-radius: 999px; padding: 10px 16px; margin: 8px 0 22px;
 }
 /* Slides up over the sticky Seer hero: opaque, full-bleed, with a soft top edge. */
 .below { position: relative; z-index: 1; background: var(--bg); margin: 0 -20px; padding: 18px 20px 0; }

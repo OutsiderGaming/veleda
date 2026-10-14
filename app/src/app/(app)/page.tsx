@@ -17,7 +17,6 @@ export default function Home() {
       <Seer />
       <div className={s.below}>
         <h1 className={s.title}>Predict the future</h1>
-        {firstVisit && <Link href="/practice" className={s.practice}>View the tutorial</Link>}
         <h2 className={s.section}>Top markets</h2>
         {error && !markets && <p className={s.error}>Couldn&apos;t load the markets. Retrying…</p>}
         {!markets && !error && [0, 1].map((i) => <div key={i} className={s.skeleton} />)}
@@ -39,6 +38,7 @@ export default function Home() {
             </div>
           </Link>
         ))}
+        {firstVisit && <Link href="/practice" className={s.practice}>View the tutorial</Link>}
       </div>
     </>
   );
