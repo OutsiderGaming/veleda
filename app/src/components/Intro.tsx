@@ -42,7 +42,6 @@ export function Intro() {
   return (
     <div className={`${s.intro} ${state === "leaving" ? s.leaving : ""}`} onClick={leave} role="button" aria-label="Skip intro">
       <video ref={video} className={s.video} src="/intro.mp4" muted playsInline preload="auto" onEnded={leave} aria-hidden />
-      <span className={s.skip}>Tap to skip</span>
     </div>
   );
 }
