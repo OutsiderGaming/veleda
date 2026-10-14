@@ -95,11 +95,13 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
       <div className={s.backdrop} onClick={onClose} />
       <div className={s.sheet} style={{ transform: dy ? `translateY(${dy}px)` : undefined, transition: dy ? "none" : "transform 0.2s" }}>
         <div className={s.grab} style={{ touchAction: "none" }} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} />
-        <Rays />
         {done ? (
           <div className={s.done}>
-            <div className={s.doneTick}>✓</div>
-            <div className={s.doneTitle}>You&apos;ve called it</div>
+            <div className={`${s.raysArea} ${s.doneHead}`}>
+              <Rays />
+              <div className={s.doneTick}>✓</div>
+              <div className={s.doneTitle}>You&apos;ve called it</div>
+            </div>
             <p className={s.doneText}>
               {formatWindow(market, range.from, range.to)}
               <br />
@@ -110,36 +112,39 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
           </div>
         ) : (
           <div>
-            <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} style={{ touchAction: "none" }}>
-              <div className={s.window}>{formatWindow(market, range.from, range.to)}</div>
-              <div className={s.multRow}>
-                <span className={s.mult}><small>×</small>{fmtMult(q.multiplier)}</span>
+            <div className={`${s.raysArea} ${s.tradeHead}`}>
+              <Rays />
+              <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} style={{ touchAction: "none" }}>
+                <div className={s.window}>{formatWindow(market, range.from, range.to)}</div>
+                <div className={s.multRow}>
+                  <span className={s.mult}><small>×</small>{fmtMult(q.multiplier)}</span>
+                </div>
+                <div className={s.odds}>Crowd odds {pct(q.price)} · payout after fees</div>
               </div>
-              <div className={s.odds}>Crowd odds {pct(q.price)} · payout after fees</div>
-            </div>
-            <div className={s.stakeLabel}>Stake (VCR)</div>
-            <div className={s.chips}>
-              {CHIPS.map((c) => (
-                <button key={c} className={`${s.chip} ${other === null && stake === c ? s.chipOn : ""}`} onClick={() => { setOther(null); setStake(c); }}>
-                  {c}
-                </button>
-              ))}
-              {other === null ? (
-                <button className={`${s.chip} ${s.chipOther}`} onClick={() => setOther(String(stake))}>Other</button>
-              ) : (
-                <input
-                  className={s.chipInput}
-                  inputMode="decimal"
-                  autoFocus
-                  value={other}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9.]/g, "");
-                    setOther(v);
-                    const n = Number(v);
-                    if (n > 0) setStake(Math.min(n, 100_000));
-                  }}
-                />
-              )}
+              <div className={s.stakeLabel}>Stake (VCR)</div>
+              <div className={s.chips}>
+                {CHIPS.map((c) => (
+                  <button key={c} className={`${s.chip} ${other === null && stake === c ? s.chipOn : ""}`} onClick={() => { setOther(null); setStake(c); }}>
+                    {c}
+                  </button>
+                ))}
+                {other === null ? (
+                  <button className={`${s.chip} ${s.chipOther}`} onClick={() => setOther(String(stake))}>Other</button>
+                ) : (
+                  <input
+                    className={s.chipInput}
+                    inputMode="decimal"
+                    autoFocus
+                    value={other}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9.]/g, "");
+                      setOther(v);
+                      const n = Number(v);
+                      if (n > 0) setStake(Math.min(n, 100_000));
+                    }}
+                  />
+                )}
+              </div>
             </div>
             <div className={s.wins}>
               <span className={s.winsLabel}>Wins if it lands</span>
@@ -177,16 +182,18 @@ function friendly(message: string): string {
   return message.length > 140 ? "Something went wrong placing your call. Try again." : message;
 }
 
-/** Decorative radiating copper lines (mockup screen 3). */
+/** Decorative radiating copper lines (mockup screen 3), clipped to the bottom of its .raysArea. */
 function Rays() {
   const lines = Array.from({ length: 18 }, (_, i) => {
     const a = (i / 18) * Math.PI * 2;
     return <line key={i} x1="200" y1="190" x2={200 + Math.cos(a) * 400} y2={190 + Math.sin(a) * 400} stroke="#E9A867" strokeWidth="0.8" opacity="0.5" />;
   });
   return (
-    <svg className={`${s.rays}`} viewBox="0 0 320 340" aria-hidden>
-      {lines}
-      <circle cx="200" cy="190" r="2" fill="#F6C792" />
-    </svg>
+    <div className={s.raysClip} aria-hidden>
+      <svg className={s.rays} viewBox="0 0 320 340">
+        {lines}
+        <circle cx="200" cy="190" r="2" fill="#F6C792" />
+      </svg>
+    </div>
   );
 }
