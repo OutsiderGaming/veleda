@@ -169,7 +169,7 @@ In build order; each step should leave the app working.
   - Replace the draft script's placeholder figures with the model's output, and agree the script with the user before building the screens.
   - Built last, on top of the finished timeline, select and buy sheet.
 - [x] **Copy audit**: no "SOL", "devnet" or "seed phrase" anywhere a user can see (the `/dev` page excepted); "window", never "chunk"; "test money" beside every balance; VCR, not USDC; the brand is never shortened to "Veda". First pass 13 Oct 2026: clean. Re-run before the stopwatch test.
-- [ ] **Stopwatch test**: on a phone, from opening a share link to holding a position, three times in a row, each under 60 seconds, with fresh accounts.
+- [x] **Stopwatch test**: on a phone, from opening a share link to holding a position, three times in a row, each under 60 seconds, with fresh accounts. Passed 14 Oct 2026 (user's call): sign-in, airdrop and buy are near instant; nearly all the time is typing the email and the code in Privy's window.
 
 ### Open items (13 Oct 2026)
 
