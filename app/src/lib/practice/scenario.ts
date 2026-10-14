@@ -38,8 +38,8 @@ export type Step =
  */
 export const STEPS: Step[] = [
   { at: 0, kind: "beat", id: "question", caption: "Every market is one question about when something will happen. This one asks when Luna the cat will have her kittens." },
-  { at: 1 * 3_600, kind: "beat", id: "timeline", caption: "Below the question, time is split into slots: days here, but hours or months in other markets. Each bar's width is the crowd's odds that the kittens arrive in that slot. The bottom bar is \"not by day 10\"." },
-  { at: 2 * 3_600, kind: "beat", id: "pick", caption: "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." },
+  { at: 1 * 3_600, kind: "beat", id: "timeline", caption: "Below the question, time is split into slots: days, in this case. The bronze bars are wider when more people have guessed that slot. The bottom bar predicts that it won't happen during the timeline at all." },
+  { at: 2 * 3_600, kind: "beat", id: "pick", caption: "Hold a day to select it. Drag to choose a whole region. Narrow bars give better odds." },
   { at: 3 * 3_600, kind: "beat", id: "buy", caption: "Make the call: 20 VCR on days 6–7." },
   { at: 10 * 3_600, kind: "trade", from: 2, to: 3, stake: 15 },
   { at: 20 * 3_600, kind: "trade", from: 8, to: 9, stake: 10 },
@@ -48,8 +48,8 @@ export const STEPS: Step[] = [
   { at: 3 * DAY + 9 * 3_600, kind: "trade", from: 5, to: 7, stake: 40 },
   { at: 3 * DAY + 10 * 3_600, kind: "trade", from: 5, to: 6, stake: 30 },
   { at: 3 * DAY + 11 * 3_600, kind: "trade", from: 6, to: 6, stake: 25 },
-  { at: 3 * DAY + 12 * 3_600, kind: "beat", id: "news", caption: "News: the vet says \"any day now, probably day 6 or 7\". Traders pile in, and your window jumps." },
+  { at: 3 * DAY + 12 * 3_600, kind: "beat", id: "news", caption: "News: the vet says \"any day now, probably day 6 or 7\". Traders pile in, and your slots shoot up in value." },
   { at: 3 * DAY + 13 * 3_600, kind: "beat", id: "choice", caption: "Cash out now, or hold for the full payout?" },
-  { at: 4 * DAY + 12 * 3_600, kind: "beat", id: "locked", caption: "Within a day of now, a window can't be bought or sold. That stops anyone trading on what they've just seen." },
+  { at: 4 * DAY + 12 * 3_600, kind: "beat", id: "locked", caption: "There is no buying and selling of slots within the next 24 hours, which means predictions are \"locked in\" within that time." },
   { at: 6 * DAY + 3 * 3_600, kind: "beat", id: "happens", caption: "Day 7, 3 a.m.: the kittens arrive. Windows that contain the moment pay 1 VCR per share." },
 ];
