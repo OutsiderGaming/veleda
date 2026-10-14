@@ -1,0 +1,13 @@
+/* Full-bleed across the app column (Shell pads it by 20px), about 45% of the screen tall. */
+.hero {
+  position: relative; overflow: hidden;
+  margin: -6px -20px 18px;
+  height: min(46svh, 600px);
+  background: var(--bg);
+  /* Soften the bottom edge into the page. */
+  mask-image: linear-gradient(to bottom, #000 82%, transparent);
+}
+.stage { position: absolute; inset: 0; will-change: transform; }
+.layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.idle, .end { opacity: 0; transition: opacity 150ms linear; }
+.hero[data-phase="idle"] .idle, .hero[data-phase="end"] .end { opacity: 1; }

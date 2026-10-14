@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { MiniBand } from "@/components/MiniBand";
+import { Seer } from "@/components/Seer";
 import { useMarkets } from "@/lib/client/markets";
 import { endLabel, pct } from "@/lib/veleda/timeline";
 import s from "./home.module.css";
@@ -10,6 +11,7 @@ export default function Home() {
   const { markets, error } = useMarkets();
   return (
     <>
+      <Seer />
       <h1 className={s.title}>Call when it happens.</h1>
       <p className={s.tagline}>Pick any window of time. The narrower it is, the more it pays.</p>
       <Link href="/practice" className={s.practice}>
