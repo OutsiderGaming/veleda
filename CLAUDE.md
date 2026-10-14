@@ -48,6 +48,10 @@ Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" 
 - Devnet VCR mint: `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP` (6 decimals, classic SPL Token).
 - `keys/`: devnet keypairs, gitignored. Never commit or print private keys.
 
+## Git workflow
+
+- Commit each finished, tested step locally, but **never `git push` without an explicit go-ahead**. The user often bundles several small changes into one push, and every push to `main` deploys the live app.
+
 ## Stack (from the spec)
 
 Anchor program on devnet · React mobile-first PWA with the Solana wallet adapter · **Privy** embedded wallets (Solana; free Developer tier) · server fee payer + 100-token sign-up airdrop · plain share links at `/m/<market>?from=&to=` (Blinks are roadmap only) · trader-bot script to seed markets.
