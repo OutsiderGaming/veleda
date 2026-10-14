@@ -1,4 +1,4 @@
-.title { font: 600 clamp(19px, 6.2vw, 28px)/1.15 var(--serif); text-transform: uppercase; letter-spacing: 0.1em; text-align: center; margin: 6px 0 20px; }
+.title { font: 600 clamp(19px, 6.2vw, 28px)/1.15 var(--serif); text-transform: uppercase; letter-spacing: 0.1em; text-align: center; margin: 16px 0 30px; }
 .section { font: 600 13px var(--serif); text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-2); margin: 0 0 12px; }
 .card {
   display: block; text-decoration: none; color: var(--text);
