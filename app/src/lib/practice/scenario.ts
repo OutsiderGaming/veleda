@@ -37,9 +37,10 @@ export type Step =
  * slider snaps.
  */
 export const STEPS: Step[] = [
-  { at: 0, kind: "beat", id: "timeline", caption: "Each bar is a day. Its width is the crowd's odds that the kittens arrive then. The bar at the bottom is \"not by day 10\"." },
-  { at: 1 * 3_600, kind: "beat", id: "pick", caption: "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." },
-  { at: 2 * 3_600, kind: "beat", id: "buy", caption: "Make the call: 20 VCR on days 6–7." },
+  { at: 0, kind: "beat", id: "question", caption: "Every market is one question about when something will happen. This one asks when Luna the cat will have her kittens." },
+  { at: 1 * 3_600, kind: "beat", id: "timeline", caption: "Below the question, time is split into slots: days here, but hours or months in other markets. Each bar's width is the crowd's odds that the kittens arrive in that slot. The bottom bar is \"not by day 10\"." },
+  { at: 2 * 3_600, kind: "beat", id: "pick", caption: "Drag to choose when you think it happens. Narrow windows are cheap and pay big; wide ones are safer." },
+  { at: 3 * 3_600, kind: "beat", id: "buy", caption: "Make the call: 20 VCR on days 6–7." },
   { at: 10 * 3_600, kind: "trade", from: 2, to: 3, stake: 15 },
   { at: 20 * 3_600, kind: "trade", from: 8, to: 9, stake: 10 },
   { at: 30 * 3_600, kind: "trade", from: 4, to: 5, stake: 12 },

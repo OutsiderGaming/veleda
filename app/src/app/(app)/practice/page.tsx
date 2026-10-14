@@ -35,9 +35,12 @@ export default function Practice() {
   const quote = useMemo(() => quoteAtBuy(window), [window]);
   const beatIndex = BEATS.findIndex((b) => b.id === snap.beat.id);
 
-  // Keep the user's window in view as the story moves on.
+  // Scroll to what the caption talks about: the question first, then the start of the
+  // timeline, then the user's window as the story moves on.
   useEffect(() => {
-    const row = document.querySelector<HTMLElement>(`[data-bar="${window.from}"]`);
+    const id = snap.beat.id;
+    if (id === "question") { scrollTo({ top: 0, behavior: "smooth" }); return; }
+    const row = document.querySelector<HTMLElement>(`[data-bar="${id === "timeline" ? 0 : window.from}"]`);
     if (!row) return;
     const top = row.getBoundingClientRect().top + scrollY - innerHeight * 0.22;
     scrollTo({ top: Math.max(0, top), behavior: "smooth" });
@@ -56,25 +59,23 @@ export default function Practice() {
         <span className={s.tag}>PRACTICE · SIMULATED PRICES</span>
         <button className={s.restart} onClick={() => { setT(0); setCashOut(false); setWindow(S.window); }}>Restart</button>
       </div>
-      <h1 className={s.question}>{S.question}</h1>
+      <h1 className={`${s.question} ${snap.beat.id === "question" ? s.spotlight : ""}`}>{S.question}</h1>
       <div className={s.clock}>{clock}</div>
 
       <div className={s.caption}>
         <div className={s.step}>STEP {beatIndex + 1} OF {BEATS.length}</div>
         <p className={s.text}>{snap.beat.caption}</p>
 
-        {t < buyAt && (
+        {t < buyAt && snap.beat.id === "pick" && (
           <>
             <div className={s.figures}>
               <Fig label="Your window" value={days(window)} />
               <Fig label="Crowd odds" value={pct(quote.price)} />
               <Fig label="Pays" value={`×${fmtMult(quote.multiplier)}`} copper />
             </div>
-            {snap.beat.id === "pick" && (
-              <button className={s.primary} onClick={() => move(buyAt)}>
-                PREDICT THE FUTURE <span className={s.sep} /> {S.stake} VCR
-              </button>
-            )}
+            <button className={s.primary} onClick={() => move(buyAt)}>
+              PREDICT THE FUTURE <span className={s.sep} /> {S.stake} VCR
+            </button>
           </>
         )}
 

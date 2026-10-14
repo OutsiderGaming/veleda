@@ -1,7 +1,8 @@
 .tag { display: inline-block; border: 1px solid var(--copper); color: var(--copper); border-radius: 999px; padding: 4px 12px; font: 700 11px var(--sans); letter-spacing: 0.14em; }
 .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .restart { background: none; border: 0; color: var(--muted); font: 500 14px var(--sans); cursor: pointer; }
-.question { font: 600 24px/1.2 var(--sans); margin: 4px 0 6px; }
+.question { font: 600 24px/1.2 var(--sans); margin: 4px 0 6px; transition: color 300ms; }
+.spotlight { color: var(--copper-light); }
 .clock { color: var(--copper-light); font: 600 15px var(--sans); margin-bottom: 14px; font-variant-numeric: tabular-nums; }
 .caption {
   position: fixed; left: 0; right: 0; z-index: 16; margin: 0 auto; max-width: 480px;
