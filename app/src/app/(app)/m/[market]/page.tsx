@@ -3,9 +3,11 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { BuySheet } from "@/components/BuySheet";
+import { RulesSheet } from "@/components/RulesSheet";
 import { Timeline, fmtMult, type Range } from "@/components/Timeline";
 import { marketNowSec, useMarket, type MarketView } from "@/lib/client/markets";
 import { useSession } from "@/lib/client/session";
+import { rulesFor } from "@/lib/veleda/rules";
 import { defaultZoom, formatDate, formatWindow, multiplierFor, ZOOM_LABEL, zoomsFor, type Zoom } from "@/lib/veleda/timeline";
 import s from "./market.module.css";
 
@@ -41,6 +43,7 @@ function Loaded({ market: m }: { market: MarketView }) {
   const [zoom, setZoom] = useState<Zoom>(() => defaultZoom(market));
   const [selection, setSelection] = useState<Range | null>(null);
   const [sheet, setSheet] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // Share links: /m/<market>?from=&to= opens with that window selected and the sheet up.
@@ -63,6 +66,7 @@ function Loaded({ market: m }: { market: MarketView }) {
   }, [toast]);
 
   const lock = `${market.lockSeconds / 3600}h`;
+  const rules = rulesFor(market.name, market);
   const mine = (positions ?? []).filter((p) => p.market === market.name).map((p) => ({ from: p.from, to: p.to }));
   const unit = zoom === "month" ? "month" : zoom === "year" ? "year" : zoom === "day" ? "day" : "hour";
 
@@ -76,8 +80,13 @@ function Loaded({ market: m }: { market: MarketView }) {
       <h1 className={s.question}>{market.question}</h1>
       <div className={s.meta}>
         <span>{Math.round(market.volume).toLocaleString("en-GB")} VCR traded</span>
-        <span>{market.resolves}</span>
+        {rules ? (
+          <button className={s.rulesLink} onClick={() => setShowRules(true)}>View resolution criteria</button>
+        ) : (
+          <span>{market.resolves}</span>
+        )}
       </div>
+      {showRules && rules && <RulesSheet question={market.question} rules={rules} onClose={() => setShowRules(false)} />}
       {market.resolved && market.winner !== null && (
         <div className={s.resolved}>
           Resolved: {market.winner === market.atoms ? `not by ${formatDate(market, market.atoms - 1)}` : formatDate(market, market.winner)}
