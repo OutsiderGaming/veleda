@@ -191,3 +191,43 @@ In build order; each step should leave the app working.
 - Link to first position in under 60 seconds, three times in a row.
 - Practice mode plays the whole story and scrubs both ways.
 - The copy audit passes.
+
+## Week 4: ship it
+
+Goal from the hackathon spec: one-command setup script and README, seeded markets, the demo video (~2:25) and rehearsals. Done when a stranger can run the repo from the README and the demo script runs end to end twice without intervention. Drafted 14 Oct 2026; nothing here is built yet.
+
+### Decisions
+
+| Area | Decision |
+| --- | --- |
+| Setup script | `npm run setup` runs `scripts/setup.sh`. Default mode: install both projects, check `.env`, run the app against the live devnet markets (README step 3). `--own` mode: everything in README step 4 (keys, devnet SOL, build and deploy, mint and metadata, both markets, one bot round). It updates the program address in the four files listed in step 4 itself, so a stranger doesn't have to |
+| Repo visibility | Open (14 Oct 2026): the repo is private and judges need to read it. Making it public also makes the bots' GitHub Actions minutes free (tighten the schedule then, as the week 3 Bots decision says). Only `keys/README.md` and `.env.example` are committed (checked 14 Oct 2026), but scan the history once more before switching |
+| Recording | Open: phone screen recording plus voiceover, or a capture of a phone-width browser window; which editor; whether to use the news-broadcast framing (hackathon spec, "Demo script") |
+| Deadline | Open: confirm the Encode submission deadline and portal, and work back from it |
+
+### Steps
+
+- [ ] **Setup script** (`scripts/setup.sh`, `npm run setup`), both modes. Fails early with a plain message when a tool is missing (Node, and for `--own`: Rust, Solana CLI, Anchor) or the devnet faucet rate-limits (print the address and point to a web faucet).
+- [ ] **Fresh-clone test**: clone into an empty directory and follow only the README, default mode then `--own`. Fix the README wherever it falls short. This is the "stranger can run it" check.
+- [ ] **README finish**: a screenshot of the real app (timeline plus buy sheet; the README has none yet); the demo video link once it exists; a line on practice mode. Check the "How Solana powers Veleda" claims against the build (below).
+- [ ] **Measure the tree claim**: count the nodes a `buy_range` touches on the flagship (732 atoms) and record the compute units for a 1-day and a 1-year window. Then either keep "about 16 nodes" in `docs/05-submission-copy.md` or replace it with the measured figure.
+- [ ] **Seed for recording**: re-create the fast market (`node scripts/create-markets.ts fast`, then update `MARKETS_JSON` on Vercel); run a bot burst so both bands have fresh shape and the fast market has some volume (Home shows "0 VCR traded" today).
+- [ ] **Demo accounts**: a fresh email alias for beat 2 (first call), a second phone or browser for beat 4 (share), and an account holding a fast-market position for beats 5–6 that lands in profit when the clock moves.
+- [ ] **Admin run sheet**: the exact `scripts/admin.ts fast` commands for beats 5–6 (how far to move the clock, which atom to resolve on), tried once off camera so the cash-out figure visibly climbs and the claim pays.
+- [ ] **Narration**: final voiceover text for the seven beats, timed to ~2:25; decide whether a few seconds of practice mode go after beat 1.
+- [ ] **Rehearse**: the full demo script twice in a row without intervention (the week's exit check).
+- [ ] **Record**: the main video, plus a backup recording of the full live run in case devnet is slow on the day.
+- [ ] **Final checks on the day**: copy audit again; stopwatch test once more on the live URL; both markets open and seeded.
+- [ ] **Submission**: final project description and "How Solana powers Veleda" from `docs/05-submission-copy.md`; repo link, live link and video link; tick the hackathon spec's submission checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
+
+### Optional, if there's room
+
+- A free RPC tier (e.g. Helius) in `SOLANA_RPC_URL` for faster positions and history. Needs a sign-up: the user's call.
+- Phantom/Solflare through Privy's connectors (week 3 stretch goal; cut first if time is short, per the hackathon spec).
+
+### Week 4 is done when
+
+- A stranger can run the repo from the README, in either mode.
+- The demo script runs end to end twice without intervention.
+- The video (2–4 minutes) and a backup recording exist.
+- Every item in the hackathon spec's submission checklist is ticked.
