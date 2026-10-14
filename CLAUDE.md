@@ -1,6 +1,6 @@
 # Veleda — onboarding for Claude Code
 
-Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype for the **Colosseum hackathon, "Best Consumer App on Solana" track** (October 2026), deployed on devnet.
+Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype for the **Encode Club Solana Hackathon, "Best Consumer App on Solana" track** (starting 12 Oct 2026), deployed on devnet.
 
 **Status: week 2 done (13 Oct 2026); week 3 next.** Weeks 1–2: reference model, Rust maths and engine (cross-checked on 26,000 trades), the Anchor program with all seven instructions live on devnet, both markets created (`markets.json`), trade endpoints, trader bots, and the Privy onboarding proof. Week 2 checks passed (Privy buy/sell on 13 Oct; bots trading). Next: week 3, the web app (checklist in the build plan). Work from `docs/06-build-plan.md`.
 

@@ -1,6 +1,6 @@
 # Veleda — Submission copy (drafts)
 
-Drafted 12 Oct 2026 for the Colosseum "Best Consumer App on Solana" submission form.
+Drafted 12 Oct 2026 for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
 
 ## Project description
 

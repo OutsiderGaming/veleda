@@ -4,7 +4,7 @@ Oct 12, 2026 · @Outsider Gaming
 
 ## What Veleda is
 
-Veleda is a "when will it happen" prediction market on Solana, being built as a four-week prototype for the Colosseum hackathon's Best Consumer App track. Users buy any contiguous window of future time (an hour, a day, a month) as one trade; narrow windows are cheap and pay big, wide ones cost more and pay less. Positions can be cashed out at any time as the crowd moves. Named after a 1st-century Germanic seeress who predicted Rome's defeat ("VEL-eh-dah"); tagline "the market of seers". Earlier working names, now retired: Longshot, Twelvescore, Vatum.
+Veleda is a "when will it happen" prediction market on Solana, being built as a four-week prototype for the Encode Club Solana Hackathon's Best Consumer App track. Users buy any contiguous window of future time (an hour, a day, a month) as one trade; narrow windows are cheap and pay big, wide ones cost more and pay less. Positions can be cashed out at any time as the crowd moves. Named after a 1st-century Germanic seeress who predicted Rome's defeat ("VEL-eh-dah"); tagline "the market of seers". Earlier working names, now retired: Longshot, Twelvescore, Vatum.
 
 ## Decisions made
 

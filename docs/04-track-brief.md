@@ -1,4 +1,4 @@
-# Best Consumer App on Solana
+# Best Consumer App on Solana (Encode Club Solana Hackathon)
 
 **Prize:** Accelerator places for winning teams (non-cash prize).
 
