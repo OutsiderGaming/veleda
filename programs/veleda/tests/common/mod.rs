@@ -326,6 +326,7 @@ pub fn flagship_args() -> CreateMarketArgs {
         end_price_ppm: 650_000,
         floor_ppm: 100,
         shape: shape.iter().map(|&(atom, weight)| ShapePoint { atom, weight }).collect(),
+        clock_offset: 0,
     }
 }
 
@@ -341,5 +342,6 @@ pub fn fast_args() -> CreateMarketArgs {
         end_price_ppm: (1_000_000 / 169) as u32,
         floor_ppm: 0,
         shape: vec![],
+        clock_offset: 0,
     }
 }

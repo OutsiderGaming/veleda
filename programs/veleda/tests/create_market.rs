@@ -64,6 +64,38 @@ fn rejects_wrong_account_size() {
 }
 
 #[test]
+fn demo_market_can_start_in_the_future() {
+    // A fictional scenario set ~2 years ahead: the clock and atom 0 both start there.
+    let mut env = Env::new();
+    let offset = 730 * DAY + 1_234;
+    let created = env.create_market(veleda::CreateMarketArgs { clock_offset: offset, ..fast_args() }).unwrap();
+    let market = created.market;
+    let h = env.header(&market);
+    let now = START + offset;
+    assert_eq!((h.clock_offset, h.start_time), (offset, now - now.rem_euclid(HOUR)));
+
+    // Nothing has elapsed on the market's clock, and trading follows it: hour 1 is still
+    // inside the 1-hour locked zone, hour 2 is open.
+    env.advance_time(&market).unwrap();
+    assert_eq!(env.header(&market).live_edge, 0);
+    let user = env.new_user(100);
+    expect_error(env.buy(&market, &user, 0, 1, 1, BASE, 10 * BASE), "Locked");
+    env.buy(&market, &user, 0, 2, 3, BASE, 10 * BASE).unwrap();
+    env.check_invariant(&market);
+
+    // The clock still only moves forward from the starting offset.
+    expect_error(env.set_clock_offset(&market, offset - 1), "ClockBackwards");
+    env.set_clock_offset(&market, offset + 5 * HOUR).unwrap();
+}
+
+#[test]
+fn only_demo_markets_start_with_a_clock_offset() {
+    let mut env = Env::new();
+    expect_error(env.create_market(veleda::CreateMarketArgs { clock_offset: DAY, ..flagship_args() }), "NotDemo");
+    expect_error(env.create_market(veleda::CreateMarketArgs { clock_offset: -HOUR, ..fast_args() }), "ClockBackwards");
+}
+
+#[test]
 fn rejects_bad_params_and_priors() {
     let mut env = Env::new();
     expect_error(env.create_market(veleda::CreateMarketArgs { atoms: 0, ..fast_args() }), "BadParams");

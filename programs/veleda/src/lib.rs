@@ -39,6 +39,9 @@ pub struct CreateMarketArgs {
     pub floor_ppm: u32,
     /// Opening shape of the timed atoms (see `prior.rs`); empty for flat.
     pub shape: Vec<ShapePoint>,
+    /// Demo markets only (0 otherwise): the clock starts this far ahead of chain time, and so
+    /// does atom 0, e.g. to set a clearly fictional scenario in the future. Never negative.
+    pub clock_offset: i64,
 }
 
 #[program]
@@ -47,7 +50,8 @@ pub mod veleda {
 
     /// Writes the parameters and opening prices, then moves the subsidy
     /// (b · ln(1 / lowest opening price)) from the admin into the vault.
-    /// Atom 0 starts at the current atom boundary (UTC midnight for daily markets).
+    /// Atom 0 starts at the current atom boundary of the market clock (UTC midnight for daily
+    /// markets); a demo market created with a clock offset starts that far ahead.
     pub fn create_market(ctx: Context<CreateMarket>, args: CreateMarketArgs) -> Result<()> {
         let a = &args;
         require!(
@@ -55,7 +59,9 @@ pub mod veleda {
             VeledaError::BadParams
         );
         let prior = prior::opening_prices(a.atoms, a.end_price_ppm, a.floor_ppm, &a.shape).ok_or(VeledaError::BadPrior)?;
-        let now = Clock::get()?.unix_timestamp;
+        require!(a.clock_offset >= 0, VeledaError::ClockBackwards);
+        require!(a.demo || a.clock_offset == 0, VeledaError::NotDemo);
+        let now = Clock::get()?.unix_timestamp + a.clock_offset;
 
         let market_info = ctx.accounts.market.to_account_info();
         let subsidy = {
@@ -70,7 +76,7 @@ pub mod veleda {
                 start_time: now - now.rem_euclid(a.atom_seconds),
                 lock_seconds: a.lock_seconds,
                 lag_seconds: a.lag_seconds,
-                clock_offset: 0,
+                clock_offset: a.clock_offset,
                 balance: 0,
                 lp_fees: 0,
                 platform_fees: 0,

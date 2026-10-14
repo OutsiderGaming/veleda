@@ -43,13 +43,13 @@ Run two markets: a flagship that shows the real use case, and a fast one that sh
 
 | Parameter | Flagship | Fast demo |
 | --- | --- | --- |
-| Question | "When will Taylor Swift's first child be born?" Natural timing, resolving on the reported date of birth | A staged event resolved live during judging |
+| Question | "When will Taylor Swift's first child be born?" Natural timing, resolving on the reported date of birth | "When will BTC first hit $200,000?" A clearly fictional scenario set in the week of 12 June 2028 (tagged "Fictional · 2028"), played out and resolved live in the demo |
 | Atom size | Day | Hour |
 | Window | 3 years (1,096 daily atoms + end-date atom) | 7 days (168 atoms + end-date atom) |
 | b | 1,000 VCR | 100 VCR |
 | Opening prior | "Not by end date" at 65%. The other 35% over the three years: near zero (the 0.01% floor) for the first ~6 months, then curving up to a peak around the end of year 2, then easing slightly down through year 3 | Flat |
 | Locked zone | 72 hours | 1 hour |
-| Clock offset | Always 0 | Admin-settable, so time can move forward during the demo |
+| Clock offset | Always 0 | Starts ~20 months ahead (set at creation, so atom 0 is 12 June 2028); admin-settable, so time can move forward during the demo |
 | Live-edge lag | 24 hours | 10 minutes |
 | Resolution | Admin, day precision. The calendar date of birth (local to the place of birth) as reported by at least 5 of 10 named outlets; if they disagree, the date reported by the most outlets. If fewer than 5 report, the bar isn't met and the market stays unresolved. The quorum can be tuned. Draft list: Associated Press, Reuters, BBC News, CNN, The New York Times, People, TMZ, E! News, Billboard, Variety | Admin, hour precision |
 
@@ -175,7 +175,7 @@ Specced so the design is ready, but none of this is needed for the demo: the fla
 
 **Void if it already happened**
 
-- **Rule:** if the event happened before the market opened, the market is voided (flagship: the birth; fast market: the staged event).
+- **Rule:** if the event happened before the market opened, the market is voided (flagship: the birth; the fast market is fictional, so it doesn't apply).
 - **`resolve`** can mark the market void instead of recording a winner.
 - **Position account** records the net amount paid (stakes including fees, minus net cash-out proceeds).
 - **`claim`** on a void market refunds that amount, never below 0.

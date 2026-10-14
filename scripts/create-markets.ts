@@ -17,9 +17,14 @@ import { FAST, FLAGSHIP, PROGRAM_ID, ata, createAtaIdempotent, createMarket, dec
 
 const RPC = process.env.SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
 const OUT = process.env.MARKETS_FILE ?? "markets.json";
-const PRESETS: Record<string, { args: MarketArgs; question: string; resolves: string }> = {
+// `startAt` (demo markets only) sets a fictional scenario in the future: the market's clock and
+// atom 0 start there, via create_market's clock offset. `tag` is shown beside the question in the app.
+const PRESETS: Record<string, { args: MarketArgs; question: string; resolves: string; tag?: string; startAt?: string }> = {
   flagship: { args: FLAGSHIP, question: "When will Taylor Swift's first child be born?", resolves: "Resolves on the reported birth date" },
-  fast: { args: FAST, question: "Fast demo market", resolves: "Staged event · resolves live in the demo" },
+  fast: {
+    args: FAST, question: "When will BTC first hit $200,000?", resolves: "Fictional scenario · resolves live in the demo",
+    tag: "Fictional · 2028", startAt: "2028-06-12T00:00:00Z",
+  },
 };
 
 const which = process.argv.slice(2);
@@ -45,7 +50,11 @@ record.mint = mint.toBase58();
 record.markets ??= {};
 
 for (const name of which) {
-  const { args, question, resolves } = PRESETS[name];
+  const { question, resolves, tag, startAt } = PRESETS[name];
+  // Offset from chain time (not this machine's clock), so atom 0 lands on `startAt`; the 30 s
+  // margin keeps it there even if the block time we read runs a little ahead of execution.
+  const chainNow = (await conn.getBlockTime(await conn.getSlot()))!;
+  const args = { ...PRESETS[name].args, clockOffset: startAt ? Date.parse(startAt) / 1000 - chainNow + 30 : 0 };
   const market = Keypair.generate();
   const space = marketAccountLen(args.atoms);
   const rent = await conn.getMinimumBalanceForRentExemption(space);
@@ -69,6 +78,7 @@ for (const name of which) {
     address: market.publicKey.toBase58(),
     question,
     resolves,
+    ...(tag && { tag }),
     createdAt: new Date().toISOString(),
     startTime: h.startTime,
     ...Object.fromEntries(Object.entries(args).map(([k, v]) => [k, typeof v === "bigint" ? Number(v) : v])),

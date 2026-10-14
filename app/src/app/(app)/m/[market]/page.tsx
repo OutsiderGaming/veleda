@@ -77,6 +77,7 @@ function Loaded({ market: m }: { market: MarketView }) {
 
   return (
     <>
+      {market.tag && <div className={s.tagRow}><span className={s.tag}>{market.tag}</span></div>}
       <h1 className={s.question}>{market.question}</h1>
       <div className={s.meta}>
         <span>{Math.round(market.volume).toLocaleString("en-GB")} VCR traded</span>

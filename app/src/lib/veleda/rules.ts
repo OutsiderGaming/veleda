@@ -38,9 +38,9 @@ const RULES: Record<string, (m: M) => Rules> = {
   }),
   fast: (m) => ({
     body: [
-      "A staged event, run live during the demo so you can see a market resolve. The hour in which the event is triggered is the winning slot.",
-      "This market's clock can be moved forward on camera, so its hours pass faster than real time.",
-      `If the event hasn't happened by the end of the timeline, “${endLabel(m)}” wins.`,
+      "A fictional scenario set in June 2028, so you can watch a market play out from start to finish. Nothing here reflects real BTC prices or predicts them.",
+      "In the story, the market resolves to the hour in which BTC first trades at or above $200,000. The Veleda team plays the scenario out live during the demo and moves this market's clock forward on camera, so its hours pass faster than real time.",
+      `If BTC hasn't hit $200,000 by the end of the timeline, “${endLabel(m)}” wins.`,
       settle,
       lock(m),
     ],

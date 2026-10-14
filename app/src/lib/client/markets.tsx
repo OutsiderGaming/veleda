@@ -11,6 +11,8 @@ export interface MarketView {
   question: string;
   /** One line on how it resolves. */
   resolves: string;
+  /** Short label shown beside the question, e.g. "Fictional · 2028". */
+  tag: string | null;
   atoms: number;
   atomSeconds: number;
   startTime: number;

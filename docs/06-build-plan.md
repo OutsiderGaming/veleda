@@ -173,7 +173,7 @@ In build order; each step should leave the app working.
 
 ### Open items (13 Oct 2026)
 
-- The fast market's question is still the placeholder "Fast demo market" (the spec only says "a staged event"). Suggestion: something we can stage on camera, e.g. "When will we ring the Veleda bell?".
+- Fast market (14 Oct 2026): "When will BTC first hit $200,000?", a fictional scenario tagged "Fictional · 2028". `create_market` gained a `clock_offset` argument (demo markets only, never negative) so the market's clock and atom 0 can start in the future; program upgraded on devnet, market re-created at `77g45iFp7ZCsXKcMoJJGu1EuHH3gUiUzMuESKsj47Kq5` (atom 0 = 12 June 2028 00:00 UTC). `scripts/admin.ts fast status | clock +3h | advance | resolve <atom|ISO time|end>` runs it on camera. Re-creating it changes the address: update `MARKETS_JSON` on Vercel each time.
 - The public devnet RPC rate-limits bursts (429s). Fine for the demo with retries, but a free RPC tier (e.g. Helius's free plan) in `SOLANA_RPC_URL` would make positions and history snappier. It needs a sign-up, so it's the user's call.
 - "Not by end date" is labelled with its cutoff ("Not by 12 October 2029"; hourly markets give the end time), on the timeline, the window text and the Home cards (13 Oct 2026, user request).
 - Releasing a drag opens the buy sheet straight away (mockup: "Release to see your price"); the alternative is a tag that needs one more tap.

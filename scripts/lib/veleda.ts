@@ -70,6 +70,8 @@ export function createAtaIdempotent(payer: PublicKey, owner: PublicKey, mint: Pu
 export interface MarketArgs {
   atoms: number; atomSeconds: number; b: bigint; lockSeconds: number; lagSeconds: number; demo: boolean;
   endPricePpm: number; floorPpm: number; shape: [atom: number, weight: number][];
+  /** Demo markets only: start the market's clock (and atom 0) this many seconds ahead of chain time. */
+  clockOffset?: number;
 }
 
 /**
@@ -114,6 +116,7 @@ function encodeArgs(a: MarketArgs): Buffer {
   return Buffer.concat([
     u32(a.atoms), i64(a.atomSeconds), u64(a.b), i64(a.lockSeconds), i64(a.lagSeconds), Buffer.from([a.demo ? 1 : 0]),
     u32(a.endPricePpm), u32(a.floorPpm), u32(a.shape.length), ...a.shape.flatMap(([atom, weight]) => [u32(atom), u32(weight)]),
+    i64(a.clockOffset ?? 0),
   ]);
 }
 

@@ -23,6 +23,7 @@ export default function Home() {
         {!markets && !error && [0, 1].map((i) => <div key={i} className={s.skeleton} />)}
         {markets?.map((m) => (
           <Link key={m.name} href={`/m/${m.name}`} className={s.card}>
+            {m.tag && <span className={s.tag}>{m.tag}</span>}
             <h2 className={s.question}>{m.question}</h2>
             <div className={s.meta}>
               <span>{Math.round(m.volume).toLocaleString("en-GB")} VCR traded</span>
