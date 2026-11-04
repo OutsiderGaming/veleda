@@ -97,6 +97,14 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
     }
   }, [autoBuy, authenticated, address, airdropping, balance, stake, market.resolved, q.shares, placeCall]);
 
+  // Signed in, but the wallet hasn't connected. Private tabs can block it, and it would never arrive.
+  const [walletSlow, setWalletSlow] = useState(false);
+  useEffect(() => {
+    if (!authenticated || address) return setWalletSlow(false);
+    const t = setTimeout(() => setWalletSlow(true), 12_000);
+    return () => clearTimeout(t);
+  }, [authenticated, address]);
+
   const pickStake = (v: number) => {
     setStake(v);
     setAutoBuy(false);
@@ -190,6 +198,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
             <div className={s.detail}>
               {Math.round(shares).toLocaleString("en-GB")} shares · 3.5% fee included · cancels if price passes {pctFine(cancelAt)}
             </div>
+            {walletSlow && <div className={s.error}>Your wallet is taking a while. If you&apos;re in a private tab, open this link in your normal browser.</div>}
             {error && <div className={s.error}>{error}</div>}
             <div>
               <button className={s.primary} disabled={disabled} onClick={buy}>{label}</button>
