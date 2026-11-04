@@ -19,7 +19,7 @@ Every window can also be shared as a link that opens straight onto it, so a frie
 
 A new user signs in with Google or email, Veleda creates a wallet for them, and they can make their first call with free test credits in under a minute.
 
-Adding real money would be the one slower step: the first card deposit goes through a payment partner's identity check, and funds then arrive as USDC in the user's own wallet, shown simply as dollars. Anyone who already holds USDC can deposit directly. The platform pays network fees, so nobody has to buy SOL or handle a seed phrase.
+Adding real money would be the one slower step: the first card deposit goes through a payment partner's ID and eligibility checks, and funds then arrive as USDC in the user's own wallet, shown simply as dollars. Anyone who already holds USDC can deposit directly. The platform pays network fees, so nobody has to buy SOL or handle a seed phrase.
 
 **This prototype runs on devnet with test money: the deposit is simulated, while every trade, cash-out and payout is real on-chain.** Real-money launch depends on licensing and legal advice. The demo video and the "launch preview" link show this flow, clearly labelled.
 

@@ -68,7 +68,7 @@ export function AddMoneySheet() {
           <>
             <h2 id="add-money-title" className={s.title}>Verify your identity</h2>
             <p className={s.lead}>First deposit only.</p>
-            <p className={s.text}>At launch you&apos;d confirm your country and age, and our payment partner would ask for ID. It&apos;s the one slower step, and it can take a few minutes.</p>
+            <p className={s.text}>At launch you&apos;d confirm your country and age, then complete our payment partner&apos;s ID check and a few questions. It can take a few minutes.</p>
             <p className={s.note}>In this preview we skip it. Nothing is collected.</p>
             <button className={s.primary} onClick={() => setStep("pay")}>CONTINUE</button>
           </>
