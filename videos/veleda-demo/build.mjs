@@ -25,7 +25,7 @@ const PARTS = [
     ["l1", "Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front."],
     ["l2", "They'll set the opening odds, so a provider who knows the market better gives away less to the first traders, and they earn two and a half percent of every buy and sell. It isn't guaranteed profit, and the risk is real, but it's capped and it's priced."],
     ["l3", "And that's Veleda, a new form of prediction market where users can buy and sell future time, in any increment they want, whenever they want."],
-    ["l4", "Veleda. Tokenising the Future."]]],
+    ["l4", "Veleda. The market of seers."]]],
 ];
 const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
 const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol");
@@ -254,7 +254,7 @@ const t = (id, k = "s") => n3(T[id][k]);
   <div class="g usp" id="lu"><div class="uh serif">A new form of prediction market</div><div class="us">Buy and sell future time.</div>
     <div class="uc"><span class="uchip" id="uc1">Any increment</span><span class="uchip" id="uc2">Whenever they want</span></div>
     <div class="utl">${ubars}<div class="uw" id="uw"></div></div></div>
-  <div class="g end" id="le"><img src="assets/logo.png" alt="" /><div class="serif">Veleda</div><div>Tokenising the Future</div></div>`,
+  <div class="g end" id="le"><img src="assets/logo.png" alt="" /><div class="serif">Veleda</div><div>the market of seers</div></div>`,
   `const A=${t("l1")},B=${t("l2")},Bd=${n3(T.l2.d)},U=${t("l3")},Ud=${n3(T.l3.d)},E=${t("l4")};
   IN(["#lh","#lr"],A+.1);IN("#lc",A+.3);IN("#l1",A+${n3(T.l1.d * .55)});
   tl.fromTo("#lm",{scaleX:0},{scaleX:1,duration:.8,ease:"power2.out",immediateRender:false},A+${n3(T.l1.d * .6)});
