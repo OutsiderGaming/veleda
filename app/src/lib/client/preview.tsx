@@ -7,13 +7,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSession } from "./session";
 import { vcr } from "@/lib/veleda/timeline";
+import { launchPreviewOn } from "./preview-mode";
 
-const MODE_KEY = "veleda.preview";
 const depositKey = (address: string) => `veleda.preview.deposited.${address}`;
 
 interface Preview {
   active: boolean;
-  /** This wallet has made a simulated deposit, so amounts show as dollars. */
+  /** This wallet has made a simulated deposit, so the next one skips the identity step. */
   deposited: boolean;
   markDeposited: () => void;
   adding: boolean;
@@ -30,14 +30,7 @@ export function PreviewProvider({ children }: { children: ReactNode }) {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    const param = new URLSearchParams(location.search).get("preview");
-    try {
-      if (param === "launch") localStorage.setItem(MODE_KEY, "launch");
-      if (param === "off") localStorage.removeItem(MODE_KEY);
-      setActive(param === "launch" || (param !== "off" && localStorage.getItem(MODE_KEY) === "launch"));
-    } catch {
-      setActive(param === "launch");
-    }
+    setActive(launchPreviewOn());
   }, []);
 
   useEffect(() => {
@@ -69,9 +62,9 @@ export function usePreview(): Preview {
   return p;
 }
 
-/** Formats amounts as VCR, or as dollars once this wallet has made a simulated deposit (1 VCR stands in for $1). */
+/** Formats amounts as VCR, or as dollars throughout the launch preview (1 VCR stands in for $1). */
 export function useMoney() {
-  const { deposited: dollars } = usePreview();
+  const { active: dollars } = usePreview();
   return useMemo(
     () => ({
       dollars,

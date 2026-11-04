@@ -3,3 +3,5 @@ renders/
 snapshots/
 voice/scratch/
 contact.png
+.thumbnails/
+.waveform-cache/

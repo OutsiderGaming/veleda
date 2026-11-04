@@ -84,18 +84,24 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
   }
 
   // After sign-in: wait for the wallet and the 100 VCR, then place the call without a second tap.
+  // In the launch preview there are no free credits, so add money first, then place the call the same way.
+  const addMoneyOffered = useRef(false);
   const { authenticated, address, balance, airdropping } = session;
   useEffect(() => {
     if (!autoBuy || !authenticated || !address || airdropping || balance === null || market.resolved || q.shares <= 0) return;
+    if (preview.adding) return;
     if (balance >= stake) {
       setAutoBuy(false);
       clearPendingCall();
       void placeCall();
-    } else if (balance > 0) {
-      setAutoBuy(false); // too little for this stake: leave the choice to them
+    } else if (preview.active && !addMoneyOffered.current) {
+      addMoneyOffered.current = true;
+      preview.openAddMoney();
+    } else if (balance > 0 || preview.active) {
+      setAutoBuy(false); // too little for this stake, or they left the deposit: leave the choice to them
       clearPendingCall();
     }
-  }, [autoBuy, authenticated, address, airdropping, balance, stake, market.resolved, q.shares, placeCall]);
+  }, [autoBuy, authenticated, address, airdropping, balance, stake, market.resolved, q.shares, placeCall, preview]);
 
   // Signed in, but the wallet hasn't connected. Private tabs can block it, and it would never arrive.
   const [walletSlow, setWalletSlow] = useState(false);

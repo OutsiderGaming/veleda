@@ -1,6 +1,6 @@
 # Veleda — Demo run sheet
 
-Written 4 Nov 2026. The problem, one new user start to finish, why Solana, and liquidity providers, in about 3:30 (the limit is 2–4 minutes). Live app: https://veleda-veleda1.vercel.app
+Written 4 Nov 2026. The problem, one new user start to finish, why Solana, and liquidity providers, in about 3:30 to 3:45 (the limit is 2–4 minutes). Live app: https://veleda-veleda1.vercel.app
 
 ## Before each take
 
@@ -15,11 +15,11 @@ Run every command from the repo root.
 3. **Pause the scheduled bots** so prices hold still: `gh workflow disable bots.yml`. Turn them back on afterwards with `gh workflow enable bots.yml`.
 4. **Check the market:** `node scripts/admin.ts fast status` should say `open`, with a clock on 12 June 2028.
 5. **Prepare the phone.** Use a **normal tab, never a private one**, because private tabs can stop the wallet connecting. Sign in with a Google account that's new to Veleda, or delete a throwaway test user in the Privy dashboard so it counts as new.
-6. **Open** https://veleda-veleda1.vercel.app/?preview=launch and sign out if needed.
+6. **Open** https://veleda-veleda1.vercel.app/?preview=launch and sign out if needed. A new account starts at $0 here, with no free credits.
 
 ## The script
 
-About 3:30 in total (the limit is 4:00). The VO column is the narration. Parts 1, 3 and 4 are generated graphics. Part 2 is the phone recording.
+About 3:30 to 3:45 in total at a natural pace (the limit is 4:00). Times in the tables are approximate, and `build.mjs` sets the real ones. The VO column is the narration. Parts 1, 3 and 4 are generated graphics. Part 2 is the phone recording.
 
 ### Part 1: the problem (0:00–0:40)
 
@@ -29,19 +29,21 @@ About 3:30 in total (the limit is 4:00). The VO column is the narration. Parts 1
 | 0:12 | Mock of a typical market, labelled "Illustration": "BTC hits $200K by…?" with fixed dates, each with Yes and No | But ask them *when* something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that. |
 | 0:28 | The deadlines dissolve into one continuous timeline. A finger drags a window across it | Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price. |
 
-### Part 2: the whole flow (0:40–2:35)
+### Part 2: the whole flow, as it works at launch
 
-| Time | On screen | Do this | Voiceover |
+The label "How it works at launch. Shown on devnet: test money, simulated payment. Launch depends on licensing." stays on screen for the whole part. There is no stopwatch: the first deposit includes an ID check that takes minutes, so "under a minute" would not be true of this flow. It still holds for the free-credit path on the normal site.
+
+| Beat | On screen | Do this | Voiceover |
 |---|---|---|---|
-| 0:40 | Fast market (tagged Fictional · 2028) | Start the on-screen stopwatch | Here's someone who has never used Solana. They've opened a link, and they can browse without an account. This market is a fictional scenario we can run at speed: when will BTC first hit two hundred thousand dollars? |
-| 0:55 | **Window A: 14 June, midday to 6pm**, stake 20 | Drag, tap "predict the future", sign in with Google, wait | They drag across a stretch of time and make the call. One Google sign-in, and that's it. Behind the scenes, Veleda creates their wallet, gives them free test credits and pays the network fee. There's no seed phrase, and they never need to buy SOL. |
-| 1:15 | Success screen | Stop the stopwatch | First position, in under a minute. |
-| 1:20 | Add money: $50 → identity → payment | Tap "Add real money (preview)" and go through it | This next part is a preview of launch, with the payment simulated. You'd pay by card or mobile wallet, and it arrives as USDC in your own wallet, shown simply as dollars. The first deposit includes a standard ID check from our payment partner, and then you're in. |
-| 1:40 | **Window B: 15 June, 6am to midday**, stake $20 | Buy it, then open Positions | Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade. |
-| 1:50 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves. |
-| 2:05 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
-| 2:15 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out. |
-| 2:28 | Share link opens on a second phone | Open a shared link | And any window can be shared as a link, so a friend can back the same call. |
+| f1 | Fast market (tagged Fictional · 2028) | Open https://veleda-veleda1.vercel.app/?preview=launch signed out, and browse | Here's someone who has never used Solana. They open a link and can browse without an account. This is how Veleda will work at launch, shown here on devnet with test money and a simulated payment. The market is a fictional one we can run at speed: when will BTC first hit two hundred thousand dollars? |
+| f2 | **Window A: 14 June, midday to 6pm**, stake $20 | Drag, tap "predict the future", sign in with a Google account new to Veleda | They drag across a stretch of time and make the call. One Google sign-in creates their wallet. There's no seed phrase, and they never need to buy SOL, because Veleda pays the network fees. |
+| f3 | Add money: $50 → identity → payment | The sheet opens by itself. Go through it | Then they add money, by card or mobile wallet. The first deposit includes an ID check from our payment partner, which can take a few minutes, and only happens once. The money arrives as USDC in their own wallet, shown simply as dollars. |
+| f4 | Success screen | Tap Done. The call places itself | And their call goes straight through, with no second tap: twenty dollars on that window. |
+| f5 | **Window B: 15 June, 6am to midday**, stake $20 | Buy it, then open Positions | Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade. |
+| f6 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves. |
+| f7 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
+| f8 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance. |
+| f9 | Account, then a shared link on a second phone | Show "Withdrawing, at launch", then open a shared link | From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call. |
 
 ### Part 3: why Solana (2:35–3:05)
 
@@ -76,7 +78,6 @@ The project is `videos/veleda-demo`, and all timing comes from its audio files.
 
 1. Save each recorded beat as `footage/<beat>.mp4` (f1 to f9) and your voice as `voice/final/<beat>.wav`. The beat IDs are in `build.mjs`. Without a final voice file, a beat uses the scratch voice.
 2. Run `node build.mjs`, which regenerates the timing, captions and scenes. Don't hand-edit `index.html` or `compositions/`.
-3. **The stopwatch must show true elapsed time.** It currently counts narration time from the start of f1 to the start of f3, which is a placeholder. Once the footage is in, set it from the real recording.
 
 ## Expected figures
 

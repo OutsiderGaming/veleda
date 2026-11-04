@@ -7,6 +7,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useSignTransaction, useWallets } from "@privy-io/react-auth/solana";
 import { getBase64Decoder, getBase64Encoder } from "@solana/kit";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { launchPreviewOn } from "./preview-mode";
 
 export interface PositionView {
   address: string;
@@ -86,7 +87,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   // Sign-up airdrop: the first time we see this wallet with no VCR, ask for the 100 VCR (the route is idempotent).
   useEffect(() => {
-    if (!address || balance === null || balance > 0 || airdropTried.current === address) return;
+    // The launch preview has no free credits: a new user starts at zero and adds money, as they would at launch.
+    if (!address || balance === null || balance > 0 || airdropTried.current === address || launchPreviewOn()) return;
     airdropTried.current = address;
     setAirdropping(true);
     request("/api/airdrop", {})

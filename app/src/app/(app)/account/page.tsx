@@ -43,7 +43,7 @@ export default function Account() {
         </>
       ) : (
         <>
-          <p className={s.text}>Sign in with Google or email. We set up everything else, and you start with 100 VCR of test money.</p>
+          <p className={s.text}>{preview.active ? "Sign in with Google or email. We set up everything else, then you add money." : <>Sign in with Google or email. We set up everything else, and you start with 100 VCR of test money.</>}</p>
           <button className={s.primary} onClick={login}>Sign in</button>
           <Link href="/practice" className={s.link}>How it works →</Link>
         </>

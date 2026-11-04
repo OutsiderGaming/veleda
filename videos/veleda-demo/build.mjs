@@ -8,15 +8,15 @@ const PARTS = [
     ["p1b", "But ask them when something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that."],
     ["p1c", "Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price."]]],
   ["flow", [
-    ["f1", "Here's someone who has never used Solana. They've opened a link, and they can browse without an account. This market is a fictional scenario we can run at speed: when will BTC first hit two hundred thousand dollars?"],
-    ["f2", "They drag across a stretch of time and make the call. One Google sign-in, and that's it. Behind the scenes, Veleda creates their wallet, gives them free test credits and pays the network fee. There's no seed phrase, and they never need to buy SOL."],
-    ["f3", "First position, in under a minute."],
-    ["f4", "This next part is a preview of launch, with the payment simulated. You'd pay by card or mobile wallet, and it arrives as USDC in your own wallet, shown simply as dollars. The first deposit includes a standard ID check from our payment partner, and then you're in."],
+    ["f1", "Here's someone who has never used Solana. They open a link and can browse without an account. This is how Veleda will work at launch, shown here on devnet with test money and a simulated payment. The market is a fictional one we can run at speed: when will BTC first hit two hundred thousand dollars?"],
+    ["f2", "They drag across a stretch of time and make the call. One Google sign-in creates their wallet. There's no seed phrase, and they never need to buy SOL, because Veleda pays the network fees."],
+    ["f3", "Then they add money, by card or mobile wallet. The first deposit includes an ID check from our payment partner, which can take a few minutes, and only happens once. The money arrives as USDC in their own wallet, shown simply as dollars."],
+    ["f4", "And their call goes straight through, with no second tap: twenty dollars on that window."],
     ["f5", "Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade."],
     ["f6", "Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves."],
     ["f7", "No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit."],
-    ["f8", "Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out."],
-    ["f9", "And any window can be shared as a link, so a friend can back the same call."]]],
+    ["f8", "Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance."],
+    ["f9", "From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call."]]],
   ["tree", [
     ["s1", "So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices."],
     ["s2", "Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit."],
@@ -130,15 +130,15 @@ const t = (id, k = "s") => n3(T[id][k]);
 // ---------- 2. flow
 {
   const B = {
-    f1: ["The market", "Browse first. No account needed.", "Open the Fictional · 2028 BTC market. Start of the stopwatch.", "1-timeline-month"],
-    f2: ["One sign-in", "", "Drag window A: 14 June, midday to 6pm, stake 20. Tap predict the future. Sign in with Google.", "2-dragging-a-window"],
-    f3: ["First position", "Link to position, on the clock.", "Success screen. Stop the stopwatch.", "3-buy-sheet"],
-    f4: ["Adding money", "Launch preview. The payment is simulated.", "Add real money (preview): $50, then identity, then payment.", null],
+    f1: ["The market", "Browse first. No account needed.", "Open the Fictional · 2028 BTC market.", "1-timeline-month"],
+    f2: ["One sign-in", "", "Drag window A: 14 June, midday to 6pm, stake $20. Tap predict the future. Sign in with Google.", "2-dragging-a-window"],
+    f3: ["Add money", "Card or mobile wallet. ID check on the first deposit only.", "Add money opens by itself: $50, then identity, then payment.", null],
+    f4: ["The call goes through", "No second tap.", "Tap Done. The call places itself, then the success screen.", "3-buy-sheet"],
     f5: ["A second call", "Narrow pays more. Wide is safer.", "Window B: 15 June, 6am to midday, stake $20. Open Positions.", "3-buy-sheet"],
     f6: ["Time passes", "Admin control, on this demo market only.", "Positions updating after the clock moves.", "4-your-positions"],
     f7: ["Cash out", "A live price, any time.", "Cash out window A.", "4-your-positions"],
     f8: ["It happens", "Winning hour recorded on-chain.", "Tap Claim on window B.", "4-your-positions"],
-    f9: ["Share it", "Any window is a link.", "A shared link opens on a second phone.", null],
+    f9: ["Take it out", "To a bank or any wallet. Or share the window as a link.", "Account: Withdrawing, at launch. Then a shared link on a second phone.", null],
   };
   const ids = Object.keys(B); let slots = "", side = "", js = "";
   for (const id of ids) {
@@ -147,7 +147,7 @@ const t = (id, k = "s") => n3(T[id][k]);
     slots += has(footage)
       ? `<video id="v-${id}" class="clip vid" src="${footage}" muted data-start="${s}" data-duration="${d}" data-track-index="1"></video>`
       : `<div id="slot-${id}" class="clip slot" data-start="${s}" data-duration="${d}" data-track-index="1">${img ? `<img src="assets/${img}.png" alt="" />` : ""}<div class="ph"><b>Rough cut</b><span>${shot}</span></div></div>`;
-    const extra = id === "f2" ? `<ul class="ticks"><li>Wallet created</li><li>Free test credits</li><li>Network fee paid</li></ul>`
+    const extra = id === "f2" ? `<ul class="ticks"><li>Wallet created</li><li>No seed phrase</li><li>Network fees paid for them</li></ul>`
       : id === "f6" ? `<div class="term"><span>$</span> node scripts/admin.ts fast clock +2d</div>`
       : id === "f8" ? `<div class="term"><span>$</span> node scripts/admin.ts fast clock +1d<br /><span>$</span> node scripts/admin.ts fast resolve 2028-06-15T09:00Z</div>` : "";
     side += `<div class="g step" id="st-${id}"><div class="k">${ids.indexOf(id) + 1} of ${ids.length}</div><div class="h serif">${h}</div>${sub ? `<div class="sub">${sub}</div>` : ""}${extra}</div>`;
@@ -161,12 +161,12 @@ const t = (id, k = "s") => n3(T[id][k]);
   .step{left:860px;top:230px;width:940px}.k{font-size:28px;color:#BFB5A5;font-weight:700;margin-bottom:14px}.h{font-size:92px;line-height:1.1;color:#F6C792}.sub{font-size:42px;color:#EDE4D6;margin-top:24px;line-height:1.3}
   .ticks{list-style:none;padding:0;margin:32px 0 0;font-size:42px;line-height:1.7}.ticks li{opacity:0}.ticks li::before{content:"✓  ";color:#9CCB8E;font-weight:800}
   .term{margin-top:40px;background:#101311;border:2px solid #2C2A24;border-radius:14px;padding:26px 30px;font-family:ui-monospace,Menlo,monospace;font-size:27px;line-height:1.7;color:#EDE4D6}.term span{color:#E9A867}
-  .sw{left:860px;top:70px;display:flex;align-items:baseline;gap:22px}.sw b{font-family:"Cinzel",serif;font-size:72px;color:#EDE4D6;width:230px}.sw span{font-size:26px;color:#BFB5A5}`,
+  .lab{left:860px;top:60px;width:940px;font-size:27px;line-height:1.35;color:#F6C792;background:#2A221A;border:2px solid #E9A867;border-radius:10px;padding:12px 18px}`,
   `<div class="glow" style="left:900px;top:-300px"></div><div class="phone">${slots}</div>${side}
-  <div class="g sw" id="sw"><b id="swn">0:00</b><span>since opening the link</span></div>`,
+  <div class="g lab" id="lab">How it works at launch. Shown on devnet: test money, simulated payment. Launch depends on licensing.</div>`,
   `tl.fromTo(".glow",{scale:1},{scale:1.15,duration:${n3(SC.flow.d)},ease:"none"},0);
   ${js}
-  IN("#sw",${t("f1")}+.1);COUNT("swn",0,${n3(T.f3.s)},${t("f1")},${n3(T.f3.s)},v=>Math.floor(v/60)+":"+String(Math.floor(v%60)).padStart(2,"0"),"none");OUT("#sw",${n3(T.f3.e)}-.3,.25);`));
+  IN("#lab",${t("f1")}+.1);`));
 }
 
 // ---------- 3. tree
