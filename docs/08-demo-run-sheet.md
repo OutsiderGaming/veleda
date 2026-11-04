@@ -59,7 +59,8 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 |---|---|---|
 | 3:05 | Curve with a shaded "maximum loss" floor | Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front. |
 | 3:13 | LP drags the opening curve. Fees tick up as trades go through | They'll set the opening odds, so a provider who knows the market better gives away less to the first traders, and they earn two and a half percent of every buy and sell. It isn't guaranteed profit, and the risk is real, but it's capped and it's priced. |
-| 3:26 | Logo | Veleda: the market of seers. |
+| 3:26 | The timeline again, with a window moving and resizing. "A new form of prediction market", "Any increment", "Whenever they want" | And that's Veleda, a new form of prediction market where users can buy and sell future time, in any increment they want, whenever they want. |
+| 3:36 | Logo, "Tokenising the Future" | Veleda. Tokenising the Future. |
 
 ### Graphics notes
 

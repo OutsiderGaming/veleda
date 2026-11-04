@@ -24,7 +24,8 @@ const PARTS = [
   ["lp", [
     ["l1", "Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front."],
     ["l2", "They'll set the opening odds, so a provider who knows the market better gives away less to the first traders, and they earn two and a half percent of every buy and sell. It isn't guaranteed profit, and the risk is real, but it's capped and it's priced."],
-    ["l3", "Veleda: the market of seers."]]],
+    ["l3", "And that's Veleda, a new form of prediction market where users can buy and sell future time, in any increment they want, whenever they want."],
+    ["l4", "Veleda. Tokenising the Future."]]],
 ];
 const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
 const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol");
@@ -226,6 +227,7 @@ const t = (id, k = "s") => n3(T[id][k]);
 {
   const n = 44, flat = 34; const shape = (i) => 10 + 82 * Math.exp(-((i - 17) ** 2) / 70) + 14 * Math.exp(-((i - 36) ** 2) / 40);
   const bars = Array.from({ length: n }, (_, i) => `<i data-h="${shape(i).toFixed(1)}"></i>`).join("");
+  const ubars = Array.from({ length: 84 }, (_, i) => { const h = 16 + 78 * Math.exp(-((i - 34) ** 2) / 480) + 7 * Math.sin(i * 1.7) ** 2; return `<i style="height:${h.toFixed(1)}%"></i>`; }).join("");
   const pills = Array.from({ length: 10 }, (_, i) => `<span class="pill">${i % 3 === 2 ? "sell" : "buy"}</span>`).join("");
   W("compositions/lp.html", comp("lp", `
   .road{left:1370px;top:60px;width:450px;text-align:center;border:2px solid #E9A867;border-radius:10px;padding:10px;font-size:28px;font-weight:800;color:#F6C792;background:#2A221A}
@@ -237,6 +239,11 @@ const t = (id, k = "s") => n3(T[id][k]);
   .col{left:1090px;width:730px}.col .serif{font-size:54px;color:#F6C792;line-height:1.15}.col p{font-size:35px;margin:12px 0 0;line-height:1.3;color:#EDE4D6}
   .pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.pill{font-size:25px;font-weight:800;padding:6px 18px;border-radius:8px;background:#2A221A;color:#F6C792;opacity:0}
   .meter{height:24px;background:#2C2A24;margin-top:18px;position:relative}.meter i{position:absolute;left:0;top:0;bottom:0;width:100%;background:#E9A867;transform-origin:left}
+  .usp{inset:0;background:#0D0F0E;padding:80px 150px}.uh{font-size:78px;color:#F6C792}.us{font-size:44px;margin-top:14px}
+  .uc{display:flex;gap:22px;margin-top:34px;height:66px}.uchip{background:#2A221A;border:2px solid #E9A867;color:#F6C792;border-radius:10px;padding:10px 26px;font-size:34px;font-weight:800;opacity:0}
+  .utl{position:relative;height:440px;margin-top:44px;display:flex;align-items:flex-end;gap:5px;border-bottom:3px solid #2C2A24}
+  .utl i{flex:1;background-color:#A9743F;background-image:radial-gradient(circle,rgba(13,15,14,.55) 1px,transparent 1.3px);background-size:5px 5px}
+  .uw{position:absolute;top:-8px;bottom:-3px;left:0;width:60px;background:rgba(246,199,146,.26);border-left:5px solid #F6C792;border-right:5px solid #F6C792;opacity:0}
   .end{inset:0;background:#0D0F0E;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:90px}.end img{width:330px;height:330px;border-radius:30px}.end .serif{font-size:112px;color:#F6C792;margin-top:28px}.end div+div{font-size:42px;color:#EDE4D6}`,
   `<div class="glow" style="left:900px;top:-300px"></div>
   <div class="g hd serif" id="lh">Liquidity providers</div><div class="g road" id="lr">Next. Not built yet.</div>
@@ -244,8 +251,11 @@ const t = (id, k = "s") => n3(T[id][k]);
   <div class="g col" id="l1" style="top:190px"><div class="serif">Capped</div><p>Maximum loss known and funded up front.</p><div class="meter"><i id="lm"></i></div></div>
   <div class="g col" id="l2" style="top:390px"><div class="serif">Their odds</div><p>A provider sets the opening curve.</p></div>
   <div class="g col" id="l3" style="top:560px"><div class="serif">2.5% fees</div><p>On every buy and sell. Profit isn't guaranteed.</p><div class="pills">${pills}</div></div>
-  <div class="g end" id="le"><img src="assets/logo.png" alt="" /><div class="serif">Veleda</div><div>the market of seers</div></div>`,
-  `const A=${t("l1")},B=${t("l2")},Bd=${n3(T.l2.d)},E=${t("l3")};
+  <div class="g usp" id="lu"><div class="uh serif">A new form of prediction market</div><div class="us">Buy and sell future time.</div>
+    <div class="uc"><span class="uchip" id="uc1">Any increment</span><span class="uchip" id="uc2">Whenever they want</span></div>
+    <div class="utl">${ubars}<div class="uw" id="uw"></div></div></div>
+  <div class="g end" id="le"><img src="assets/logo.png" alt="" /><div class="serif">Veleda</div><div>Tokenising the Future</div></div>`,
+  `const A=${t("l1")},B=${t("l2")},Bd=${n3(T.l2.d)},U=${t("l3")},Ud=${n3(T.l3.d)},E=${t("l4")};
   IN(["#lh","#lr"],A+.1);IN("#lc",A+.3);IN("#l1",A+${n3(T.l1.d * .55)});
   tl.fromTo("#lm",{scaleX:0},{scaleX:1,duration:.8,ease:"power2.out",immediateRender:false},A+${n3(T.l1.d * .6)});
   const bs=document.querySelectorAll("[data-composition-id='lp'] .bars i");
@@ -254,7 +264,18 @@ const t = (id, k = "s") => n3(T[id][k]);
   bs.forEach((b,i)=>tl.fromTo(b,{scaleY:${flat / 100}},{scaleY:+b.dataset.h/100,duration:1.6,ease:"power2.inOut",immediateRender:false},B+.4+i*.012));
   IN("#l3",B+Bd*.38);
   tl.fromTo("[data-composition-id='lp'] .pill",{opacity:0},{opacity:1,duration:.15,stagger:.35,immediateRender:false},B+Bd*.42);
-  tl.fromTo("#le",{opacity:0},{opacity:1,duration:.6,immediateRender:false},E-.3);`));
+  tl.fromTo("#lu",{opacity:0},{opacity:1,duration:.5,immediateRender:false},U-.25);
+  OUT(["#lh","#lr","#lc","#l1","#l2","#l3"],U-.25,.25);
+  tl.set(["#lh","#lr","#lc","#l1","#l2","#l3"],{display:"none"},U+.05);
+  tl.set(".uchip",{display:"none"},0);tl.set(".uchip",{display:"inline-block"},U+Ud*.6);
+  tl.fromTo("#uw",{opacity:0},{opacity:1,duration:.3,immediateRender:false},U+Ud*.42);
+  tl.fromTo("#uw",{x:240,width:60},{x:520,width:150,duration:.6,ease:"power2.inOut",immediateRender:false},U+Ud*.48);
+  IN("#uc1",U+Ud*.66,{y:10});
+  tl.fromTo("#uw",{x:520,width:150},{x:430,width:620,duration:.7,ease:"power2.inOut",immediateRender:false},U+Ud*.68);
+  IN("#uc2",U+Ud*.83,{y:10});
+  tl.fromTo("#uw",{x:430,width:620},{x:1040,width:240,duration:.7,ease:"power2.inOut",immediateRender:false},U+Ud*.85);
+  tl.fromTo("#le",{opacity:0},{opacity:1,duration:.6,immediateRender:false},E-.3);
+  tl.set("#lu",{display:"none"},E+.35);`));
 }
 
 // ---------- index
