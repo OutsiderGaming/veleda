@@ -220,7 +220,7 @@ Goal from the hackathon spec: one-command setup script and README, seeded market
 - [ ] **Final checks on the day**: copy audit again; stopwatch test once more on the live URL; both markets open and seeded.
 - [ ] **Submission**: final project description and "How Solana powers Veleda" from `docs/05-submission-copy.md`; repo link, live link and video link; tick the hackathon spec's submission checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
 
-- [ ] **Launch preview** (added 4 Nov 2026 after judge feedback): `/?preview=launch` shows how real-money onboarding would work; `/?preview=off` leaves it. The payment is simulated and collects nothing; `/api/preview/deposit` then mints test VCR (set amounts, balance capped at 500), so later trades are real. Amounts show as dollars after the first deposit, with "test money" labels. Code done; still needs a run with a real sign-in on the live URL, which also covers the automatic buy after sign-in.
+- [x] **Launch preview** (added 4 Nov 2026 after judge feedback): `/?preview=launch` shows how real-money onboarding would work; `/?preview=off` leaves it. The payment is simulated and collects nothing; `/api/preview/deposit` then mints test VCR (set amounts, balance capped at 500), so later trades are real. Amounts show as dollars after the first deposit, with "test money" labels. The whole flow, including the automatic buy after Google sign-in, passed on a phone on the live URL on 4 Nov 2026 in a normal tab. A private tab can stop the wallet connecting, and the buy sheet now says so. The take itself is in `docs/08-demo-run-sheet.md`.
 
 ### Optional, if there's room
 
