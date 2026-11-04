@@ -70,6 +70,14 @@ About 3:30 in total (the limit is 4:00). The VO column is the narration. Parts 1
 - **Five-year account size:** 3,496,520 bytes from `market_account_len` for 43,824 hourly atoms (tree capacity 65,536, so 16 levels). Earlier docs say 1–2 MB, which is out of date. Rent would be about 24 SOL.
 - **Five years fits, but doesn't run yet.** `MAX_ATOMS` is 1,500, `create_market` builds prices on the heap, and each trade walks every live atom for its largest-payout check. Trading at that size needs a max-tree for liabilities and staged initialisation, so don't say it's live. The 70K–100K figures are measured on the 3-year daily market only.
 
+## Building the video
+
+The project is `videos/veleda-demo`, and all timing comes from its audio files.
+
+1. Save each recorded beat as `footage/<beat>.mp4` (f1 to f9) and your voice as `voice/final/<beat>.wav`. The beat IDs are in `build.mjs`. Without a final voice file, a beat uses the scratch voice.
+2. Run `node build.mjs`, which regenerates the timing, captions and scenes. Don't hand-edit `index.html` or `compositions/`.
+3. **The stopwatch must show true elapsed time.** It currently counts narration time from the start of f1 to the start of f3, which is a placeholder. Once the footage is in, set it from the real recording.
+
 ## Expected figures
 
 These are estimates from the LMSR formulas using the fast market's prices on 4 Nov, before bot trading had shaped it. They ignore window B's effect on window A. **Check them in the rehearsal**, because bots and window choice change them.
