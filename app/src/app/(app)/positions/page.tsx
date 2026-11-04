@@ -7,8 +7,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useMarkets, type MarketView } from "@/lib/client/markets";
+import { useMoney } from "@/lib/client/preview";
 import { useSession, type PositionView } from "@/lib/client/session";
-import { formatWindow, pct, vcr } from "@/lib/veleda/timeline";
+import { formatWindow, pct } from "@/lib/veleda/timeline";
 import s from "./positions.module.css";
 
 interface Settled {
@@ -24,6 +25,7 @@ interface Settled {
 
 export default function Positions() {
   const { ready, authenticated, login, positions, request, signAndSubmit } = useSession();
+  const money = useMoney();
   const { markets, refresh: refreshMarkets } = useMarkets();
   const [tab, setTab] = useState<"open" | "settled">("open");
   const [settled, setSettled] = useState<Settled[] | null>(null);
@@ -77,12 +79,12 @@ export default function Positions() {
   return (
     <>
       <div className={s.hero}>
-        <span className={s.heroValue}>{vcr(total)}</span>
-        <span className={s.heroUnit}>VCR</span>
+        <span className={s.heroValue}>{money.amount(total)}</span>
+        {money.unit && <span className={s.heroUnit}>{money.unit}</span>}
       </div>
       <div className={s.summary}>
-        {paidValued > 0 && <span className={pnl >= 0 ? s.gain : s.loss}>{signed(pnl)} ({signedPct(pnl / paidValued)})</span>}
-        <span>{vcr(paid)} paid</span>
+        {paidValued > 0 && <span className={pnl >= 0 ? s.gain : s.loss}>{signed(pnl, money.amount)} ({signedPct(pnl / paidValued)})</span>}
+        <span>{money.amount(paid)} paid</span>
         <span>{open.length} open</span>
       </div>
       <div className={s.tabs}>
@@ -119,12 +121,12 @@ export default function Positions() {
                   </div>
                   <div className={s.pnl}>
                     <div className={s.outcome}>{x.outcome.toUpperCase()}</div>
-                    <div className={`${s.pnlValue} ${gain >= 0 ? s.gain : s.loss}`}>{signed(gain)}</div>
+                    <div className={`${s.pnlValue} ${gain >= 0 ? s.gain : s.loss}`}>{signed(gain, money.amount)}</div>
                   </div>
                 </div>
                 <div className={s.grid} style={{ gridTemplateColumns: "1fr 1fr", marginBottom: 0 }}>
-                  <Cell label="Paid" value={vcr(x.paid)} />
-                  <Cell label={x.outcome === "cashed out" ? "Cashed out for" : "Paid out"} value={vcr(x.received)} />
+                  <Cell label="Paid" value={money.amount(x.paid)} />
+                  <Cell label={x.outcome === "cashed out" ? "Cashed out for" : "Paid out"} value={money.amount(x.received)} />
                 </div>
               </div>
             );
@@ -135,6 +137,7 @@ export default function Positions() {
 }
 
 function OpenCard({ p, m, busy, error, onAct }: { p: PositionView; m: MarketView; busy: boolean; error?: string; onAct: (p: PositionView, kind: "sell" | "claim") => void }) {
+  const money = useMoney();
   const gain = p.value !== null && p.paid ? p.value - p.paid : null;
   const won = m.resolved && p.value !== null && p.value > 0;
   const lock = `${m.lockSeconds / 3600}h`;
@@ -148,28 +151,28 @@ function OpenCard({ p, m, busy, error, onAct }: { p: PositionView; m: MarketView
         {gain !== null && p.paid ? (
           <div className={s.pnl}>
             <div className={s.pnlLabel}>{!m.resolved && <span className={s.liveDot} />}{m.resolved ? "RESULT" : "LIVE P&L"}</div>
-            <div className={`${s.pnlValue} ${gain >= 0 ? s.gain : s.loss}`}>{gain >= 0 ? "▲" : "▼"} {signed(gain)}</div>
+            <div className={`${s.pnlValue} ${gain >= 0 ? s.gain : s.loss}`}>{gain >= 0 ? "▲" : "▼"} {signed(gain, money.amount)}</div>
             <div className={`${s.pnlPct} ${gain >= 0 ? s.gain : s.loss}`}>{signedPct(gain / p.paid)}</div>
           </div>
         ) : null}
       </div>
       <div className={s.grid}>
-        <Cell label="Paid" value={p.paid ? vcr(p.paid) : "—"} />
-        <Cell label={m.resolved ? "Pays out" : "Worth now"} value={p.value === null ? "Locked" : vcr(p.value)} note={m.resolved ? undefined : "after 3.5% fee"} />
-        <Cell label="If it lands" value={vcr(p.shares)} copper note={p.paid ? `×${(p.shares / p.paid).toFixed(1)} at entry` : undefined} />
+        <Cell label="Paid" value={p.paid ? money.amount(p.paid) : "—"} />
+        <Cell label={m.resolved ? "Pays out" : "Worth now"} value={p.value === null ? "Locked" : money.amount(p.value)} note={m.resolved ? undefined : "after 3.5% fee"} />
+        <Cell label="If it lands" value={money.amount(p.shares)} copper note={p.paid ? `×${(p.shares / p.paid).toFixed(1)} at entry` : undefined} />
       </div>
       {p.entryPrice != null && p.currentPrice != null && !m.resolved && (
         <div className={s.odds}>Crowd odds {pct(p.entryPrice)} when you bought · {pct(p.currentPrice)} now</div>
       )}
       {m.resolved ? (
         <button className={s.primary} disabled={busy} onClick={() => onAct(p, "claim")}>
-          {busy ? "CLAIMING…" : won ? <>CLAIM <span className={s.sep} /> {vcr(p.value ?? 0)} VCR</> : "CLOSE · NO PAYOUT"}
+          {busy ? "CLAIMING…" : won ? <>CLAIM <span className={s.sep} /> {money.full(p.value ?? 0)}</> : "CLOSE · NO PAYOUT"}
         </button>
       ) : p.status === "locked" ? (
         <button className={s.locked} disabled>🔒 Locked · within {lock} of now</button>
       ) : (
         <button className={s.primary} disabled={busy} onClick={() => onAct(p, "sell")}>
-          {busy ? "CASHING OUT…" : <>CASH OUT <span className={s.sep} /> {vcr(p.value ?? 0)} VCR</>}
+          {busy ? "CASHING OUT…" : <>CASH OUT <span className={s.sep} /> {money.full(p.value ?? 0)}</>}
         </button>
       )}
       {error && <div className={s.error}>{error}</div>}
@@ -187,5 +190,5 @@ function Cell({ label, value, note, copper }: { label: string; value: string; no
   );
 }
 
-const signed = (v: number) => `${v >= 0 ? "+" : "−"}${vcr(Math.abs(v))}`;
+const signed = (v: number, amount: (v: number) => string) => `${v >= 0 ? "+" : "−"}${amount(Math.abs(v))}`;
 const signedPct = (v: number) => `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(1)}%`;

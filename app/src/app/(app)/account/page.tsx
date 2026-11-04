@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useMoney, usePreview } from "@/lib/client/preview";
 import { useSession } from "@/lib/client/session";
-import { vcr } from "@/lib/veleda/timeline";
 import s from "./account.module.css";
 
 export default function Account() {
   const { ready, authenticated, login, logout, address, balance } = useSession();
+  const preview = usePreview();
+  const money = useMoney();
   if (!ready) return null;
   return (
     <>
@@ -16,10 +18,21 @@ export default function Account() {
           <div className={s.card}>
             <div className={s.label}>Balance</div>
             <div className={s.balance}>
-              {vcr(balance ?? 0)} <span>VCR</span>
+              {money.amount(balance ?? 0)} {money.unit && <span>{money.unit}</span>}
             </div>
-            <div className={s.note}>Test money: Veleda Credit has no cash value. Every account starts with 100.</div>
+            <div className={s.note}>
+              {preview.active
+                ? "Test money: this preview shows how real deposits would work, and the balance has no cash value."
+                : "Test money: Veleda Credit has no cash value. Every account starts with 100."}
+            </div>
+            {preview.active && <button className={s.addMoney} onClick={preview.openAddMoney}>Add money</button>}
           </div>
+          {preview.active && (
+            <div className={s.card}>
+              <div className={s.label}>Withdrawing, at launch</div>
+              <div className={s.note} style={{ marginTop: 0 }}>Send your balance to your bank through our payment partner, or send USDC to any wallet you choose.</div>
+            </div>
+          )}
           <div className={s.card}>
             <div className={s.label}>Your wallet</div>
             <div className={s.mono}>{address ?? "Setting up…"}</div>
@@ -30,7 +43,7 @@ export default function Account() {
         </>
       ) : (
         <>
-          <p className={s.text}>Sign in with email or Google. We set up everything else, and you start with 100 VCR of test money.</p>
+          <p className={s.text}>Sign in with Google or email. We set up everything else, and you start with 100 VCR of test money.</p>
           <button className={s.primary} onClick={login}>Sign in</button>
           <Link href="/practice" className={s.link}>How it works →</Link>
         </>

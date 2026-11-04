@@ -2,15 +2,18 @@
 
 // Buy sheet (mockup screen 3): the selected window, multiplier after fees and
 // price impact for the chosen stake, stake chips, payout, the primary button,
-// and the share link. Signed out, the button opens sign-in; the sheet stays.
+// and the share link. Signed out, the button opens sign-in and the call goes through
+// on its own afterwards, even if sign-in left the page (Google's redirect).
 // Swipe down (or tap outside) to close.
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { useMarkets, type MarketView } from "@/lib/client/markets";
+import { clearPendingCall, readPendingCall, savePendingCall } from "@/lib/client/pending-call";
+import { useMoney, usePreview } from "@/lib/client/preview";
 import { useSession } from "@/lib/client/session";
 import { FEE, priceForCost, quoteBuy } from "@/lib/veleda/market";
-import { formatWindow, pct, vcr } from "@/lib/veleda/timeline";
+import { formatWindow, pct } from "@/lib/veleda/timeline";
 import { fmtMult, type Range } from "./Timeline";
 import s from "./BuySheet.module.css";
 
@@ -19,8 +22,14 @@ const CHIPS = [5, 20, 50];
 export function BuySheet({ market, range, onClose }: { market: MarketView; range: Range; onClose: () => void }) {
   const session = useSession();
   const { refresh: refreshMarkets } = useMarkets();
-  const [stake, setStake] = useState(20);
-  const [other, setOther] = useState<string | null>(null);
+  const preview = usePreview();
+  const money = useMoney();
+  // A call waiting on sign-in, if this sheet is coming back after a redirect.
+  const [restored] = useState(() => readPendingCall(market.name, range));
+  const [stake, setStake] = useState(restored?.stake ?? 20);
+  const [other, setOther] = useState<string | null>(restored && !CHIPS.includes(restored.stake) ? String(restored.stake) : null);
+  const [autoBuy, setAutoBuy] = useState(restored !== null);
+  const placing = useRef(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{ shares: number } | null>(null);
@@ -29,6 +38,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
   const dragStart = useRef<number | null>(null);
 
   useEffect(() => setError(null), [range.from, range.to, stake]);
+  useEffect(() => clearPendingCall, []); // closing the sheet drops the call; a redirect away never runs this
 
   const base = Math.round(stake * 1_000_000);
   const q = quoteBuy(market, market.prices, range.from, range.to, Math.max(base, 1));
@@ -48,8 +58,9 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
     setDy(0);
   };
 
-  async function buy() {
-    if (!session.authenticated) return session.login();
+  const placeCall = useCallback(async () => {
+    if (placing.current) return;
+    placing.current = true;
     setBusy(true);
     setError(null);
     try {
@@ -59,9 +70,38 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
     } catch (e) {
       setError(friendly((e as Error).message));
     } finally {
+      placing.current = false;
       setBusy(false);
     }
+  }, [market.name, range.from, range.to, stake, shares, session, refreshMarkets]);
+
+  function buy() {
+    if (session.authenticated && session.balance !== null && session.balance < stake && preview.active && !session.airdropping) return preview.openAddMoney();
+    if (session.authenticated) return void placeCall();
+    savePendingCall({ market: market.name, from: range.from, to: range.to, stake });
+    setAutoBuy(true);
+    session.login();
   }
+
+  // After sign-in: wait for the wallet and the 100 VCR, then place the call without a second tap.
+  const { authenticated, address, balance, airdropping } = session;
+  useEffect(() => {
+    if (!autoBuy || !authenticated || !address || airdropping || balance === null || market.resolved || q.shares <= 0) return;
+    if (balance >= stake) {
+      setAutoBuy(false);
+      clearPendingCall();
+      void placeCall();
+    } else if (balance > 0) {
+      setAutoBuy(false); // too little for this stake: leave the choice to them
+      clearPendingCall();
+    }
+  }, [autoBuy, authenticated, address, airdropping, balance, stake, market.resolved, q.shares, placeCall]);
+
+  const pickStake = (v: number) => {
+    setStake(v);
+    setAutoBuy(false);
+    clearPendingCall();
+  };
 
   async function share() {
     const url = `${location.origin}/m/${market.name}?from=${range.from}&to=${range.to}`;
@@ -75,8 +115,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
     } catch {}
   }
 
-  const balance = session.balance;
-  let label: React.ReactNode = <>PREDICT THE FUTURE <span className={s.sep} /> {vcrShort(stake)} VCR</>;
+  let label: React.ReactNode = <>PREDICT THE FUTURE <span className={s.sep} /> {money.stake(stake)}</>;
   let disabled = busy || stake <= 0 || q.shares <= 0 || market.resolved;
   if (busy) label = "PLACING YOUR CALL…";
   else if (session.authenticated && session.airdropping) {
@@ -86,8 +125,8 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
     label = "ONE MOMENT…";
     disabled = true;
   } else if (session.authenticated && balance !== null && balance < stake) {
-    label = "NOT ENOUGH VCR";
-    disabled = true;
+    label = preview.active ? "ADD MONEY" : "NOT ENOUGH VCR";
+    disabled = !preview.active;
   }
 
   return (
@@ -102,9 +141,10 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
             <p className={s.doneText}>
               {formatWindow(market, range.from, range.to)}
               <br />
-              Wins {vcr(done.shares)} VCR if it lands. Cash out any time.
+              Wins {money.full(done.shares)} if it lands. Cash out any time.
             </p>
             <Link href="/positions" className={s.primary} style={{ textDecoration: "none" }}>SEE YOUR POSITIONS</Link>
+            {preview.active && !preview.deposited && <button className={s.secondary} onClick={preview.openAddMoney}>Add real money (preview)</button>}
             <button className={s.secondary} onClick={onClose}>Back to the timeline</button>
           </div>
         ) : (
@@ -118,10 +158,10 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
                 </div>
                 <div className={s.odds}>Crowd odds {pct(q.price)} · payout after fees</div>
               </div>
-              <div className={s.stakeLabel}>Stake (VCR)</div>
+              <div className={s.stakeLabel}>Stake ({money.dollars ? "$" : "VCR"})</div>
               <div className={s.chips}>
                 {CHIPS.map((c) => (
-                  <button key={c} className={`${s.chip} ${other === null && stake === c ? s.chipOn : ""}`} onClick={() => { setOther(null); setStake(c); }}>
+                  <button key={c} className={`${s.chip} ${other === null && stake === c ? s.chipOn : ""}`} onClick={() => { setOther(null); pickStake(c); }}>
                     {c}
                   </button>
                 ))}
@@ -137,7 +177,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
                       const v = e.target.value.replace(/[^0-9.]/g, "");
                       setOther(v);
                       const n = Number(v);
-                      if (n > 0) setStake(Math.min(n, 100_000));
+                      if (n > 0) pickStake(Math.min(n, 100_000));
                     }}
                   />
                 )}
@@ -145,7 +185,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
             </div>
             <div className={s.wins}>
               <span className={s.winsLabel}>Win if it lands:</span>
-              <span className={s.winsValue}>{vcr(shares)}<small>VCR</small></span>
+              <span className={s.winsValue}>{money.amount(shares)}{money.unit && <small>{money.unit}</small>}</span>
             </div>
             <div className={s.detail}>
               {Math.round(shares).toLocaleString("en-GB")} shares · 3.5% fee included · cancels if price passes {pctFine(cancelAt)}
@@ -168,13 +208,11 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
 /** One more decimal place than pct(): the cancel price sits just above the current odds. */
 const pctFine = (p: number) => `${(p * 100).toFixed(p >= 0.01 ? 2 : 3)}%`;
 
-const vcrShort = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(2));
-
 /** Program errors arrive as custom error codes in the failed transaction. */
 function friendly(message: string): string {
   if (/Slippage|0x1775|6005/.test(message)) return "The price moved while you were deciding. Check the new figures and try again.";
   if (/Locked|0x1771|6001/.test(message)) return "That window has just entered the locked zone. Pick a later start.";
-  if (/insufficient funds|0x1\b/.test(message)) return "Not enough VCR for that stake.";
+  if (/insufficient funds|0x1\b/.test(message)) return "Your balance is too low for that stake.";
   if (/User rejected|cancel/i.test(message)) return "Cancelled.";
   return message.length > 140 ? "Something went wrong placing your call. Try again." : message;
 }

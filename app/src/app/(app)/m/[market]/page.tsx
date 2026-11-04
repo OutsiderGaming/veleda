@@ -6,6 +6,8 @@ import { BuySheet } from "@/components/BuySheet";
 import { RulesSheet } from "@/components/RulesSheet";
 import { Timeline, fmtMult, type Range } from "@/components/Timeline";
 import { marketNowSec, useMarket, type MarketView } from "@/lib/client/markets";
+import { readPendingCall } from "@/lib/client/pending-call";
+import { useMoney } from "@/lib/client/preview";
 import { useSession } from "@/lib/client/session";
 import { rulesFor } from "@/lib/veleda/rules";
 import { defaultZoom, formatDate, formatWindow, multiplierFor, ZOOM_LABEL, zoomsFor, type Zoom } from "@/lib/veleda/timeline";
@@ -31,6 +33,7 @@ function Loaded({ market: m }: { market: MarketView }) {
   const router = useRouter();
   const params = useSearchParams();
   const { positions } = useSession();
+  const money = useMoney();
   // The timeline uses the market's clock, advanced locally between fetches.
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -47,7 +50,15 @@ function Loaded({ market: m }: { market: MarketView }) {
   const [toast, setToast] = useState<string | null>(null);
 
   // Share links: /m/<market>?from=&to= opens with that window selected and the sheet up.
+  // A call waiting on sign-in comes back the same way after Google's redirect.
   useEffect(() => {
+    const pending = readPendingCall(market.name);
+    if (pending && pending.from >= market.firstOpenAtom && pending.to <= market.atoms) {
+      setSelection({ from: pending.from, to: pending.to });
+      setSheet(true);
+      if (pending.to < market.atoms) setZoom(pending.to - pending.from + 1 >= 28 && zooms.includes("month") ? "month" : zooms.includes("day") ? "day" : zooms[0]);
+      return;
+    }
     const from = Number(params.get("from")), to = Number(params.get("to"));
     if (!params.has("from") || !Number.isInteger(from) || !Number.isInteger(to) || from > to || to > market.atoms) return;
     if (from < market.firstOpenAtom && from !== market.atoms) {
@@ -80,7 +91,7 @@ function Loaded({ market: m }: { market: MarketView }) {
       {market.tag && <div className={s.tagRow}><span className={s.tag}>{market.tag}</span></div>}
       <h1 className={s.question}>{market.question}</h1>
       <div className={s.meta}>
-        <span>{Math.round(market.volume).toLocaleString("en-GB")} VCR traded</span>
+        <span>{money.rounded(market.volume)} traded</span>
         {rules ? (
           <button className={s.rulesLink} onClick={() => setShowRules(true)}>View resolution criteria</button>
         ) : (

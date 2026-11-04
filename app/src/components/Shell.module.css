@@ -8,6 +8,7 @@
 .brand { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
 .logo { width: 36px; height: 36px; border-radius: 9px; background: var(--card); padding: 3px; }
 .wordmark { font-family: var(--serif); font-weight: 600; letter-spacing: 0.32em; font-size: 18px; }
+.previewBar { font-size: 12px; text-align: center; color: var(--copper-light); border: 1px solid var(--copper); border-radius: 12px; padding: 4px 10px; margin: -6px 0 16px; text-wrap: balance; }
 .balance { text-align: right; line-height: 1.15; }
 .balanceValue { color: var(--copper); font-weight: 600; font-variant-numeric: tabular-nums; }
 .unit { color: var(--text-2); font-weight: 400; }

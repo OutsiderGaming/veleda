@@ -3,24 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { AddMoneySheet } from "./AddMoneySheet";
 import { Intro } from "./Intro";
 import { useSession } from "@/lib/client/session";
-import { vcr } from "@/lib/veleda/timeline";
+import { useMoney, usePreview } from "@/lib/client/preview";
 import s from "./Shell.module.css";
 
 export function Shell({ children }: { children: ReactNode }) {
+  const preview = usePreview();
+  const practice = usePathname().startsWith("/practice");
   return (
     <div className={s.app}>
       <Intro />
       <Header />
+      {preview.active && !practice && <div className={s.previewBar}>Launch preview · simulated payment, test money</div>}
       {children}
       <BottomNav />
+      {preview.adding && <AddMoneySheet />}
     </div>
   );
 }
 
 function Header() {
   const { ready, authenticated, login, balance, airdropping } = useSession();
+  const money = useMoney();
   // Practice mode shows no real balances (hackathon spec, "Practice mode").
   const practice = usePathname().startsWith("/practice");
   return (
@@ -32,7 +38,7 @@ function Header() {
       </Link>
       {!ready || practice ? null : authenticated ? (
         <div className={s.balance}>
-          <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : vcr(balance)}</span> <span className={s.unit}>VCR</span>
+          <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : money.amount(balance)}</span> <span className={s.unit}>{money.unit}</span>
           <span className={s.testMoney}>test money</span>
         </div>
       ) : (

@@ -9,3 +9,4 @@
 .link { display: block; margin: 18px 0; font-weight: 600; text-decoration: none; }
 .button { width: 100%; height: 52px; border-radius: 999px; border: 1px solid var(--btn-border); background: var(--btn); color: var(--text); font: 600 16px var(--sans); cursor: pointer; }
 .primary { width: 100%; height: 56px; border: 0; border-radius: 999px; background: var(--primary); color: var(--primary-text); font: 700 16px var(--serif); letter-spacing: 0.14em; cursor: pointer; }
+.addMoney { width: 100%; height: 48px; margin-top: 14px; border-radius: 14px; border: 1px solid var(--copper); background: var(--chip); color: var(--copper-light); font: 600 16px var(--sans); cursor: pointer; }

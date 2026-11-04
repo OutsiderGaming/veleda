@@ -5,11 +5,13 @@ import { MiniBand } from "@/components/MiniBand";
 import { Seer } from "@/components/Seer";
 import { useFirstVisit } from "@/lib/client/first-visit";
 import { useMarkets } from "@/lib/client/markets";
+import { useMoney } from "@/lib/client/preview";
 import { endLabel, pct } from "@/lib/veleda/timeline";
 import s from "./home.module.css";
 
 export default function Home() {
   const { markets, error } = useMarkets();
+  const money = useMoney();
   // The tutorial link only shows on a first visit; after that it lives under Account → How it works.
   const firstVisit = useFirstVisit();
   return (
@@ -25,7 +27,7 @@ export default function Home() {
             {m.tag && <span className={s.tag}>{m.tag}</span>}
             <h2 className={s.question}>{m.question}</h2>
             <div className={s.meta}>
-              <span>{Math.round(m.volume).toLocaleString("en-GB")} VCR traded</span>
+              <span>{money.rounded(m.volume)} traded</span>
               <span className={s.dot}>·</span>
               <span>{m.resolves}</span>
             </div>
