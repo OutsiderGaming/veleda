@@ -13,7 +13,7 @@ const PARTS = [
     ["f3", "Then they add money, by card or mobile wallet. The first deposit includes an ID check from our payment partner, which can take a few minutes, and only happens once. The money arrives as USDC in their own wallet, shown simply as dollars."],
     ["f4", "And their call goes straight through, with no second tap: twenty dollars on that window."],
     ["f5", "Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade."],
-    ["f6", "Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves."],
+    ["f6", "As time passes, hours drop away, the ones left become more likely, and the cash-out value moves."],
     ["f7", "No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit."],
     ["f8", "Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance."],
     ["f9", "From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call."]]],
@@ -135,9 +135,9 @@ const t = (id, k = "s") => n3(T[id][k]);
     f3: ["Add money", "Card or mobile wallet. ID check on the first deposit only.", "Add money opens by itself: $50, then identity, then payment.", null],
     f4: ["The call goes through", "No second tap.", "Tap Done. The call places itself, then the success screen.", "3-buy-sheet"],
     f5: ["A second call", "Narrow pays more. Wide is safer.", "Window B: 15 June, 6am to midday, stake $20. Open Positions.", "3-buy-sheet"],
-    f6: ["Time passes", "Admin control, on this demo market only.", "Positions updating after the clock moves.", "4-your-positions"],
+    f6: ["Time passes", "Two days later. Demo clock, sped up.", "Positions updating after the clock moves.", "4-your-positions"],
     f7: ["Cash out", "A live price, any time.", "Cash out window A.", "4-your-positions"],
-    f8: ["It happens", "Winning hour recorded on-chain.", "Tap Claim on window B.", "4-your-positions"],
+    f8: ["It happens", "One day later. Winning hour recorded on-chain.", "Tap Claim on window B.", "4-your-positions"],
     f9: ["Take it out", "To a bank or any wallet. Or share the window as a link.", "Account: Withdrawing, at launch. Then a shared link on a second phone.", null],
   };
   const ids = Object.keys(B); let slots = "", side = "", js = "";
@@ -148,8 +148,7 @@ const t = (id, k = "s") => n3(T[id][k]);
       ? `<video id="v-${id}" class="clip vid" src="${footage}" muted data-start="${s}" data-duration="${d}" data-track-index="1"></video>`
       : `<div id="slot-${id}" class="clip slot" data-start="${s}" data-duration="${d}" data-track-index="1">${img ? `<img src="assets/${img}.png" alt="" />` : ""}<div class="ph"><b>Rough cut</b><span>${shot}</span></div></div>`;
     const extra = id === "f2" ? `<ul class="ticks"><li>Wallet created</li><li>No seed phrase</li><li>Network fees paid for them</li></ul>`
-      : id === "f6" ? `<div class="term"><span>$</span> node scripts/admin.ts fast clock +2d</div>`
-      : id === "f8" ? `<div class="term"><span>$</span> node scripts/admin.ts fast clock +1d<br /><span>$</span> node scripts/admin.ts fast resolve 2028-06-15T09:00Z</div>` : "";
+      : "";
     side += `<div class="g step" id="st-${id}"><div class="k">${ids.indexOf(id) + 1} of ${ids.length}</div><div class="h serif">${h}</div>${sub ? `<div class="sub">${sub}</div>` : ""}${extra}</div>`;
     js += `IN("#st-${id}",${s}+.05);OUT("#st-${id}",${n3(T[id].e)}-.3,.25);`;
     if (id === "f2") js += `IN("#st-f2 li",${s}+${n3(T.f2.d * .42)},{stagger:${n3(T.f2.d * .1)},y:14});`;

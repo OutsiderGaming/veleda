@@ -40,7 +40,7 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 | f3 | Add money: $50 → identity → payment | The sheet opens by itself. Go through it | Then they add money, by card or mobile wallet. The first deposit includes an ID check from our payment partner, which can take a few minutes, and only happens once. The money arrives as USDC in their own wallet, shown simply as dollars. |
 | f4 | Success screen | Tap Done. The call places itself | And their call goes straight through, with no second tap: twenty dollars on that window. |
 | f5 | **Window B: 15 June, 6am to midday**, stake $20 | Buy it, then open Positions | Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade. |
-| f6 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves. |
+| f6 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | As time passes, hours drop away, the ones left become more likely, and the cash-out value moves. |
 | f7 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
 | f8 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance. |
 | f9 | Account, then a shared link on a second phone | Show "Withdrawing, at launch", then open a shared link | From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call. |
@@ -97,7 +97,8 @@ If window A doesn't show a clear profit, make the first jump larger, but keep it
 - **Clock:** a market lasts 7 days at most from creation, and every jump shortens that.
 - **Resolving is final.** Don't run it until window A is cashed out.
 - **Updates lag:** the market screen updates within about 10 seconds and Positions within about 15. Trim the wait in the edit.
-- **Label the simulation:** keep the preview label in shot during the deposit, and describe the clock as an admin control, as the voiceover does.
+- **Label the simulation:** keep the preview label in shot during the deposit. The voiceover says the market runs at speed, and the video labels the clock "Demo clock, sped up".
+- **Clock versus windows:** the market clock runs in real time from creation. Run `node scripts/admin.ts fast status` before the take: window A must still start more than an hour ahead of the clock after the +2d jump. Otherwise re-create the market or pick later windows.
 
 ## After recording
 
