@@ -1,6 +1,6 @@
 # Veleda — Demo run sheet
 
-Written 4 Nov 2026. One new user, one market, start to finish, in about 3:10 (the limit is 2–4 minutes). Live app: https://veleda-veleda1.vercel.app
+Written 4 Nov 2026. The problem, one new user start to finish, why Solana, and liquidity providers, in about 3:30 (the limit is 2–4 minutes). Live app: https://veleda-veleda1.vercel.app
 
 ## Before each take
 
@@ -17,21 +17,58 @@ Run every command from the repo root.
 5. **Prepare the phone.** Use a **normal tab, never a private one**, because private tabs can stop the wallet connecting. Sign in with a Google account that's new to Veleda, or delete a throwaway test user in the Privy dashboard so it counts as new.
 6. **Open** https://veleda-veleda1.vercel.app/?preview=launch and sign out if needed.
 
-## The take
+## The script
+
+About 3:30 in total (the limit is 4:00). The VO column is the narration. Parts 1, 3 and 4 are generated graphics. Part 2 is the phone recording.
+
+### Part 1: the problem (0:00–0:40)
+
+| Time | On screen | Voiceover |
+|---|---|---|
+| 0:00 | Volume figures climbing | Prediction markets are exploding. Kalshi and Polymarket went from about eight billion dollars of trading a month last November to more than five billion a week by this March. |
+| 0:12 | Mock of a typical market, labelled "Illustration": "BTC hits $200K by…?" with fixed dates, each with Yes and No | But ask them *when* something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that. |
+| 0:28 | The deadlines dissolve into one continuous timeline. A finger drags a window across it | Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price. |
+
+### Part 2: the whole flow (0:40–2:35)
 
 | Time | On screen | Do this | Voiceover |
 |---|---|---|---|
-| 0:00 | Home, the flagship timeline | Scroll slowly | Fans argue about when things will happen: when the album drops, when the baby's due, when BTC hits a number. Those arguments have no stakes and no record of who called it. Veleda turns them into calls you can stake, share and get credit for. |
-| 0:25 | Fast market (tagged Fictional · 2028) | Start the on-screen stopwatch | Here's someone who has never used Solana. They've opened a link, and they can browse without an account. This market is a fictional scenario we can run at speed: when will BTC first hit two hundred thousand dollars? |
-| 0:40 | **Window A: 14 June, midday to 6pm**, stake 20 | Drag, tap "predict the future", sign in with Google, wait | They drag across any stretch of time and make the call. One Google sign-in, and that's it. Behind the scenes, Veleda creates their wallet, gives them free test credits and pays the network fee. There's no seed phrase, and they never need to buy SOL. |
-| 1:05 | Success screen | Stop the stopwatch | First position, in under a minute. |
-| 1:10 | Add money: $50 → identity → payment | Tap "Add real money (preview)" and go through it | This next part is a preview of launch, with the payment simulated. You'd pay by card or mobile wallet, and it arrives as USDC in your own wallet, shown simply as dollars. The first deposit includes a standard ID check from our payment partner, and then you're in. |
-| 1:35 | **Window B: 15 June, 6am to midday**, stake $20 | Buy it, then open Positions | Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade on one on-chain market maker. |
+| 0:40 | Fast market (tagged Fictional · 2028) | Start the on-screen stopwatch | Here's someone who has never used Solana. They've opened a link, and they can browse without an account. This market is a fictional scenario we can run at speed: when will BTC first hit two hundred thousand dollars? |
+| 0:55 | **Window A: 14 June, midday to 6pm**, stake 20 | Drag, tap "predict the future", sign in with Google, wait | They drag across a stretch of time and make the call. One Google sign-in, and that's it. Behind the scenes, Veleda creates their wallet, gives them free test credits and pays the network fee. There's no seed phrase, and they never need to buy SOL. |
+| 1:15 | Success screen | Stop the stopwatch | First position, in under a minute. |
+| 1:20 | Add money: $50 → identity → payment | Tap "Add real money (preview)" and go through it | This next part is a preview of launch, with the payment simulated. You'd pay by card or mobile wallet, and it arrives as USDC in your own wallet, shown simply as dollars. The first deposit includes a standard ID check from our payment partner, and then you're in. |
+| 1:40 | **Window B: 15 June, 6am to midday**, stake $20 | Buy it, then open Positions | Now a second call. Narrow windows pay more and wide ones are safer, but either way it's one trade. |
 | 1:50 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | Now time passes. We're moving this demo market's clock with an admin control, which real markets don't have. Elapsed hours drop off the timeline, the remaining ones become more likely, and the cash-out value moves. |
-| 2:10 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
-| 2:20 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out. Every payout was backed by the market's vault from the start. |
-| 2:40 | Window share link on a second device, or a diagram | Open a shared link | Any window can be shared as a link that opens straight onto it, so a friend can back the same call. |
-| 2:50 | Diagram of one account holding the timeline | | Here's why Solana. The whole timeline lives in one account, as a tree of prices. Buying a day or nearly two years is one atomic trade, from about 70 to 100 thousand compute units, and fees are low enough for small, precise calls. Veleda: the market of seers. |
+| 2:05 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
+| 2:15 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out. |
+| 2:28 | Share link opens on a second phone | Open a shared link | And any window can be shared as a link, so a friend can back the same call. |
+
+### Part 3: why Solana (2:35–3:05)
+
+| Time | On screen | Voiceover |
+|---|---|---|
+| 2:35 | One block labelled "one account", opening into a tree | So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices. |
+| 2:43 | Zoom down the tree to individual hours, then back out to the whole market. Counter: 43,800 hours · 16 levels · 3.5 MB of 10 MB | Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit. |
+| 2:53 | A window lights up one high branch, not every leaf. Figures: 1 day 70K, 700 days 100K compute units | Buying a window updates a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees. |
+
+### Part 4: liquidity providers (3:05–3:30)
+
+| Time | On screen | Voiceover |
+|---|---|---|
+| 3:05 | Curve with a shaded "maximum loss" floor | Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front. |
+| 3:13 | LP drags the opening curve. Fees tick up as trades go through | They'll set the opening odds, so a provider who knows the market better gives away less to the first traders, and they earn two and a half percent of every buy and sell. It isn't guaranteed profit, and the risk is real, but it's capped and it's priced. |
+| 3:26 | Logo | Veleda: the market of seers. |
+
+### Graphics notes
+
+- **Roadmap:** part 4 is not built, and the voiceover says "next". The five-year market in part 3 isn't live either. See below.
+- **The mock market** is our own neutral illustration, with no Polymarket or Kalshi branding or logos and with made-up prices. Check it against a live page before recording.
+
+### Checks for part 1 and part 3 claims
+
+- **Volume figures:** about $8bn combined in November 2025 and $5.35bn in the week of 2–8 March 2026 (The Block, DeFi Rate). Swap in a fresher figure if one is available.
+- **Five-year account size:** 3,496,520 bytes from `market_account_len` for 43,824 hourly atoms (tree capacity 65,536, so 16 levels). Earlier docs say 1–2 MB, which is out of date. Rent would be about 24 SOL.
+- **Five years fits, but doesn't run yet.** `MAX_ATOMS` is 1,500, `create_market` builds prices on the heap, and each trade walks every live atom for its largest-payout check. Trading at that size needs a max-tree for liabilities and staged initialisation, so don't say it's live. The 70K–100K figures are measured on the 3-year daily market only.
 
 ## Expected figures
 
