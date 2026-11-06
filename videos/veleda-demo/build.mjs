@@ -4,7 +4,7 @@ import { existsSync as has, writeFileSync as W, mkdirSync } from "node:fs";
 
 const PARTS = [
   ["problem", [
-    ["p1a", "Prediction markets are exploding. Kalshi and Polymarket went from about eight billion dollars of trading a month last November to more than five billion a week by this March."],
+    ["p1a", "Prediction markets are exploding. Kalshi and Polymarket went from about a billion dollars of trading a week in September last year to nearly twenty billion a week this September."],
     ["p1b", "But ask them when something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that."],
     ["p1c", "Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price."]]],
   ["flow", [
@@ -113,8 +113,8 @@ const t = (id, k = "s") => n3(T[id][k]);
   .axis{display:flex;justify-content:space-between;font-size:26px;color:#BFB5A5;margin-top:12px}`,
   `<div class="glow" style="left:310px;top:-250px"></div>
   <div class="g a" id="pa"><div class="h serif">Prediction markets are exploding</div>
-    <div class="stats"><div class="stat"><div class="n serif" id="n1">$0bn</div><div class="l">in a month, November 2025</div></div><div class="arrow">→</div><div class="stat" id="st2"><div class="n serif" id="n2">$0bn</div><div class="l">in a week, March 2026</div></div></div>
-    <div class="src">Kalshi and Polymarket combined. Sources: The Block, DeFi Rate.</div></div>
+    <div class="stats"><div class="stat"><div class="n serif" id="n1">$0bn</div><div class="l">in a week, Sept 2025</div></div><div class="arrow">→</div><div class="stat" id="st2"><div class="n serif" id="n2">$0bn</div><div class="l">in a week, Sept 2026</div></div></div>
+    <div class="src">Kalshi and Polymarket combined. Sources: Dune via CoinDesk, DeFi Rate.</div></div>
   <div class="g b" id="pb"><div class="tag">What a "when" market looks like today · Illustration, made-up prices</div><div class="card"><div class="q">BTC hits $200K by…?</div>${rows}</div></div>
   <div class="g miss" id="pm"><span>Second week of June 2028?</span><em>No market</em></div>
   <div class="g c" id="pc"><div class="ch serif">One market. The whole timeline.</div><div class="cs">Buy any stretch of time, in one trade, at one live price.</div>
@@ -122,7 +122,7 @@ const t = (id, k = "s") => n3(T[id][k]);
     <div class="axis"><span>Jun 2028</span><span>Jun 2029</span><span>Jun 2030</span><span>Jun 2031</span></div></div>`,
   `const fm=v=>"$"+v.toFixed(v<6?2:0)+"bn",A=${t("p1a")};
   tl.fromTo(".glow",{scale:.9},{scale:1.12,duration:${n3(SC.problem.d)},ease:"none"},0);
-  IN("#pa",A+.1);COUNT("n1",0,8,A+.4,1.6,v=>"$"+v.toFixed(0)+"bn");IN("#st2",A+${n3(T.p1a.d * .5)},{y:0});COUNT("n2",0,5.35,A+${n3(T.p1a.d * .5)},1.8,v=>"$"+v.toFixed(2)+"bn");
+  IN("#pa",A+.1);COUNT("n1",0,1,A+.4,1.6,v=>"~$"+(v<1?v.toFixed(1):"1")+"bn");IN("#st2",A+${n3(T.p1a.d * .5)},{y:0});COUNT("n2",0,19.46,A+${n3(T.p1a.d * .5)},1.8,v=>"$"+v.toFixed(2)+"bn");
   OUT("#pa",${t("p1b")}-.35);
   IN("#pb",${t("p1b")}+.05);IN("#pm",${t("p1b") + T.p1b.d * .6},{scale:.94});
   OUT(["#pb","#pm"],${t("p1c")}-.35);

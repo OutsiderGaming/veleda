@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="UTF-8" /></head><body><template id="problem-template">
-<div data-composition-id="problem" data-width="1920" data-height="1080" data-duration="31.441">
+<div data-composition-id="problem" data-width="1920" data-height="1080" data-duration="31.685">
 <style>@font-face{font-family:"Cinzel";src:url("assets/fonts/Cinzel-Variable.ttf");font-weight:400 900}
 @font-face{font-family:"Manrope";src:url("assets/fonts/Manrope-Variable.ttf");font-weight:200 800}[data-composition-id="problem"]{position:relative;width:100%;height:100%;background:#0D0F0E;color:#EDE4D6;font-family:"Manrope",sans-serif;overflow:hidden}
 [data-composition-id="problem"] *{box-sizing:border-box}
@@ -23,8 +23,8 @@
   .axis{display:flex;justify-content:space-between;font-size:26px;color:#BFB5A5;margin-top:12px}</style>
 <div class="glow" style="left:310px;top:-250px"></div>
   <div class="g a" id="pa"><div class="h serif">Prediction markets are exploding</div>
-    <div class="stats"><div class="stat"><div class="n serif" id="n1">$0bn</div><div class="l">in a month, November 2025</div></div><div class="arrow">→</div><div class="stat" id="st2"><div class="n serif" id="n2">$0bn</div><div class="l">in a week, March 2026</div></div></div>
-    <div class="src">Kalshi and Polymarket combined. Sources: The Block, DeFi Rate.</div></div>
+    <div class="stats"><div class="stat"><div class="n serif" id="n1">$0bn</div><div class="l">in a week, Sept 2025</div></div><div class="arrow">→</div><div class="stat" id="st2"><div class="n serif" id="n2">$0bn</div><div class="l">in a week, Sept 2026</div></div></div>
+    <div class="src">Kalshi and Polymarket combined. Sources: Dune via CoinDesk, DeFi Rate.</div></div>
   <div class="g b" id="pb"><div class="tag">What a "when" market looks like today · Illustration, made-up prices</div><div class="card"><div class="q">BTC hits $200K by…?</div><div class="row"><b>30 Jun 2028</b><span class="pct">18%</span><span class="yes">Yes 18¢</span><span class="no">No 82¢</span></div><div class="row"><b>30 Sep 2028</b><span class="pct">24%</span><span class="yes">Yes 24¢</span><span class="no">No 76¢</span></div><div class="row"><b>31 Dec 2028</b><span class="pct">31%</span><span class="yes">Yes 31¢</span><span class="no">No 69¢</span></div><div class="row"><b>30 Jun 2029</b><span class="pct">44%</span><span class="yes">Yes 44¢</span><span class="no">No 56¢</span></div></div></div>
   <div class="g miss" id="pm"><span>Second week of June 2028?</span><em>No market</em></div>
   <div class="g c" id="pc"><div class="ch serif">One market. The whole timeline.</div><div class="cs">Buy any stretch of time, in one trade, at one live price.</div>
@@ -35,17 +35,17 @@ const IN=(e,t,o={})=>tl.fromTo(e,{opacity:0,y:o.y??26,scale:o.scale??1},{opacity
 const OUT=(e,t,d=.4)=>tl.fromTo(e,{opacity:1},{opacity:0,duration:d,ease:"power2.in",immediateRender:false},t);
 const COUNT=(id,a,b,t,d,fmt,ease="power2.out")=>{const el=document.getElementById(id),o={v:a};el.textContent=fmt(a);tl.to(o,{v:b,duration:d,ease,onUpdate:()=>{el.textContent=fmt(o.v)}},t)};
 const fm=v=>"$"+v.toFixed(v<6?2:0)+"bn",A=0;
-  tl.fromTo(".glow",{scale:.9},{scale:1.12,duration:31.441,ease:"none"},0);
-  IN("#pa",A+.1);COUNT("n1",0,8,A+.4,1.6,v=>"$"+v.toFixed(0)+"bn");IN("#st2",A+5,{y:0});COUNT("n2",0,5.35,A+5,1.8,v=>"$"+v.toFixed(2)+"bn");
-  OUT("#pa",10-.35);
-  IN("#pb",10+.05);IN("#pm",17.0192926,{scale:.94});
-  OUT(["#pb","#pm"],21.699-.35);
-  const C=21.699,D=9.343;IN("#pc",C+.05);
+  tl.fromTo(".glow",{scale:.9},{scale:1.12,duration:31.685,ease:"none"},0);
+  IN("#pa",A+.1);COUNT("n1",0,1,A+.4,1.6,v=>"~$"+(v<1?v.toFixed(1):"1")+"bn");IN("#st2",A+5.122,{y:0});COUNT("n2",0,19.46,A+5.122,1.8,v=>"$"+v.toFixed(2)+"bn");
+  OUT("#pa",10.244-.35);
+  IN("#pb",10.244+.05);IN("#pm",17.2632926,{scale:.94});
+  OUT(["#pb","#pm"],21.942-.35);
+  const C=21.942,D=9.343;IN("#pc",C+.05);
   const ch=document.getElementById("pch");
   [["1 hour",18],["1 week",60],["1 year",540]].forEach(([l,w],i)=>{const s=C+D*(.36+i*.11);
     tl.fromTo("#pw",{width:i?[18,60][i-1]:18},{width:w,duration:.5,ease:"power2.inOut",immediateRender:false},s);
     if(i===0)tl.fromTo(ch,{opacity:0},{opacity:1,duration:.2,immediateRender:false},s);
     tl.set(ch,{textContent:l},s);});
-tl.to({}, {duration:31.441}, 0);
+tl.to({}, {duration:31.685}, 0);
 window.__timelines["problem"]=tl;})();</script>
 </div></template></body></html>

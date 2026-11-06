@@ -25,7 +25,7 @@ About 3:30 to 3:45 in total at a natural pace (the limit is 4:00). Times in the 
 
 | Time | On screen | Voiceover |
 |---|---|---|
-| 0:00 | Volume figures climbing | Prediction markets are exploding. Kalshi and Polymarket went from about eight billion dollars of trading a month last November to more than five billion a week by this March. |
+| 0:00 | Volume figures climbing | Prediction markets are exploding. Kalshi and Polymarket went from about a billion dollars of trading a week in September last year to nearly twenty billion a week this September. |
 | 0:12 | Mock of a typical market, labelled "Illustration": "BTC hits $200K by…?" with fixed dates, each with Yes and No | But ask them *when* something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that. |
 | 0:28 | The deadlines dissolve into one continuous timeline. A finger drags a window across it | Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price. |
 
@@ -69,7 +69,7 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 
 ### Checks for part 1 and part 3 claims
 
-- **Volume figures:** about $8bn combined in November 2025 and $5.35bn in the week of 2–8 March 2026 (The Block, DeFi Rate). Swap in a fresher figure if one is available.
+- **Volume figures:** Kalshi and Polymarket combined, the same week a year apart. 11–17 Sept 2025: Kalshi over $500M and Polymarket $430M, so about $1bn (Dune data, reported by CoinDesk on 20 Sept 2025). 21–27 Sept 2026: $19.46bn across Kalshi, Polymarket US and Polymarket International (DeFi Rate, updated 18 Oct 2026). The two sources count volume differently, so treat the 20 times as approximate.
 - **Five-year account size:** 3,496,520 bytes from `market_account_len` for 43,824 hourly atoms (tree capacity 65,536, so 16 levels). Earlier docs say 1–2 MB, which is out of date. Rent would be about 24 SOL.
 - **Five years fits, but doesn't run yet.** `MAX_ATOMS` is 1,500, `create_market` builds prices on the heap, and each trade walks every live atom for its largest-payout check. Trading at that size needs a max-tree for liabilities and staged initialisation, so don't say it's live. The 70K–100K figures are measured on the 3-year daily market only.
 
