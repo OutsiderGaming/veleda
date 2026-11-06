@@ -11,7 +11,7 @@ Run every command from the repo root.
    2. Paste the new `markets.json`, compacted to one line, into `MARKETS_JSON` on Vercel (type: config).
    3. Commit and push `markets.json`, which redeploys the app and points the bots at the new market.
    4. Check `/api/markets` shows the new address.
-2. **Give it shape.** A new market starts flat. Run `node scripts/bots.ts --rounds 10 --interval 15`.
+2. **Give it shape.** A new market starts flat. Run `node scripts/bots.ts --rounds 10 --interval 15` (on a slow devnet day, stop it once the market shows a few hundred traded). Then run `node scripts/demo/early-buy.ts`: a bot stakes 70 on the first two days, so those hours carry weight, and when they drop away at f6 window A shows a clear profit. Without it, the bots leave the first two days nearly empty and window A cashes out at a loss.
 3. **Pause the scheduled bots** so prices hold still: `gh workflow disable bots.yml`. Turn them back on afterwards with `gh workflow enable bots.yml`.
 4. **Check the market:** `node scripts/admin.ts fast status` should say `open`, with a clock on 12 June 2028.
 5. **Prepare the phone.** Use a **normal tab, never a private one**, because private tabs can stop the wallet connecting. Sign in with a Google account that's new to Veleda, or delete a throwaway test user in the Privy dashboard so it counts as new.
@@ -82,7 +82,7 @@ The project is `videos/veleda-demo`, and all timing comes from its audio files.
 
 ## Expected figures
 
-These are estimates from the LMSR formulas using the fast market's prices on 4 Nov, before bot trading had shaped it. They ignore window B's effect on window A. **Check them in the rehearsal**, because bots and window choice change them.
+Rehearsed on 6 Nov on market `CYMNhpJi…` after the bots and the early buy: window A about 15.08 right after buying, about 25.61 after +2d; window B pays about 196. The table below is the older estimate from 4 Nov, before bot trading had shaped that market. They ignore window B's effect on window A. **Check them in the rehearsal**, because bots and window choice change them.
 
 | Clock jump | Window A, bought with 20 | Result |
 |---|---|---|
