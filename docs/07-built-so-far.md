@@ -1,6 +1,6 @@
 # Veleda — What we've built so far
 
-Written 20 Oct 2026 as source material for the pitch deck. Status: weeks 1–3 of 4 are done; week 4 (README, setup script, seeded markets, demo video) is in progress. Final submissions close 9 Nov 2026.
+Written 20 Oct 2026 as source material for the pitch deck; status updated 6 Nov 2026. Weeks 1–3 are done and week 4 is nearly done: the setup script, README, seeded markets and the demo video cut are finished, and the video needs its voiceover and render. Final submissions close 9 Nov 2026; we're submitting by 8 Nov.
 
 > **For the deck writer:** everything below is built and working unless it's under "Not built yet" or "Roadmap". Figures are measured, not estimated, unless marked. Please don't present roadmap items as built.
 
@@ -106,21 +106,21 @@ Dark obsidian with copper; logo is a gold engraved seeress on dark green-black. 
 
 Screens worth using in the deck: timeline (month view), dragging a window, buy sheet, positions with cash-out, practice mode. Mockups are in `design/screens/`; real-app screenshots still to be taken.
 
-## The demo (planned, ~2:25)
+## The demo video (about 3:10)
 
-1. **The need (20s):** fans argue about when; Veleda lets you stake your call and get credit for it.
-2. **First call in under a minute (25s):** open a link on a phone, drag to a month two years out, buy, sign in with email; the position appears. Stopwatch on screen.
-3. **Any width (15s):** widen the window and watch the multiplier fall.
-4. **Share it (20s):** share the window; it opens on a second phone ready to buy.
-5. **Time passes (25s):** move the fast market's clock forward; elapsed hours grey out, the cash-out figure climbs; cash out for a profit.
-6. **Resolution (20s):** resolve inside a held window; claim.
-7. **Why Solana (20s):** one account, any width at the same cost, fully backed.
+The script and how it's built are in `docs/08-demo-run-sheet.md`; the video project is `videos/veleda-demo`.
 
-## Not built yet (week 4, before 9 Nov)
+1. **The problem:** prediction market volume is up about 20 times in a year, but "when" questions get a few fixed yes-or-no deadlines. Veleda is one market for the whole timeline.
+2. **The whole flow, as it works at launch** (a real phone take, labelled as devnet with test money and a simulated payment): browse signed out, drag a window, sign in with Google, add money, the call places itself, a second call, time passes, cash out at a profit, the event resolves and the claim pays.
+3. **Why Solana:** the whole timeline in one account as a tree of prices; five years of hours would fit in 3.5 MB; any window is one atomic trade at similar cost.
+4. **Liquidity providers (roadmap):** capped, known maximum loss, opening odds set by the provider, 2.5% of every buy and sell.
 
-- One-command setup script and finished README with screenshots.
-- Re-seeding both markets with fresh bot trading before recording.
-- Demo video plus a backup recording.
+The stopwatch beat was dropped: the real-money flow includes an ID check, so "under a minute" holds only for the free-credit path on the normal site. The share link was dropped from the video to save time; it's still in the app.
+
+## Not done yet (before submission)
+
+- The demo video's voiceover and render (the cut is done; the raw phone take is the backup recording).
+- A clean fast market for judges, created as close to submission as possible.
 - Connecting an existing wallet (Phantom, Solflare) is a stretch goal; the demo uses email/Google sign-in only.
 
 ## Roadmap (designed, not built)
