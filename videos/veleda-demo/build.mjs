@@ -16,7 +16,7 @@ const PARTS = [
     ["f6", "As time passes, hours drop away, the ones left become more likely, and the cash-out value moves."],
     ["f7", "No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit."],
     ["f8", "Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance."],
-    ["f9", "From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call."]]],
+    ["f9", "From there, they can send it to their bank through our payment partner, or send USDC to any wallet."]]],
   ["tree", [
     ["s1", "So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices."],
     ["s2", "Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit."],
@@ -28,6 +28,9 @@ const PARTS = [
     ["l4", "Veleda. The market of seers."]]],
 ];
 const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
+// Phone footage plays at most this much faster than real time; a beat whose clip is longer than
+// its voice grows to fit, and every clip is sped up or slowed to fill its beat exactly.
+const MAX_RATE = 1.6; const RATE = {};
 const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol");
 const dur = (f) => +X("ffprobe", ["-v","error","-show_entries","format=duration","-of","csv=p=0",f]).toString().trim();
 
@@ -44,7 +47,10 @@ for (const [part, beats] of PARTS) {
         X("ffmpeg", ["-y","-loglevel","error","-i",a,"-ar","44100","-ac","1",f]); X("rm",[a]); }
     }
     const d = dur(f);
-    T[id] = { s: clock - sc, e: clock - sc + d + GAP, d: d + GAP };
+    const fp = `footage/${id}.mp4`, fd = has(fp) ? dur(fp) : 0;
+    const bd = Math.max(d + GAP, fd / MAX_RATE);
+    if (fd) RATE[id] = +(fd / bd).toFixed(4);
+    T[id] = { s: clock - sc, e: clock - sc + bd, d: bd };
     audio.push({ id, f, s: clock, d });
     // captions: split at punctuation, then by length, timed by characters
     const parts = text.match(/[^.,:?]+[.,:?]*/g).map((x) => x.trim()); const lines = [];
@@ -54,7 +60,7 @@ for (const [part, beats] of PARTS) {
       else { let cur = ""; for (const w of p.split(" ")) { if ((cur + " " + w).length > 66) { lines.push(cur); cur = w; } else cur = (cur + " " + w).trim(); } if (cur) lines.push(cur); } }
     const total = lines.reduce((n, l) => n + l.length, 0); let t = clock;
     for (const l of lines) { const cd = (d * l.length) / total; caps.push({ t, d: cd, l }); t += cd; }
-    clock += d + GAP;
+    clock += bd;
   }
   clock += PART_GAP - GAP;
   SC[part] = { s: sc, d: clock - sc };
@@ -139,14 +145,14 @@ const t = (id, k = "s") => n3(T[id][k]);
     f6: ["Time passes", "Two days later. Demo clock, sped up.", "Positions updating after the clock moves.", "4-your-positions"],
     f7: ["Cash out", "A live price, any time.", "Cash out window A.", "4-your-positions"],
     f8: ["It happens", "One day later. Winning hour recorded on-chain.", "Tap Claim on window B.", "4-your-positions"],
-    f9: ["Take it out", "To a bank or any wallet. Or share the window as a link.", "Account: Withdrawing, at launch. Then a shared link on a second phone.", null],
+    f9: ["Take it out", "To a bank or any wallet.", "Account: Withdrawing, at launch.", null],
   };
   const ids = Object.keys(B); let slots = "", side = "", js = "";
   for (const id of ids) {
     const [h, sub, shot, img] = B[id]; const s = t(id), d = n3(T[id].d);
     const footage = `footage/${id}.mp4`;
     slots += has(footage)
-      ? `<video id="v-${id}" class="clip vid" src="${footage}" muted data-start="${s}" data-duration="${d}" data-track-index="1"></video>`
+      ? `<video id="v-${id}" class="clip vid" src="${footage}" muted data-start="${s}" data-duration="${d}" data-playback-rate="${RATE[id]}" data-track-index="1"></video>`
       : `<div id="slot-${id}" class="clip slot" data-start="${s}" data-duration="${d}" data-track-index="1">${img ? `<img src="assets/${img}.png" alt="" />` : ""}<div class="ph"><b>Rough cut</b><span>${shot}</span></div></div>`;
     const extra = id === "f2" ? `<ul class="ticks"><li>Wallet created</li><li>No seed phrase</li><li>Network fees paid for them</li></ul>`
       : "";

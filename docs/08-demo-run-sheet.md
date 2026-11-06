@@ -43,7 +43,7 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 | f6 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +2d`, wait for the update | As time passes, hours drop away, the ones left become more likely, and the cash-out value moves. |
 | f7 | Positions | Cash out window A | No waiting for the event, and no waiting for a buyer. The market maker always quotes a price, so they sell and take the profit. |
 | f8 | Terminal, then Positions | Run `node scripts/admin.ts fast clock +1d`, then `node scripts/admin.ts fast resolve 2028-06-15T09:00Z`, then tap Claim on window B | Then the event happens. The winning hour is recorded on-chain, and window B contains it, so it pays out to their balance. |
-| f9 | Account, then a shared link on a second phone | Show "Withdrawing, at launch", then open a shared link | From there, they can send it to their bank through our payment partner, or send USDC to any wallet. And any window can be shared as a link, so a friend can back the same call. |
+| f9 | Account | Show "Withdrawing, at launch" | From there, they can send it to their bank through our payment partner, or send USDC to any wallet. |
 
 ### Part 3: why Solana (2:35–3:05)
 
@@ -77,7 +77,7 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 
 The project is `videos/veleda-demo`, and all timing comes from its audio files.
 
-1. Save each recorded beat as `footage/<beat>.mp4` (f1 to f9) and your voice as `voice/final/<beat>.wav`. The beat IDs are in `build.mjs`. Without a final voice file, a beat uses the scratch voice.
+1. Record one continuous take, then run `sh cut-footage.sh <take.mov>`, which cuts it into `footage/f1.mp4` to `f9.mp4` (times are set for the 6 Nov take; it also blurs the Google account chooser). The footage is gitignored. A clip plays sped up, at most 1.6 times, to fit its beat, and a beat grows when its clip needs more time. Save your voice as `voice/final/<beat>.wav`. The beat IDs are in `build.mjs`. Without a final voice file, a beat uses the scratch voice.
 2. Run `node build.mjs`, which regenerates the timing, captions and scenes. Don't hand-edit `index.html` or `compositions/`.
 
 ## Expected figures
