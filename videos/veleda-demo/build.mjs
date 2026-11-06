@@ -30,7 +30,7 @@ const PARTS = [
 const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
 // Phone footage plays at most this much faster than real time; a beat whose clip is longer than
 // its voice grows to fit, and every clip is sped up or slowed to fill its beat exactly.
-const MAX_RATE = 1.6; const RATE = {};
+const MAX_RATE = 1.6, MAX_RATE_OF = { f5: 1.2 }; const RATE = {}; // f5: the second drag should read at near real speed
 const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol");
 const dur = (f) => +X("ffprobe", ["-v","error","-show_entries","format=duration","-of","csv=p=0",f]).toString().trim();
 
@@ -48,7 +48,7 @@ for (const [part, beats] of PARTS) {
     }
     const d = dur(f);
     const fp = `footage/${id}.mp4`, fd = has(fp) ? dur(fp) : 0;
-    const bd = Math.max(d + GAP, fd / MAX_RATE);
+    const bd = Math.max(d + GAP, fd / (MAX_RATE_OF[id] ?? MAX_RATE));
     if (fd) RATE[id] = +(fd / bd).toFixed(4);
     T[id] = { s: clock - sc, e: clock - sc + bd, d: bd };
     audio.push({ id, f, s: clock, d });

@@ -26,7 +26,8 @@ cut f1 "4.0 24.0"
 cut f2 "24.0 37.0 37.5 41.9" "split[a][b];[b]crop=440:240:40:535,boxblur=28:4[bl];[a][bl]overlay=40:535:enable='gte(t,12.95)'"
 cut f3 "42.5 63.6"
 cut f4 "63.6 69.5"
-cut f5 "79.0 84.0 86.5 92.5 97.0 100.5"
+# f5 keeps the tap and drag for window B (85.0-86.5) unbroken; build.mjs plays f5 at most 1.2x.
+cut f5 "83.8 92.5 96.8 100.5"
 cut f6 "98.5 106.0"
 cut f7 "112.0 121.0"
 # f8 skips 142.5-148.9, where the resolved card still showed the pre-resolve value (fixed in the app since).
