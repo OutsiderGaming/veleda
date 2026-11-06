@@ -218,6 +218,12 @@ Goal from the hackathon spec: one-command setup script and README, seeded market
 - [x] **Rehearse** _(a trial run and the full take on 6 Nov 2026)_: the full demo script twice in a row without intervention (the week's exit check).
 - [ ] **Record** _(phone take done 6 Nov 2026 and cut into the video; it's also the backup recording; render after the voiceover)_: the main video, plus a backup recording of the full live run in case devnet is slow on the day.
 - [ ] **Final checks on the day**: copy audit again; stopwatch test once more on the live URL; both markets open and seeded.
+- [x] **Name checks** _(6 Nov 2026; still to check by hand: the X handle and UK trademarks)_:
+  - **Domains:** veleda.market and veleda.app are unregistered (registry RDAP returns 404). veleda.xyz and veleda.io are unregistered too. veleda.com is taken (registered Feb 2024, a global investigations and advisory firm).
+  - **Tokens:** DexScreener's search API finds no VELEDA pair; the web search found no VELEDA token on pump.fun (pump.fun's own search is behind a bot check). The nearest names are unrelated (VLED, VAEL).
+  - **US trademarks** (Trademarkia): VELEDA, clothing, class 25, dead since 1989; VELEDA CONSULTING GROUP, pending since June 2026, classes 35 and 41 (leadership training). Nothing in software, finance or betting.
+  - **X:** x.com/veleda can't be checked without a browser; look at it, and at veleda_market or similar as fallbacks.
+  - "Veda" stays off-limits: an existing Solana DeFi protocol.
 - [ ] **Submission**: final project description and "How Solana powers Veleda" from `docs/05-submission-copy.md`; repo link, live link and video link; tick the hackathon spec's submission checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
 
 - [x] **Launch preview, real-money order** (4 Nov 2026): in the preview a new account gets no free credits and sees dollars throughout. Sign-in opens Add money, and the call places itself after the deposit. Needs a phone pass on a new Google account after the next push.
