@@ -3,7 +3,7 @@
 #   sh cut-footage.sh /path/to/take.mov
 # Segment times (seconds into the take) are for the 6 Nov take; re-check them for a new one.
 # f2 blurs the Google account chooser's names, photos and emails. f7 ends before the
-# stale window-A card and f8 skips it; f8 adds the Settled list at the end.
+# stale window-A card and f8 skips it, and the stale claim amount; f8 ends on the Settled list.
 # Screen recordings have variable frame timing (a still screen can go seconds without a
 # frame), so the take is made constant 60 fps first and trimmed by filter, not by seeking.
 set -e
@@ -29,6 +29,7 @@ cut f4 "63.6 69.5"
 cut f5 "79.0 84.0 86.5 92.5 97.0 100.5"
 cut f6 "98.5 106.0"
 cut f7 "112.0 121.0"
-cut f8 "139.5 149.0 182.0 187.0"
+# f8 skips 142.5-148.9, where the resolved card still showed the pre-resolve value (fixed in the app since).
+cut f8 "137.0 142.4 149.0 150.5 182.0 187.0"
 cut f9 "153.5 163.0"
 for f in footage/f*.mp4; do printf '%s %ss\n' "$f" "$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f")"; done
