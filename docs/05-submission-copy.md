@@ -1,6 +1,6 @@
 # Veleda — Submission copy (drafts)
 
-Drafted 12 Oct 2026, rewritten 4 Nov 2026 after judge feedback, for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
+Drafted 12 Oct 2026, rewritten 4 Nov 2026 after judge feedback, checked against the build and the demo video on 6 Nov 2026, for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
 
 ## Project description
 
@@ -23,6 +23,10 @@ Adding real money would be the one slower step: the first card deposit goes thro
 
 **This prototype runs on devnet with test money: the deposit is simulated, while every trade, cash-out and payout is real on-chain.** Real-money launch depends on licensing and legal advice. The demo video and the "launch preview" link show this flow, clearly labelled.
 
+### What's next
+
+Today the platform funds every market. Next, we open that to liquidity providers. A provider's maximum loss is known and funded up front, they set the opening odds (so a provider who knows the market gives away less to the first traders), and they earn the 2.5% liquidity share of every buy and sell. It isn't guaranteed profit, but the risk is capped and priced.
+
 ### One-line version
 
 Veleda: buy any window of future time in one swipe. Call when it happens, cash out as the crowd moves.
@@ -32,6 +36,8 @@ Veleda: buy any window of future time in one swipe. Call when it happens, cash o
 Every Veleda market is a single on-chain automated market maker, a logarithmic market scoring rule (LMSR), that prices the whole timeline at once. The timeline is split into hourly or daily slots, and the prices for every slot live in a segment tree inside one zero-copy account. Buying a window means adding shares to every slot in that range. The tree applies this as a lazy range update, so the work grows with the logarithm of the timeline's length, not with the width of the window.
 
 We measured this on the three-year flagship market: buying 1 day costs about 70K compute units, 31 days about 81K and 700 days about 100K, all within Solana's default 200K budget. One program instruction can quote, buy or sell any contiguous range atomically.
+
+The same layout scales to fine-grained markets: five years of hourly slots (43,824) fits in one 3.5 MB account, inside Solana's 10 MB limit. Trading at that size needs one more change, a tree for the solvency check, which today scans the open slots once per trade; that's on the roadmap, and the live markets run at 1,096 days and 168 hours.
 
 Because the market maker is always on the other side of the trade, there's no order book and no waiting for a counterparty. You can enter early at a long-shot price and cash out at the live price at any time. The maths runs in Q64.64 fixed point, with costs rounded up and proceeds rounded down. Every instruction checks one invariant: the vault always holds enough to pay the largest possible payout, so every position is fully backed on-chain. We cross-checked the maths against a separate reference model on 26,000 random trades.
 
