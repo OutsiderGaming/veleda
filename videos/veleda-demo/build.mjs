@@ -20,7 +20,7 @@ const PARTS = [
   ["tree", [
     ["s1", "So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices."],
     ["s2", "Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit."],
-    ["s3", "Buying a window updates a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees."]]],
+    ["s3", "Buying a window reprices a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees."]]],
   ["lp", [
     ["l1", "Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front."],
     ["l2", "They'll set the opening odds, so a provider who knows the market better gives away less to the first traders, and they earn two and a half percent of every buy and sell. It isn't guaranteed profit, and the risk is real, but it's capped and it's priced."],

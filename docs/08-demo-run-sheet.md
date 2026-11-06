@@ -51,7 +51,7 @@ The label "How it works at launch. Shown on devnet: test money, simulated paymen
 |---|---|---|
 | 2:35 | One block labelled "one account", opening into a tree | So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices. |
 | 2:43 | Zoom down the tree to individual hours, then back out to the whole market. Counter: 43,800 hours · 16 levels · 3.5 MB of 10 MB | Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit. |
-| 2:53 | A window lights up one high branch, not every leaf. Figures: 1 day 70K, 700 days 100K compute units | Buying a window updates a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees. |
+| 2:53 | A window lights up one high branch, not every leaf. Figures: 1 day 70K, 700 days 100K compute units | Buying a window reprices a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees. |
 
 ### Part 4: liquidity providers (3:05–3:30)
 
