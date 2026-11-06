@@ -28,6 +28,8 @@ const PARTS = [
     ["l4", "Veleda. The market of seers."]]],
 ];
 const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
+// The video opens on the logo for INTRO seconds (fade in, hold, fade out) before the first beat.
+const INTRO = 1.5, LOGO_BG = "#171C1A"; // LOGO_BG is the logo image's own flat background
 // Phone footage plays at most this much faster than real time; a beat whose clip is longer than
 // its voice grows to fit, and every clip is sped up or slowed to fill its beat exactly.
 const MAX_RATE = 1.6, MAX_RATE_OF = { f5: 1.2 }; const RATE = {}; // f5: the second drag should read at near real speed
@@ -35,7 +37,7 @@ const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol")
 const dur = (f) => +X("ffprobe", ["-v","error","-show_entries","format=duration","-of","csv=p=0",f]).toString().trim();
 
 // ---------- timing
-let clock = 0; const T = {}, SC = {}; const audio = [], caps = [];
+let clock = INTRO; const T = {}, SC = {}; const audio = [], caps = [];
 for (const [part, beats] of PARTS) {
   const sc = clock;
   for (const [id, text] of beats) {
@@ -250,7 +252,7 @@ const t = (id, k = "s") => n3(T[id][k]);
   .utl{position:relative;height:440px;margin-top:44px;display:flex;align-items:flex-end;gap:5px;border-bottom:3px solid #2C2A24}
   .utl i{flex:1;background-color:#A9743F;background-image:radial-gradient(circle,rgba(13,15,14,.55) 1px,transparent 1.3px);background-size:5px 5px}
   .uw{position:absolute;top:-8px;bottom:-3px;left:0;width:60px;background:rgba(246,199,146,.26);border-left:5px solid #F6C792;border-right:5px solid #F6C792;opacity:0}
-  .end{inset:0;background:#0D0F0E;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:90px}.end img{width:330px;height:330px;border-radius:30px}.end .serif{font-size:112px;color:#F6C792;margin-top:28px}.end div+div{font-size:42px;color:#EDE4D6}`,
+  .end{inset:0;background:${LOGO_BG};display:flex;align-items:center;justify-content:center}.end img{width:1000px;height:1000px}`,
   `<div class="glow" style="left:900px;top:-300px"></div>
   <div class="g hd serif" id="lh">Liquidity providers</div><div class="g road" id="lr">Next. Not built yet.</div>
   <div class="g chart" id="lc"><div class="ct" id="lct">Opening odds across the timeline</div><div class="bars">${bars}</div><div class="ax"><span>Sooner</span><span>Later</span></div></div>
@@ -260,7 +262,7 @@ const t = (id, k = "s") => n3(T[id][k]);
   <div class="g usp" id="lu"><div class="uh serif">A new form of prediction market</div><div class="us">Buy and sell future time.</div>
     <div class="uc"><span class="uchip" id="uc1">Any increment</span><span class="uchip" id="uc2">Whenever they want</span></div>
     <div class="utl">${ubars}<div class="uw" id="uw"></div></div></div>
-  <div class="g end" id="le"><img src="assets/logo.png" alt="" /><div class="serif">Veleda</div><div>the market of seers</div></div>`,
+  <div class="g end" id="le"><img src="assets/logo-big.png" alt="" /></div>`,
   `const A=${t("l1")},B=${t("l2")},Bd=${n3(T.l2.d)},U=${t("l3")},Ud=${n3(T.l3.d)},E=${t("l4")};
   IN(["#lh","#lr"],A+.1);IN("#lc",A+.3);IN("#l1",A+${n3(T.l1.d * .55)});
   tl.fromTo("#lm",{scaleX:0},{scaleX:1,duration:.8,ease:"power2.out",immediateRender:false},A+${n3(T.l1.d * .6)});
@@ -291,11 +293,13 @@ W("index.html", `<!doctype html>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
 <style>${FONT}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0D0F0E}
 #root{position:relative;width:100%;height:100%;background:#0D0F0E;font-family:"Manrope",sans-serif}
+#intro{position:absolute;inset:0;background:${LOGO_BG};display:flex;align-items:center;justify-content:center;z-index:40;opacity:0}#intro img{width:1000px;height:1000px}
 .cap{position:absolute;left:210px;width:1500px;bottom:44px;text-align:center;font-size:38px;font-weight:600;color:#EDE4D6;line-height:1.3;z-index:50}</style></head>
 <body><div id="root" data-composition-id="main" data-start="0" data-duration="${TOTAL}" data-width="1920" data-height="1080">
+<div id="intro" class="clip" data-start="0" data-duration="${INTRO}" data-track-index="5"><img src="assets/logo-big.png" alt="" /></div>
 ${PARTS.map(([id], i) => scene(id, i % 2)).join("\n")}
 ${audio.map((a) => `<audio id="vo-${a.id}" src="${a.f}" data-start="${n3(a.s)}" data-duration="${n3(a.d)}" data-track-index="10" data-volume="1"></audio>`).join("\n")}
 ${caps.map((c, i) => `<div id="cap-${i}" class="clip cap" data-start="${n3(c.t)}" data-duration="${n3(c.d)}" data-track-index="20">${c.l}</div>`).join("\n")}
-</div><script>const tl=gsap.timeline({paused:true});tl.to({}, {duration:${TOTAL}}, 0);window.__timelines["main"]=tl;</script></body></html>`);
+</div><script>const tl=gsap.timeline({paused:true});tl.to({}, {duration:${TOTAL}}, 0);tl.fromTo("#intro",{opacity:0},{opacity:1,duration:.45,ease:"power1.out",immediateRender:false},0);tl.to("#intro",{opacity:0,duration:.4,ease:"power1.in"},${INTRO}-.4);window.__timelines["main"]=tl;</script></body></html>`);
 W("timing.json", JSON.stringify(T, null, 1));
 console.log("total", TOTAL, Object.fromEntries(Object.entries(SC).map(([k, v]) => [k, [+v.s.toFixed(1), +v.d.toFixed(1)]])));
