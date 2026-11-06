@@ -24,13 +24,16 @@ interface Settled {
 }
 
 export default function Positions() {
-  const { ready, authenticated, login, positions, request, signAndSubmit } = useSession();
+  const { ready, authenticated, login, positions, refresh, request, signAndSubmit } = useSession();
   const money = useMoney();
   const { markets, refresh: refreshMarkets } = useMarkets();
   const [tab, setTab] = useState<"open" | "settled">("open");
   const [settled, setSettled] = useState<Settled[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Windows cashed out or claimed on this page. They leave Open at once: the RPC can still list a
+  // closed position for a few seconds, and a position address is never reused.
+  const [closed, setClosed] = useState<ReadonlySet<string>>(() => new Set());
 
   const loadSettled = useCallback(async () => {
     try {
@@ -42,7 +45,14 @@ export default function Positions() {
 
   useEffect(() => {
     if (authenticated) void loadSettled();
-  }, [authenticated, loadSettled]);
+  }, [authenticated, loadSettled, positions?.length]);
+
+  // Markets refresh more often than positions. When a market resolves or its clock moves, fetch
+  // positions now, so values, odds and the claim amount all come from the same moment.
+  const marketKey = markets?.map((m) => `${m.name}:${m.liveEdge}:${m.resolved}`).join() ?? "";
+  useEffect(() => {
+    if (authenticated && marketKey) void refresh();
+  }, [authenticated, marketKey, refresh]);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -54,7 +64,7 @@ export default function Positions() {
     );
   }
 
-  const open = positions ?? [];
+  const open = (positions ?? []).filter((p) => !closed.has(p.address)).map((p) => withResult(p, markets?.find((m) => m.name === p.market)));
   const valued = open.filter((p) => p.value !== null);
   const total = valued.reduce((t, p) => t + (p.value ?? 0), 0);
   const paid = open.reduce((t, p) => t + (p.paid ?? 0), 0);
@@ -66,6 +76,7 @@ export default function Positions() {
     setErrors((e) => ({ ...e, [p.address]: "" }));
     try {
       await signAndSubmit(`/api/trade/${kind}`, { position: p.address });
+      setClosed((c) => new Set(c).add(p.address));
       void refreshMarkets();
       void loadSettled();
     } catch (e) {
@@ -134,6 +145,12 @@ export default function Positions() {
         ))}
     </>
   );
+}
+
+/** Once the market shows resolved, a position is worth its shares if it holds the winning hour, or nothing. */
+function withResult(p: PositionView, m: MarketView | undefined): PositionView {
+  if (!m?.resolved || m.winner === null) return p;
+  return { ...p, value: p.from <= m.winner && m.winner <= p.to ? p.shares : 0, status: "resolved" };
 }
 
 function OpenCard({ p, m, busy, error, onAct }: { p: PositionView; m: MarketView; busy: boolean; error?: string; onAct: (p: PositionView, kind: "sell" | "claim") => void }) {

@@ -75,12 +75,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [getAccessToken],
   );
 
+  // Refreshes can overlap: /api/positions takes seconds on devnet, so a timed refresh that started
+  // before a trade can finish after the one fired by the trade. Only the newest one may write.
+  const refreshSeq = useRef(0);
   const refresh = useCallback(async () => {
     if (!address) return;
+    const seq = ++refreshSeq.current;
     const [bal, pos] = await Promise.allSettled([
       fetch(`/api/balance?owner=${address}`, { cache: "no-store" }).then((r) => r.json()),
       request<{ positions: PositionView[] }>("/api/positions"),
     ]);
+    if (seq !== refreshSeq.current) return;
     if (bal.status === "fulfilled" && typeof bal.value.vcr === "number") setBalance(bal.value.vcr);
     if (pos.status === "fulfilled") setPositions(pos.value.positions);
   }, [address, request]);
