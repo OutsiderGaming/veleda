@@ -5,12 +5,17 @@
 A prototype for the Encode Club Solana Hackathon (from 12 October 2026), "Best Consumer App on Solana" track, running on Solana devnet with a test currency, Veleda Credit (VCR).
 
 - **Live app:** https://veleda-veleda1.vercel.app (sign in with email or Google; new accounts get 100 VCR of test money)
+- **Launch preview:** https://veleda-veleda1.vercel.app/?preview=launch shows the real-money flow as it would work at launch: new accounts start at $0 and add money through a simulated payment, with balances shown in dollars. Still test money on devnet.
+- **Practice mode:** https://veleda-veleda1.vercel.app/practice, a scripted market on a fictional event that you scrub forwards and backwards. Same maths as the live markets, with no sign-in and nothing on chain.
+- **Demo video:** _link added at submission_
 - **Program (devnet):** `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`
 - **VCR mint (devnet):** `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`
 
+![Choosing a window on the timeline, the buy sheet, and Positions with a live cash-out value (launch preview)](docs/img/screens.png)
+
 ## How Solana powers Veleda
 
-Every Veleda market is a single on-chain automated market maker, a logarithmic market scoring rule (LMSR), that prices the whole timeline at once. The timeline is split into hourly or daily slots, and the prices for every slot live in a segment tree inside one zero-copy account. Buying a window means adding shares to every slot in that range. The tree applies this as a lazy range-multiply, so any trade touches a fixed, small number of tree nodes whether the window is one hour or one year. That keeps every trade at the same compute cost and lets a single program instruction quote, buy or sell any contiguous range atomically.
+Every Veleda market is a single on-chain automated market maker, a logarithmic market scoring rule (LMSR), that prices the whole timeline at once. The timeline is split into hourly or daily slots, and the prices for every slot live in a segment tree inside one zero-copy account. Buying a window means adding shares to every slot in that range. The tree applies this as a lazy range-multiply: each node stores the total weight beneath it, so a window is covered by a few whole nodes, which are multiplied and tagged rather than visiting every slot. Any trade touches a small number of nodes whether the window is one hour or one year, so cost barely depends on width (on the live three-year market, about 70K compute units for a 1-day window and 100K for 700 days), and a single program instruction can quote, buy or sell any contiguous range atomically.
 
 Because the AMM is always on the other side of the trade, there's no order book and no waiting for a counterparty. You can enter early at a long-shot price and cash out at the live price at any time. The maths runs in Q64.64 fixed point, with costs rounded up and proceeds rounded down. Every instruction checks one invariant: the vault always holds enough to pay the largest possible payout, so every position is fully backed on-chain.
 
@@ -24,12 +29,35 @@ Solana's low fees and fast finality make small, precise calls practical, such as
 | `crates/veleda-math` | `no_std` Rust maths (Q64.64 fixed point, packed floats, LMSR, segment tree) and the market engine the program runs |
 | `packages/reference` | TypeScript f64 reference model of the market maths, used to cross-check the Rust engine |
 | `app/` | Next.js web app and fee-payer server: Privy sign-in, sign-up airdrop, trade routes, timeline UI |
-| `scripts/` | Market creation, admin tools, trader bots, token metadata, cross-check |
+| `scripts/` | One-command setup (`setup.sh`, `setup.ts`), market creation, admin tools, trader bots, token metadata, cross-check |
 | `.github/workflows/bots.yml` | Runs a round of trader bots every 30 minutes |
 | `markets.json` | Addresses of the live devnet markets (read by the app and bots) |
 | `docs/`, `design/` | Project brief, specs, build plan, mockups and design tokens |
 
 ## Setup
+
+### Quick start (Node only)
+
+You need Node.js 23.6 or later and a free [Privy](https://privy.io) app with Solana embedded wallets and email or Google sign-in enabled.
+
+```
+git clone <this repo> veleda && cd veleda
+npm run setup
+```
+
+`npm run setup` installs both projects, creates your own devnet keys in `keys/`, gets devnet SOL, creates your own test-money mint ("Veleda Credit", VCR), creates both demo markets on the already deployed program, writes their addresses to `markets.json`, adds `TOKEN_MINT` to `.env` and runs one round of trader bots. It needs about 1.6 devnet SOL. If the faucet rate-limits, it prints one address to fund at https://faucet.solana.com: fund it and run `npm run setup` again, and it carries on where it stopped. Re-running is always safe.
+
+Then put your Privy keys in `.env` (setup adds empty lines for them), add `http://localhost:3000` to the Privy app's allowed origins, and start the app:
+
+```
+cd app && npm run dev           # http://localhost:3000
+```
+
+New accounts get 100 VCR from your mint, and every trade, cash-out and claim runs on devnet against your markets.
+
+**Your own program as well:** `npm run setup -- --own` also needs Rust 1.99, Solana CLI 3.1 (Agave) and Anchor CLI 1.1 (via `avm`), and about 6 more devnet SOL. It creates a program key, puts its address in the four files listed under step 4, builds the program and deploys it, then carries on as above.
+
+The sections below are what the setup does, for doing it by hand.
 
 ### Prerequisites
 
@@ -41,8 +69,8 @@ Solana's low fees and fast finality make small, precise calls practical, such as
 
 ```
 git clone <this repo> veleda && cd veleda
-npm install                # root: reference model and scripts
-(cd app && npm install)    # the web app has its own node_modules
+npm ci                     # root: reference model and scripts
+(cd app && npm ci)         # the web app has its own node_modules
 ```
 
 ### 2. Keys and environment
@@ -69,9 +97,9 @@ SOLANA_RPC_URL=...              # optional; defaults to the public devnet RPC, w
 TOKEN_MINT=...                  # optional; defaults to the VCR mint above
 ```
 
-### 3. Run the web app against the live devnet markets
+### 3. Run the web app
 
-This is all you need to try the app locally: it uses the program and markets already on devnet (`markets.json`).
+The app reads the markets in `markets.json`. The ones committed here are the live demo markets, which use the maintainers' VCR mint; to trade from your own server you need your own mint and markets (step 4, or `npm run setup`), because the sign-up airdrop mints VCR.
 
 ```
 cd app && npm run dev           # http://localhost:3000

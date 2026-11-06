@@ -23,8 +23,8 @@ if [ -n "$OWN" ]; then
 fi
 
 echo "1. Installing dependencies"
-npm install --no-audit --no-fund --loglevel=error
-(cd app && npm install --no-audit --no-fund --loglevel=error)
+npm ci --no-audit --no-fund --loglevel=error
+(cd app && npm ci --no-audit --no-fund --loglevel=error)
 
 echo "2. Keys and devnet SOL"
 node scripts/setup.ts fund $OWN

@@ -32,9 +32,26 @@ const run = (script: string, ...args: string[]) => {
   if (r.status !== 0) throw new Error(`${script} failed`);
 };
 
-// SOL each key should hold. Admin: ~0.85 for both markets' rent, mint and metadata, plus what it
-// hands on; with --own, ~2.7 for the program and as much again for the upload buffer (refunded).
-const TARGET = { fee: 0.3, bots: 0.3, admin: 1.0 + (own ? 5.8 : 0) };
+// Whether markets.json already holds live markets on this checkout's mint and program.
+async function marketsReady(mint: PublicKey) {
+  const rec = existsSync("markets.json") ? JSON.parse(readFileSync("markets.json", "utf8")) : {};
+  const addrs = Object.values(rec.markets ?? {}).map((m) => new PublicKey((m as { address: string }).address));
+  if (rec.mint !== mint.toBase58() || rec.programId !== PROGRAM_ID.toBase58() || addrs.length < 2) return false;
+  return (await conn.getMultipleAccountsInfo(addrs)).every((a) => a?.owner.equals(PROGRAM_ID));
+}
+
+// SOL the admin needs for what's still to do: ~0.85 for both markets' rent and fees, a little for
+// the mint and its metadata, and with --own ~2.7 for the program plus as much again for the upload
+// buffer (refunded). The fee payer and bot payer are topped up to 0.3 when they fall below 0.15.
+async function adminNeeds() {
+  const mint = load("token-mint").publicKey;
+  let n = 0.05;
+  if (!(await conn.getAccountInfo(mint))) n += 0.05;
+  if (!(await marketsReady(mint))) n += 0.9;
+  if (own && !(await conn.getAccountInfo(load("veleda-program").publicKey))) n += 5.8;
+  return n;
+}
+const TOP_UP = { below: 0.15, to: 0.3 };
 
 async function fund() {
   mkdirSync("keys", { recursive: true });
@@ -44,10 +61,12 @@ async function fund() {
     console.log(`  created ${keyPath(name)}`);
   }
   const admin = load("admin"), others = [load("fee-payer"), load("bot-payer")];
+  const needs = (await adminNeeds()) * LAMPORTS_PER_SOL;
+  const topUp = (bal: number) => (bal < TOP_UP.below * LAMPORTS_PER_SOL ? TOP_UP.to * LAMPORTS_PER_SOL - bal : 0);
   const shortfall = async () => {
     const [a, f, b] = await Promise.all([admin.publicKey, ...others.map((k) => k.publicKey)].map((k) => conn.getBalance(k)));
-    const needF = Math.max(0, TARGET.fee * LAMPORTS_PER_SOL - f), needB = Math.max(0, TARGET.bots * LAMPORTS_PER_SOL - b);
-    return { a, needF, needB, needA: Math.max(0, TARGET.admin * LAMPORTS_PER_SOL + needF + needB - a) };
+    const needF = topUp(f), needB = topUp(b);
+    return { a, needF, needB, needA: Math.max(0, needs + needF + needB - a) };
   };
   let s = await shortfall();
   for (let tries = 0; s.needA > 0 && tries < 8; tries++) {
@@ -99,10 +118,7 @@ async function chain() {
   } else console.log(`  mint ${mint.toBase58()} already exists`);
 
   // Both markets, unless markets.json already holds live ones on this mint and program.
-  const rec = existsSync("markets.json") ? JSON.parse(readFileSync("markets.json", "utf8")) : {};
-  const addrs = Object.values(rec.markets ?? {}).map((m) => new PublicKey((m as { address: string }).address));
-  const live = addrs.length >= 2 && (await conn.getMultipleAccountsInfo(addrs)).every((a) => a?.owner.equals(PROGRAM_ID));
-  if (rec.mint === mint.toBase58() && rec.programId === PROGRAM_ID.toBase58() && live) console.log("  markets.json already points at your markets");
+  if (await marketsReady(mint)) console.log("  markets.json already points at your markets");
   else run("scripts/create-markets.ts", "flagship", "fast");
 
   const empty = setEnv(mint.toBase58());
