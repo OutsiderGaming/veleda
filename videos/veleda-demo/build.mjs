@@ -4,7 +4,7 @@ import { existsSync as has, writeFileSync as W, mkdirSync } from "node:fs";
 
 const PARTS = [
   ["problem", [
-    ["p1a", "Prediction markets are exploding. Kalshi and Polymarket went from about a billion dollars of trading a week in September last year to nearly twenty billion a week this September."],
+    ["p1a", "Prediction markets are exploding. Kalshi and Polymarket combined have increased their trading volume nearly 20 times in the 12 months to September."],
     ["p1b", "But ask them when something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that."],
     ["p1c", "Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price."]]],
   ["flow", [

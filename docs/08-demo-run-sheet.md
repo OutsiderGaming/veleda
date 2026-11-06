@@ -25,7 +25,7 @@ About 3:30 to 3:45 in total at a natural pace (the limit is 4:00). Times in the 
 
 | Time | On screen | Voiceover |
 |---|---|---|
-| 0:00 | Volume figures climbing | Prediction markets are exploding. Kalshi and Polymarket went from about a billion dollars of trading a week in September last year to nearly twenty billion a week this September. |
+| 0:00 | Volume figures climbing | Prediction markets are exploding. Kalshi and Polymarket combined have increased their trading volume nearly 20 times in the 12 months to September. |
 | 0:12 | Mock of a typical market, labelled "Illustration": "BTC hits $200K by…?" with fixed dates, each with Yes and No | But ask them *when* something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that. |
 | 0:28 | The deadlines dissolve into one continuous timeline. A finger drags a window across it | Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price. |
 

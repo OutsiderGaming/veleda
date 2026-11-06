@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="UTF-8" /></head><body><template id="problem-template">
-<div data-composition-id="problem" data-width="1920" data-height="1080" data-duration="31.685">
+<div data-composition-id="problem" data-width="1920" data-height="1080" data-duration="30.408">
 <style>@font-face{font-family:"Cinzel";src:url("assets/fonts/Cinzel-Variable.ttf");font-weight:400 900}
 @font-face{font-family:"Manrope";src:url("assets/fonts/Manrope-Variable.ttf");font-weight:200 800}[data-composition-id="problem"]{position:relative;width:100%;height:100%;background:#0D0F0E;color:#EDE4D6;font-family:"Manrope",sans-serif;overflow:hidden}
 [data-composition-id="problem"] *{box-sizing:border-box}
@@ -35,17 +35,17 @@ const IN=(e,t,o={})=>tl.fromTo(e,{opacity:0,y:o.y??26,scale:o.scale??1},{opacity
 const OUT=(e,t,d=.4)=>tl.fromTo(e,{opacity:1},{opacity:0,duration:d,ease:"power2.in",immediateRender:false},t);
 const COUNT=(id,a,b,t,d,fmt,ease="power2.out")=>{const el=document.getElementById(id),o={v:a};el.textContent=fmt(a);tl.to(o,{v:b,duration:d,ease,onUpdate:()=>{el.textContent=fmt(o.v)}},t)};
 const fm=v=>"$"+v.toFixed(v<6?2:0)+"bn",A=0;
-  tl.fromTo(".glow",{scale:.9},{scale:1.12,duration:31.685,ease:"none"},0);
-  IN("#pa",A+.1);COUNT("n1",0,1,A+.4,1.6,v=>"~$"+(v<1?v.toFixed(1):"1")+"bn");IN("#st2",A+5.122,{y:0});COUNT("n2",0,19.46,A+5.122,1.8,v=>"$"+v.toFixed(2)+"bn");
-  OUT("#pa",10.244-.35);
-  IN("#pb",10.244+.05);IN("#pm",17.2632926,{scale:.94});
-  OUT(["#pb","#pm"],21.942-.35);
-  const C=21.942,D=9.343;IN("#pc",C+.05);
+  tl.fromTo(".glow",{scale:.9},{scale:1.12,duration:30.408,ease:"none"},0);
+  IN("#pa",A+.1);COUNT("n1",0,1,A+.4,1.6,v=>"~$"+(v<1?v.toFixed(1):"1")+"bn");IN("#st2",A+4.483,{y:0});COUNT("n2",0,19.46,A+4.483,1.8,v=>"$"+v.toFixed(2)+"bn");
+  OUT("#pa",8.967-.35);
+  IN("#pb",8.967+.05);IN("#pm",15.9862926,{scale:.94});
+  OUT(["#pb","#pm"],20.665-.35);
+  const C=20.665,D=9.343;IN("#pc",C+.05);
   const ch=document.getElementById("pch");
   [["1 hour",18],["1 week",60],["1 year",540]].forEach(([l,w],i)=>{const s=C+D*(.36+i*.11);
     tl.fromTo("#pw",{width:i?[18,60][i-1]:18},{width:w,duration:.5,ease:"power2.inOut",immediateRender:false},s);
     if(i===0)tl.fromTo(ch,{opacity:0},{opacity:1,duration:.2,immediateRender:false},s);
     tl.set(ch,{textContent:l},s);});
-tl.to({}, {duration:31.685}, 0);
+tl.to({}, {duration:30.408}, 0);
 window.__timelines["problem"]=tl;})();</script>
 </div></template></body></html>
