@@ -218,10 +218,11 @@ Goal from the hackathon spec: one-command setup script and README, seeded market
 - [x] **Rehearse** _(a trial run and the full take on 6 Nov 2026)_: the full demo script twice in a row without intervention (the week's exit check).
 - [ ] **Record** _(phone take done 6 Nov 2026 and cut into the video; it's also the backup recording; render after the voiceover)_: the main video, plus a backup recording of the full live run in case devnet is slow on the day.
 - [ ] **Final checks on the day**: copy audit again; stopwatch test once more on the live URL; both markets open and seeded.
-- [x] **Name checks** _(6 Nov 2026; still to check by hand: UK trademarks)_:
+- [x] **Name checks** _(6 Nov 2026)_:
   - **Domains:** veleda.market and veleda.app are unregistered (registry RDAP returns 404). veleda.xyz and veleda.io are unregistered too. veleda.com is taken (registered Feb 2024, a global investigations and advisory firm).
   - **Tokens:** DexScreener's search API finds no VELEDA pair; the web search found no VELEDA token on pump.fun (pump.fun's own search is behind a bot check). The nearest names are unrelated (VLED, VAEL).
   - **US trademarks** (Trademarkia): VELEDA, clothing, class 25, dead since 1989; VELEDA CONSULTING GROUP, pending since June 2026, classes 35 and 41 (leadership training). Nothing in software, finance or betting.
+  - **UK trademarks** (UK IPO, checked by the user): no VELEDA; the only near matches are two marks spelled VELLEDA, with a double L.
   - **X:** @veleda is taken by a personal account, inactive since 2021 (checked by the user). Use a fallback such as @veledamarket or @veleda_market; check which is free before announcing.
   - "Veda" stays off-limits: an existing Solana DeFi protocol.
 - [ ] **Submission**: final project description and "How Solana powers Veleda" from `docs/05-submission-copy.md`; repo link, live link and video link; tick the hackathon spec's submission checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
