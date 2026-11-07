@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="UTF-8" /></head><body><template id="lp-template">
-<div data-composition-id="lp" data-width="1920" data-height="1080" data-duration="36.451">
+<div data-composition-id="lp" data-width="1920" data-height="1080" data-duration="32.735">
 <style>@font-face{font-family:"Cinzel";src:url("assets/fonts/Cinzel-Variable.ttf");font-weight:400 900}
 @font-face{font-family:"Manrope";src:url("assets/fonts/Manrope-Variable.ttf");font-weight:200 800}[data-composition-id="lp"]{position:relative;width:100%;height:100%;background:#0D0F0E;color:#EDE4D6;font-family:"Manrope",sans-serif;overflow:hidden}
 [data-composition-id="lp"] *{box-sizing:border-box}
@@ -36,9 +36,9 @@
 const IN=(e,t,o={})=>tl.fromTo(e,{opacity:0,y:o.y??26,scale:o.scale??1},{opacity:1,y:0,scale:1,duration:o.d??.55,ease:o.ease??"power3.out",stagger:o.stagger??0,immediateRender:false},t);
 const OUT=(e,t,d=.4)=>tl.fromTo(e,{opacity:1},{opacity:0,duration:d,ease:"power2.in",immediateRender:false},t);
 const COUNT=(id,a,b,t,d,fmt,ease="power2.out")=>{const el=document.getElementById(id),o={v:a};el.textContent=fmt(a);tl.to(o,{v:b,duration:d,ease,onUpdate:()=>{el.textContent=fmt(o.v)}},t)};
-const A=0,B=8.692,Bd=14.573,U=23.265,Ud=8.739,E=32.004;
-  IN(["#lh","#lr"],A+.1);IN("#lc",A+.3);IN("#l1",A+4.781);
-  tl.fromTo("#lm",{scaleX:0},{scaleX:1,duration:.8,ease:"power2.out",immediateRender:false},A+5.215);
+const A=0,B=7.94,Bd=11.7,U=19.64,Ud=8.495,E=28.135;
+  IN(["#lh","#lr"],A+.1);IN("#lc",A+.3);IN("#l1",A+4.367);
+  tl.fromTo("#lm",{scaleX:0},{scaleX:1,duration:.8,ease:"power2.out",immediateRender:false},A+4.764);
   const bs=document.querySelectorAll("[data-composition-id='lp'] .bars i");
   bs.forEach(b=>gsap.set(b,{scaleY:0.34}));
   IN("#l2",B+.1);
@@ -57,6 +57,6 @@ const A=0,B=8.692,Bd=14.573,U=23.265,Ud=8.739,E=32.004;
   tl.fromTo("#uw",{x:430,width:620},{x:1040,width:240,duration:.7,ease:"power2.inOut",immediateRender:false},U+Ud*.85);
   tl.fromTo("#le",{opacity:0},{opacity:1,duration:.6,immediateRender:false},E-.3);
   tl.set("#lu",{display:"none"},E+.35);
-tl.to({}, {duration:36.451}, 0);
+tl.to({}, {duration:32.735}, 0);
 window.__timelines["lp"]=tl;})();</script>
 </div></template></body></html>

@@ -19,7 +19,7 @@ const PARTS = [
     ["f9", "From there, they can send it to their bank through our payment partner, or send USDC to any wallet."]]],
   ["tree", [
     ["s1", "So how does one market price every hour? On Solana, the whole timeline lives in a single account, as a tree of prices."],
-    ["s2", "Five years of hours is about forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit."],
+    ["s2", "Five years of hours is almost forty-four thousand slots, and that fits too: three and a half megabytes, inside Solana's ten-megabyte limit."],
     ["s3", "Buying a window reprices a few branches, not every hour beneath them. On our live three-year market, a day or nearly two years is one atomic trade, at similar cost and low fees."]]],
   ["lp", [
     ["l1", "Today the platform funds every market. Next, we open that to liquidity providers. Their maximum loss is known and funded up front."],
@@ -37,11 +37,14 @@ const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol")
 const dur = (f) => +X("ffprobe", ["-v","error","-show_entries","format=duration","-of","csv=p=0",f]).toString().trim();
 
 // ---------- timing
+// Beats that hold silently (no voice, no caption) for this long when no final take exists.
+const SILENT = { l4: 2.6 };
 let clock = INTRO; const T = {}, SC = {}; const audio = [], caps = [];
 for (const [part, beats] of PARTS) {
   const sc = clock;
   for (const [id, text] of beats) {
     let f = `voice/final/${id}.wav`;
+    if (!has(f) && SILENT[id]) { T[id] = { s: clock - sc, e: clock - sc + SILENT[id], d: SILENT[id] }; clock += SILENT[id]; continue; }
     if (!has(f)) {
       f = `voice/scratch/${id}.wav`;
       if (!has(f)) { const a = `voice/scratch/${id}.aiff`;
