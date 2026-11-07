@@ -25,15 +25,15 @@ Demo video: https://youtu.be/XSCJWLiuu-g · Live app: https://veleda-veleda1.ver
 
 ### How a trade works
 
-Using the demo's fictional market, "When will BTC first hit $200,000?":
+Using our flagship market, "When will Taylor Swift's first child be born?", which covers every day from October 2026 to October 2029 (figures are live quotes from 7 Nov 2026, in test credits):
 
-1. **Browse.** No account needed. The market is a timeline, and each bar shows the crowd's odds for that hour or day.
-2. **Drag a window.** Press and drag across the time you believe in, for example 7 hours on 15 June. The buy sheet updates as you drag: here the crowd puts 6.8% on that window, so a $20 stake pays $141 if it lands (7.1×), after the 3.5% fee and price impact. A single hour is a lottery ticket; a whole month is a safer bet.
-3. **Make the call.** Tap "predict the future". The first time, a Google sign-in creates the wallet and the call goes straight through. The whole window, however wide, is bought in one transaction.
-4. **Hold or cash out.** There's no order book and no waiting for a buyer: the market maker always quotes a price. As time passes, hours that didn't happen drop away and the ones left become more likely. In the demo, a window bought at $19.84 was worth $25.46 two days later and was sold for a profit in one tap.
-5. **Settle.** When the event happens, the winning hour is recorded on-chain. Every share in a window containing it pays $1, claimed from Positions: in the demo, the 15 June window paid $141.01.
+1. **Browse.** No account needed. The market is a timeline, and each bar shows the crowd's odds for that day, week or month.
+2. **Drag a window.** Press and drag across the time you believe in, and the buy sheet updates as you drag, after the 3.5% fee and price impact. The crowd puts 0.67% on June 2027, so $20 on that month pays $1,358 if the birth lands in it (68×). Widen it to all of 2028, at 16.9%, and the same $20 pays $109 (5.4×). A narrow window is a long shot; a wide one is a safer bet.
+3. **Make the call.** Tap "predict the future". The first time, a Google sign-in creates the wallet and the call goes straight through. The whole window, a day or a year, is bought in one transaction.
+4. **Hold or cash out.** There's no order book and no waiting for a buyer: the market maker always quotes a price. If a pregnancy is announced with a spring due date, spring windows jump and their holders can sell at the new price in one tap. And as each day passes without a birth, it drops off the timeline and the days left become more likely.
+5. **Settle.** The market resolves on the date of birth, as reported by at least 5 of 10 named news outlets. The winning day is recorded on-chain, and every share in a window containing it pays $1, claimed from Positions.
 
-To keep it fair, trading on a slot closes shortly before it (72 hours on the flagship market, 1 hour on the fast demo market), so nobody can trade on something that has already happened.
+To keep it fair, trading on a day closes 72 hours before it starts, so nobody can trade on news that's already out. The demo video shows the full cycle, including settlement, on a fictional BTC market whose clock we can run at speed.
 
 ### Status
 
