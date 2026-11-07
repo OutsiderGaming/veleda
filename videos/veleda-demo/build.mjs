@@ -8,7 +8,7 @@ const PARTS = [
     ["p1b", "But ask them when something will happen, and you get this: a handful of fixed deadlines, each its own yes-or-no bet. Think it lands in the second week of June? There's no button for that."],
     ["p1c", "Veleda has one market for the whole timeline. You buy any stretch of time: an hour, a week, a year. One trade, at one live price."]]],
   ["flow", [
-    ["f1", "Here's someone who has never used Solana. They open a link and can browse without an account. This is the launch flow, shown with test money. The market is a fictional one we can run at speed: when will BTC first hit two hundred thousand dollars?"],
+    ["f1", "Here's someone who has never used Solana. They open a link and can browse without an account. This is the launch flow, shown with test money. The market is a fictional one that we can run at speed: when will BTC first hit two hundred thousand dollars?"],
     ["f2", "They drag across a stretch of time and make the call. The odds update as they choose how much time to cover: pick a single hour for a lottery ticket, or a wide range for a safer bet. One Google sign-in creates their wallet. There's no seed phrase, and they never need to buy SOL, because Veleda pays the network fees."],
     ["f3", "Then they add money, by card or mobile wallet. The first deposit includes an ID check from our payment partner, which can take a few minutes, and only happens once. The money arrives as USDC in their own wallet, shown simply as dollars."],
     ["f4", "And their call goes straight through, with no second tap: twenty dollars on that window."],
