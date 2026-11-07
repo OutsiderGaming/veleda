@@ -27,8 +27,9 @@ cut f2 "24.0 37.0 37.5 41.9" "split[a][b];[b]crop=440:240:40:535,boxblur=28:4[bl
 cut f3 "42.5 63.6"
 cut f4 "63.6 69.5"
 # f5 keeps the tap and drag for window B (85.0-86.5) unbroken; build.mjs plays f5 at most 1.2x.
-cut f5 "83.8 92.5 96.8 100.5"
-cut f6 "98.5 106.0"
+# It skips the idle buy sheet (87.6-88.9) and most of "placing your call" (90.4-91.4).
+cut f5 "83.8 87.6 88.9 90.4 91.4 92.6 96.8 98.4"
+# No f6: build.mjs shows a full-screen timeline for "time passes" instead.
 cut f7 "112.0 121.0"
 # f8 skips 142.5-148.9, where the resolved card still showed the pre-resolve value (fixed in the app since).
 cut f8 "137.0 142.4 149.0 150.5 182.0 187.0"

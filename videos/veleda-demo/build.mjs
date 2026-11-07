@@ -32,6 +32,8 @@ const GAP = 0.4, PART_GAP = 0.8, TAIL = 1.6;
 const INTRO = 1.5, LOGO_BG = "#171C1A"; // LOGO_BG is the logo image's own flat background
 // Phone footage plays at most this much faster than real time; a beat whose clip is longer than
 // its voice grows to fit, and every clip is sped up or slowed to fill its beat exactly.
+// f6 has no phone footage: a full-screen timeline shows the clock moving instead, held at least this long.
+const MIN_BEAT = { f6: 6.4 };
 const MAX_RATE = 1.6, MAX_RATE_OF = { f5: 1.2 }; const RATE = {}; // f5: the second drag should read at near real speed
 const spoken = (s) => s.replaceAll("Veleda", "Velleda").replaceAll("SOL", "sol");
 const dur = (f) => +X("ffprobe", ["-v","error","-show_entries","format=duration","-of","csv=p=0",f]).toString().trim();
@@ -53,7 +55,7 @@ for (const [part, beats] of PARTS) {
     }
     const d = dur(f);
     const fp = `footage/${id}.mp4`, fd = has(fp) ? dur(fp) : 0;
-    const bd = Math.max(d + GAP, fd / (MAX_RATE_OF[id] ?? MAX_RATE));
+    const bd = Math.max(d + GAP, fd / (MAX_RATE_OF[id] ?? MAX_RATE), MIN_BEAT[id] ?? 0);
     if (fd) RATE[id] = +(fd / bd).toFixed(4);
     T[id] = { s: clock - sc, e: clock - sc + bd, d: bd };
     audio.push({ id, f, s: clock, d });
@@ -158,16 +160,48 @@ const t = (id, k = "s") => n3(T[id][k]);
     const footage = `footage/${id}.mp4`;
     slots += has(footage)
       ? `<video id="v-${id}" class="clip vid" src="${footage}" muted data-start="${s}" data-duration="${d}" data-playback-rate="${RATE[id]}" data-track-index="1"></video>`
+      : MIN_BEAT[id] ? `<div id="slot-${id}" class="clip slot" data-start="${s}" data-duration="${d}" data-track-index="1"></div>`
       : `<div id="slot-${id}" class="clip slot" data-start="${s}" data-duration="${d}" data-track-index="1">${img ? `<img src="assets/${img}.png" alt="" />` : ""}<div class="ph"><b>Rough cut</b><span>${shot}</span></div></div>`;
     const extra = id === "f2" ? `<ul class="ticks"><li>Wallet created</li><li>No seed phrase</li><li>Network fees paid for them</li></ul>`
       : "";
+    if (MIN_BEAT[id]) continue; // full-screen visual instead of the side panel
     side += `<div class="g step" id="st-${id}"><div class="k">${ids.indexOf(id) + 1} of ${ids.length}</div><div class="h serif">${h}</div>${sub ? `<div class="sub">${sub}</div>` : ""}${extra}</div>`;
     js += `IN("#st-${id}",${s}+.05);OUT("#st-${id}",${n3(T[id].e)}-.3,.25);`;
     // f2's ticks land on the words in the recorded take (seconds into the beat): "creates their wallet",
     // "no seed phrase", "pays the network fees". Re-time them if f2 is re-recorded.
     if (id === "f2") [12.0, 12.9, 16.3].forEach((at, i) => { js += `IN("#st-f2 li:nth-child(${i + 1})",${s}+${at},{y:14});`; });
   }
+  // f6: time passes. 120 hourly bars from Mon 12 Jun 09:00; the clock sweeps two days, the hours behind
+  // it drop away, and the rest grow (they're now more likely). Windows A and B as in the take.
+  const TV = { n: 120, sweep: 48, A: [51, 57], B: [69, 75], x0: 100, w: 1720 };
+  const tvH = (i) => 34 + 150 * Math.exp(-(((i - 66) / 30) ** 2)) + 22 * Math.sin(i * 0.9) ** 2;
+  const tvBars = Array.from({ length: TV.n }, (_, i) => `<i id="tb${i}" style="height:${tvH(i).toFixed(0)}px"></i>`).join("");
+  const bx = (i) => (i * TV.w) / TV.n, bw = TV.w / TV.n;
+  const tvWin = (k, [a, b]) => `<div class="tvw" id="tvw${k}" style="left:${bx(a).toFixed(1)}px;width:${(bx(b + 1) - bx(a)).toFixed(1)}px"><span>${k}</span></div>`;
+  const days = ["Mon 12 Jun", "Tue 13 Jun", "Wed 14 Jun", "Thu 15 Jun", "Fri 16 Jun", "Sat 17 Jun"];
+  const tvAx = days.map((d, i) => { const h = i * 24 + 15; return h < TV.n ? `<span style="left:${bx(h).toFixed(1)}px">${d}</span>` : ""; }).join("");
+  const F6 = t("f6"), F6d = n3(T.f6.d), SW = 0.7, SWd = n3(T.f6.d * 0.5);
+  js += `IN("#tv",${F6}-.15,{y:0,d:.35});OUT("#tv",${n3(T.f6.e)}-.35,.35);
+  tl.fromTo("#tvn",{x:0},{x:${bx(TV.sweep).toFixed(1)},duration:${SWd},ease:"power1.inOut",immediateRender:false},${F6}+${SW});
+  COUNT("tvc",0,${TV.sweep},${F6}+${SW},${SWd},v=>{const h=9+Math.floor(v),d=["Mon 12","Tue 13","Wed 14"][Math.min(2,Math.floor(h/24))];return d+" Jun "+String(h%24).padStart(2,"0")+":00"},"power1.inOut");
+  for(let i=0;i<${TV.sweep};i++)tl.fromTo("#tb"+i,{opacity:1,scaleY:1},{opacity:0,scaleY:0,duration:.3,ease:"power2.in",immediateRender:false},${F6}+${SW}+${SWd}*(i+1)/${TV.sweep});
+  tl.fromTo("#tvg",{scaleY:1},{scaleY:1.45,duration:${SWd},ease:"power1.inOut",immediateRender:false},${F6}+${SW}+.15);
+  IN("#tvch",${F6}+${n3(T.f6.d * .62)},{y:12});
+  COUNT("tva",14.98,25.46,${F6}+${n3(T.f6.d * .66)},${n3(T.f6.d * .22)},v=>"$"+v.toFixed(2));`;
+  side += `<div class="g tv" id="tv"><div class="tvh serif">Time passes</div><div class="tvs">Demo clock, sped up: two days in seconds</div>
+    <div class="tvc" id="tvc">Mon 12 Jun 09:00</div>
+    <div class="tvarea"><div class="tvg" id="tvg">${tvBars}</div>${tvWin("A", TV.A)}${tvWin("B", TV.B)}<div class="tvn" id="tvn"><b>Now</b></div></div>
+    <div class="tvax">${tvAx}</div>
+    <div class="tvch" id="tvch">Window A cash-out <b id="tva">$14.98</b></div></div>`;
   W("compositions/flow.html", comp("flow", `
+  .tv{inset:0;background:#0D0F0E;z-index:30}.tvh{position:absolute;left:100px;top:64px;font-size:78px;color:#F6C792}.tvs{position:absolute;left:100px;top:168px;font-size:38px;color:#BFB5A5}
+  .tvc{position:absolute;right:100px;top:84px;font-size:56px;font-weight:800;color:#F6C792;font-variant-numeric:tabular-nums}
+  .tvarea{position:absolute;left:${TV.x0}px;top:290px;width:${TV.w}px;height:470px;border-bottom:3px solid #2C2A24}
+  .tvg{position:absolute;inset:0;display:flex;align-items:flex-end;transform-origin:bottom}.tvg i{flex:1;margin:0 1px;background:#A9743F;transform-origin:bottom}
+  .tvw{position:absolute;top:0;bottom:0;background:rgba(246,199,146,.2);border-left:4px solid #F6C792;border-right:4px solid #F6C792}.tvw span{position:absolute;top:-46px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:28px;font-weight:800;color:#F6C792}
+  .tvn{position:absolute;left:0;top:-20px;bottom:-3px;width:4px;background:#EDE4D6}.tvn b{position:absolute;top:-40px;left:-30px;font-size:26px;color:#EDE4D6}
+  .tvax{position:absolute;left:${TV.x0}px;top:772px;width:${TV.w}px;height:40px;font-size:26px;color:#BFB5A5}.tvax span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .tvch{position:absolute;left:100px;top:842px;font-size:42px;font-weight:700;color:#EDE4D6}.tvch b{color:#F6C792;font-variant-numeric:tabular-nums}
   .phone{position:absolute;left:300px;top:40px;width:430px;height:860px;border-radius:52px;border:8px solid #2E2B25;background:#101311;overflow:hidden}
   .slot,.vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
   .ph{position:absolute;left:24px;right:24px;bottom:40px;background:#151816;border:2px solid #E9A867;border-radius:16px;padding:20px;font-size:25px;line-height:1.35;color:#EDE4D6}.ph b{display:block;color:#F6C792;margin-bottom:8px}
