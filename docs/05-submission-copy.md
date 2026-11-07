@@ -10,15 +10,17 @@ Demo video: https://youtu.be/XSCJWLiuu-g · Live app: https://veleda-veleda1.ver
 
 ### The user
 
-**Who they are.** People who already argue about *when*: pop-culture fans (when will Taylor Swift's first child be born, when does the album drop) and crypto communities (when will BTC hit $200K). They follow the story every day, live on their phones, and most have never used a crypto wallet.
+**Who they are.** The explosion of prediction markets in recent years is testament to a large public appetite for prediction, on subjects as diverse as celebrity news and crypto prices. Veleda is for the people who argue about *when*: pop-culture fans (when will Taylor Swift's first child be born?) and crypto communities (when will BTC hit $200K?). They follow the story every day, live on their phones, and many have never used a crypto wallet.
 
 **What they're missing today.**
-- **Prediction markets can't express their view.** Kalshi and Polymarket offer a handful of fixed deadlines, each its own yes/no bet ("by 30 June?"). A fan who thinks "the second week of June" has no button to press.
+- **Only yes or no, on fixed deadlines.** Existing platforms only offer binary yes/no bets on predetermined timeframes ("by 30 June?"). A fan who thinks "the second week of June" has no button to press.
+- **Capped long shots.** The narrowest bet is the gap between two deadlines, so the odds can only get so long. People love long shots, both for the payout and for the flex.
 - **Their debates have no stakes and no record.** Group chats argue about timing endlessly, but nobody can prove they called it.
 - **Crypto apps lose them at the door.** A seed phrase and "buy SOL first" are where most newcomers give up.
 
 **What Veleda gives them.**
 - **Their exact call.** One market covers the whole timeline, and they buy precisely the window they believe in, as narrow or as wide as they like.
+- **Real long shots.** Narrow the window to a single day and the odds go as long as the crowd says: on our Taylor Swift market, $20 on one day currently pays about $5,400 (270×).
 - **Something to share.** Every window is a link that opens straight onto it, so a friend can back the same call in a couple of taps, and the call is on record.
 - **A normal app.** Google or email sign-in creates their wallet. There's no seed phrase and no SOL, and their first call takes under a minute.
 - **A reason to come back.** A window's price moves as news breaks and as time passes, so there's always something to check, cash out or add to, not one bet and a months-long wait.
