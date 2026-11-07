@@ -1,31 +1,49 @@
 # Veleda — Submission copy (drafts)
 
-Drafted 12 Oct 2026, rewritten 4 Nov 2026 after judge feedback, checked against the build and the demo video on 6 Nov 2026, for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
+Drafted 12 Oct 2026, rewritten 4 Nov 2026 after judge feedback, checked against the build and the demo video on 6 Nov 2026, and restructured on 7 Nov 2026 around the feedback "explain the user, how a trade works, and how Solana powers it", for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
 
 ## Project description
 
-**Veleda, the market of seers.** Fans argue about *when* things will happen: when the album drops, when the baby's due, when BTC hits a number. Those arguments have no stakes and no record of who called it. Veleda turns them into calls you can stake, share and get credit for. It's built for pop-culture fans and crypto communities who want bragging rights with something at stake.
+**Veleda, the market of seers.** A prediction market for *when* something will happen. Instead of betting yes or no on a fixed deadline, you buy any stretch of future time, from an hour to a year, in one swipe and one trade, and cash out at the live price whenever you like.
+
+Demo video: https://youtu.be/XSCJWLiuu-g · Live app: https://veleda-veleda1.vercel.app · Repo: https://github.com/OutsiderGaming/veleda
+
+### The user
+
+**Who they are.** People who already argue about *when*: pop-culture fans (when will Taylor Swift's first child be born, when does the album drop) and crypto communities (when will BTC hit $200K). They follow the story every day, live on their phones, and most have never used a crypto wallet.
+
+**What they're missing today.**
+- **Prediction markets can't express their view.** Kalshi and Polymarket offer a handful of fixed deadlines, each its own yes/no bet ("by 30 June?"). A fan who thinks "the second week of June" has no button to press.
+- **Their debates have no stakes and no record.** Group chats argue about timing endlessly, but nobody can prove they called it.
+- **Crypto apps lose them at the door.** A seed phrase and "buy SOL first" are where most newcomers give up.
+
+**What Veleda gives them.**
+- **Their exact call.** One market covers the whole timeline, and they buy precisely the window they believe in, as narrow or as wide as they like.
+- **Something to share.** Every window is a link that opens straight onto it, so a friend can back the same call in a couple of taps, and the call is on record.
+- **A normal app.** Google or email sign-in creates their wallet. There's no seed phrase and no SOL, and their first call takes under a minute.
+- **A reason to come back.** A window's price moves as news breaks and as time passes, so there's always something to check, cash out or add to, not one bet and a months-long wait.
 
 ### How a trade works
 
-1. **Pick a window.** A market is a timeline of the future, and its bars show the crowd's odds for each hour, day or month. Press and drag across any stretch, from one hour to a whole year.
-2. **Make the call.** The buy sheet shows your multiplier after fees and price impact. Narrow windows pay more, wide windows are safer, and one tap buys the whole window as a single trade.
-3. **Cash out or hold.** There's no need to wait for a counterparty, because the on-chain market maker always quotes a price. Sell at the live price whenever the crowd moves your way, or as time passes and your window becomes more likely.
-4. **Settle.** Once the event happens, the winning slot is recorded on-chain. Every window containing it pays 1 unit per share, which you claim from Positions.
+Using the demo's fictional market, "When will BTC first hit $200,000?":
 
-Every window can also be shared as a link that opens straight onto it, so a friend can back the same call in a couple of taps.
+1. **Browse.** No account needed. The market is a timeline, and each bar shows the crowd's odds for that hour or day.
+2. **Drag a window.** Press and drag across the time you believe in, for example 7 hours on 15 June. The buy sheet updates as you drag: here the crowd puts 6.8% on that window, so a $20 stake pays $141 if it lands (7.1×), after the 3.5% fee and price impact. A single hour is a lottery ticket; a whole month is a safer bet.
+3. **Make the call.** Tap "predict the future". The first time, a Google sign-in creates the wallet and the call goes straight through. The whole window, however wide, is bought in one transaction.
+4. **Hold or cash out.** There's no order book and no waiting for a buyer: the market maker always quotes a price. As time passes, hours that didn't happen drop away and the ones left become more likely. In the demo, a window bought at $19.84 was worth $25.46 two days later and was sold for a profit in one tap.
+5. **Settle.** When the event happens, the winning hour is recorded on-chain. Every share in a window containing it pays $1, claimed from Positions: in the demo, the 15 June window paid $141.01.
 
-### Onboarding for someone new to Solana
+To keep it fair, trading on a slot closes shortly before it (72 hours on the flagship market, 1 hour on the fast demo market), so nobody can trade on something that has already happened.
 
-A new user signs in with Google or email, Veleda creates a wallet for them, and they can make their first call with free test credits in under a minute.
+### Status
 
-Adding real money would be the one slower step: the first card deposit goes through a payment partner's ID and eligibility checks, and funds then arrive as USDC in the user's own wallet, shown simply as dollars. Anyone who already holds USDC can deposit directly. The platform pays network fees, so nobody has to buy SOL or handle a seed phrase.
+**This prototype runs on devnet with test money: new users get 100 free test credits, and every trade, cash-out and payout is real on-chain.** The "launch preview" link shows the planned real-money flow, clearly labelled: the first card deposit goes through a payment partner's ID check, and funds arrive as USDC in the user's own wallet, shown as dollars. Real-money launch depends on licensing and legal advice.
 
-**This prototype runs on devnet with test money: the deposit is simulated, while every trade, cash-out and payout is real on-chain.** Real-money launch depends on licensing and legal advice. The demo video and the "launch preview" link show this flow, clearly labelled.
+Two markets are live: "When will Taylor Swift's first child be born?" (three years of daily slots, open for anyone to trade) and the fictional BTC market from the video, whose clock we can run at speed to show settlement.
 
 ### What's next
 
-Today the platform funds every market. Next, we open that to liquidity providers. A provider's maximum loss is known and funded up front, they set the opening odds (so a provider who knows the market gives away less to the first traders), and they earn the 2.5% liquidity share of every buy and sell. It isn't guaranteed profit, but the risk is capped and priced.
+Today the platform funds every market. Next, we open that to liquidity providers: their maximum loss is known and funded up front, they set the opening odds, and they earn 2.5% of every buy and sell. The risk is real but capped and priced.
 
 ### One-line version
 
@@ -33,16 +51,14 @@ Veleda: buy any window of future time in one swipe. Call when it happens, cash o
 
 ## How Solana powers Veleda
 
-Every Veleda market is a single on-chain automated market maker, a logarithmic market scoring rule (LMSR), that prices the whole timeline at once. The timeline is split into hourly or daily slots, and the prices for every slot live in a segment tree inside one zero-copy account. Buying a window means adding shares to every slot in that range. The tree applies this as a lazy range update, so repricing grows with the logarithm of the timeline's length, not with the width of the window. The program also keeps a plain per-slot record of what each slot would owe, which a trade updates with one addition per slot, so a wide window costs a little more, not hundreds of times more.
+**One market, one account, one instruction.** Every market is a single on-chain market maker (a logarithmic market scoring rule, LMSR) that prices the whole timeline at once. The prices for every slot live in a segment tree inside one zero-copy account. Buying a window is a lazy range update on that tree, so repricing grows with the logarithm of the timeline's length, not with the window's width. The program also keeps a plain per-slot record of what each slot would owe, updated with one addition per slot, so a wide window costs a little more, not hundreds of times more. On the three-year flagship market, buying 1 day costs about 70K compute units and 700 days about 100K, both within Solana's default 200K budget. Any window is quoted, bought or sold in one atomic instruction.
 
-We measured this on the three-year flagship market: buying 1 day costs about 70K compute units, 31 days about 81K and 700 days about 100K, all within Solana's default 200K budget. One program instruction can quote, buy or sell any contiguous range atomically.
+**Always a price, always backed.** Because the market maker is on the other side of every trade, there's no order book and no waiting for a counterparty: you can cash out at the live price at any time. The maths runs in Q64.64 fixed point, rounding costs up and proceeds down, and every instruction checks that the vault holds enough for the largest possible payout, so every position is fully backed on-chain. We cross-checked the maths against a separate reference model on 26,000 random trades.
 
-The same layout scales to fine-grained markets: five years of hourly slots (43,824) fits in one 3.5 MB account, inside Solana's 10 MB limit. Trading at that size needs one more change: keeping that per-slot record in a tree too, since today each trade updates it slot by slot and scans the open slots for the solvency check. That's on the roadmap; the live markets run at 1,096 days and 168 hours.
+**A consumer app on top.** Privy embedded wallets give every user a Solana wallet from a Google or email sign-in. Our server builds each transaction, the user's wallet signs it, and the server adds its signature as fee payer and submits it, paying the network fee and the rent for the new position account. Solana's low fees and fast confirmation are what make this work: the network fee on a $5 call or an instant cash-out is a fraction of a cent, and it confirms in about a second, so it feels like an app, not a blockchain.
 
-Because the market maker is always on the other side of the trade, there's no order book and no waiting for a counterparty. You can enter early at a long-shot price and cash out at the live price at any time. The maths runs in Q64.64 fixed point, with costs rounded up and proceeds rounded down. Every instruction checks one invariant: the vault always holds enough to pay the largest possible payout, so every position is fully backed on-chain. We cross-checked the maths against a separate reference model on 26,000 random trades.
-
-Solana's low fees and fast finality make small, precise calls practical, such as 5 units on a single day. Embedded wallets plus a platform fee payer mean a new user can hold a position from a wallet that has never held SOL.
+**Room to grow.** Five years of hourly slots (43,824) fits in one 3.5 MB account, inside Solana's 10 MB limit. Trading at that size needs one more change, keeping the per-slot record in a tree too; that's on the roadmap, and the live markets run at 1,096 days and 168 hours. Creating a market is permissionless and works with any SPL Token or Token-2022 mint.
 
 ### One-line version
 
-Each market is a single LMSR stored as a segment tree in one Solana account, so buying any window of time, from an hour to a year, is one atomic trade at near-constant cost and fully backed on-chain.
+Each market is a single LMSR stored as a segment tree in one Solana account, so buying any window of time, from an hour to a year, is one atomic, fully backed trade, made from a wallet that never needs SOL.
