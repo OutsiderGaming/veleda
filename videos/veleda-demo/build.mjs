@@ -163,7 +163,9 @@ const t = (id, k = "s") => n3(T[id][k]);
       : "";
     side += `<div class="g step" id="st-${id}"><div class="k">${ids.indexOf(id) + 1} of ${ids.length}</div><div class="h serif">${h}</div>${sub ? `<div class="sub">${sub}</div>` : ""}${extra}</div>`;
     js += `IN("#st-${id}",${s}+.05);OUT("#st-${id}",${n3(T[id].e)}-.3,.25);`;
-    if (id === "f2") js += `IN("#st-f2 li",${s}+${n3(T.f2.d * .42)},{stagger:${n3(T.f2.d * .1)},y:14});`;
+    // f2's ticks land on the words in the recorded take (seconds into the beat): "creates their wallet",
+    // "no seed phrase", "pays the network fees". Re-time them if f2 is re-recorded.
+    if (id === "f2") [12.0, 12.9, 16.3].forEach((at, i) => { js += `IN("#st-f2 li:nth-child(${i + 1})",${s}+${at},{y:14});`; });
   }
   W("compositions/flow.html", comp("flow", `
   .phone{position:absolute;left:300px;top:40px;width:430px;height:860px;border-radius:52px;border:8px solid #2E2B25;background:#101311;overflow:hidden}
