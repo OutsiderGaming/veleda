@@ -1,11 +1,11 @@
-# Veleda — Hackathon Spec
+# Veleda — Prototype Spec
 
 Oct 9, 2026 · @Outsider Gaming
 Source: https://claude.ai/code/artifact/8266dc36-5ef6-4a63-abcd-bec0c6cef449 (exported 12 Oct 2026)
 
 ## Goal and pitch
 
-In four weeks, ship a working devnet prototype for the **Best Consumer App on Solana** track that proves four things: a new user can place their first call within 60 seconds with no wallet setup, any time chunk can be bought as one trade on a single on-chain LMSR, positions can be cashed out at any time, and any window can be shared as a link that opens straight onto it.
+In four weeks, ship a working devnet prototype of a consumer app on Solana that proves four things: a new user can place their first call within 60 seconds with no wallet setup, any time chunk can be bought as one trade on a single on-chain LMSR, positions can be cashed out at any time, and any window can be shared as a link that opens straight onto it.
 
 **Pitch:** Fans already argue about when things will happen: when the album drops, when the baby's due, when the band reunites. Veleda turns those arguments into calls you can stake, share and get credit for. Pick any stretch of the future, from one hour to one year, in a single swipe. Bold, distant calls are cheap and pay big; when the crowd catches up, you can cash out.
 
@@ -53,7 +53,7 @@ Run two markets: a flagship that shows the real use case, and a fast one that sh
 | Live-edge lag | 24 hours | 10 minutes |
 | Resolution | Admin, day precision. The calendar date of birth (local to the place of birth) as reported by at least 5 of 10 named outlets; if they disagree, the date reported by the most outlets. If fewer than 5 report, the bar isn't met and the market stays unresolved. The quorum can be tuned. Draft list: Associated Press, Reuters, BBC News, CNN, The New York Times, People, TMZ, E! News, Billboard, Variety | Admin, hour precision |
 
-All parameters are stored in the market account, so the same program serves both. Seed both markets with simulated traders (a small script with a few wallets) so the band has shape and history when judges open it.
+All parameters are stored in the market account, so the same program serves both. Seed both markets with simulated traders (a small script with a few wallets) so the band has shape and history when visitors open it.
 
 ## On-chain program
 
@@ -116,7 +116,7 @@ A mobile-first web app (installable PWA) rather than native apps, built in React
 
 **Share link:** `/m/<market>?from=&to=` opens the app on that market with the window selected and the buy sheet open. Signed-out visitors can browse it and sign in when they tap Buy, as in onboarding.
 
-**Blink (roadmap only):** dropped from the hackathon on 14 Oct 2026. A Blink fixes the window to whoever shared it, while Veleda is about building your own window on the timeline; the share link already opens the app with the window selected, ready to adjust. If it's built later: one Solana Action at `/api/actions/chunk?market=&from=&to=`.
+**Blink (roadmap only):** dropped from the prototype on 14 Oct 2026. A Blink fixes the window to whoever shared it, while Veleda is about building your own window on the timeline; the share link already opens the app with the window selected, ready to adjust. If it's built later: one Solana Action at `/api/actions/chunk?market=&from=&to=`.
 
 - GET returns a card: an image of the timeline with the chunk highlighted, the live multiplier, and 5 / 20 / custom stake buttons.
 - POST builds a `buy_range` transaction at request time with `max_cost` set 2% above the quote.
@@ -151,7 +151,7 @@ A scripted story that shows the whole life of a market in about a minute: pick a
 
 ## Onboarding
 
-A judge should go from opening the link to holding a position in under 60 seconds, without installing anything or seeing the words "seed phrase", "SOL" or "devnet".
+A new visitor should go from opening the link to holding a position in under 60 seconds, without installing anything or seeing the words "seed phrase", "SOL" or "devnet".
 
 1. **Browse first.** Markets, the band and the drag-to-select all work signed out.
 2. **Sign in at the moment of buying** with email or Google, via a **Privy** embedded wallet (free Developer tier). The wallet is created silently.
@@ -159,13 +159,13 @@ A judge should go from opening the link to holding a position in under 60 second
 4. **No SOL needed.** The server is the fee payer on every transaction: it builds the transaction, the user's wallet signs it without sending, and the server adds its signature and submits it. The server also pays rent: it is the `payer` when a `Position` account is created and when the user's token account is created during the sign-up airdrop. `claim` returns the position's rent to the fee payer. Use Solana's native fee payer, not Privy's paid gas sponsorship.
 5. **First buy.** The buy sheet is already open with their chunk; one tap confirms.
 
-Balances show as plain amounts ("100.00") with a small "test money" label, so judges never wonder whether it's real. Users with an existing Phantom or Solflare wallet can still connect it instead.
+Balances show as plain amounts ("100.00") with a small "test money" label, so nobody wonders whether it's real. Users with an existing Phantom or Solflare wallet can still connect it instead.
 
 **Done when:** a stopwatch test from link to first position takes under 60 seconds on a phone, three times in a row.
 
 ## Market integrity (roadmap, not built)
 
-Specced so the design is ready, but none of this is needed for the demo: the flagship won't see a birth during judging, and the fast market is resolved on camera. The prototype's `resolve` simply records the winning atom.
+Specced so the design is ready, but none of this is needed for the demo: the flagship won't see a birth during the demo period, and the fast market is resolved on camera. The prototype's `resolve` simply records the winning atom.
 
 **Halt on first report**
 
@@ -202,11 +202,11 @@ The maths comes first and gets the most testing; the frontend is quicker and com
 | 3 | Web app: home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link. Practice mode (scripted, simulated, scrubbable). | Link to first position in under 60 seconds on a phone, three times in a row |
 | 4 | One-command setup script and README. Seed markets. Demo video (~2:25). Rehearse. | A stranger can run the repo from the README; the demo script runs end to end twice without intervention |
 
-If anything overruns, cut in this order: sub-range sells (already a stretch goal), then the option to connect an existing wallet. Never cut onboarding: it's a judging criterion.
+If anything overruns, cut in this order: sub-range sells (already a stretch goal), then the option to connect an existing wallet. Never cut onboarding: it's a core goal.
 
 ## Demo script
 
-About 2:25 on one phone, two markets. The submission minimum is 2 minutes and the maximum 4, so this leaves margin either side. If the video uses the news-broadcast framing, these beats become its segments.
+About 2:25 on one phone, two markets. The target range is 2 to 4 minutes, so this leaves margin either side. If the video uses the news-broadcast framing, these beats become its segments.
 
 1. **The need (20s).** "Fans already argue about when things will happen. Veleda lets you stake your call and get credit for it."
 2. **First call in under a minute (25s).** Open the link on a phone, drag to a month two years out (in the flagship's peak), tap Buy, sign in with email, and the position appears. Show a stopwatch on screen.
@@ -231,12 +231,12 @@ Record a backup video of the full run in week 4 in case devnet is slow on the da
 | Compute limit exceeded on wide ranges or deep trees | Measured in week 1 on devnet with 732 atoms: trades 50,000–90,000 CU, market creation ~300,000 (needs a compute-budget request). See the build plan |
 | Tree values overflow as shares grow | Periodic rescale of the whole tree by a constant |
 | Account size or rent too high | Demo markets are small (≤ ~1,000 atoms); five-year hourly markets are a slide, not a build |
-| Judges read it as gambling | Lead with fans and credit for your call; test tokens only; "test money" label in the app |
+| Viewers read it as gambling | Lead with fans and credit for your call; test tokens only; "test money" label in the app |
 | Scope creep from the design spec | Anything in the "Out" column stays a slide until week 4 is done |
 
 ## Roadmap slide
 
-What the design already answers but the prototype doesn't build, framed for judges' likely questions.
+What the design already answers but the prototype doesn't build, framed for the audience's likely questions.
 
 - **"Who provides liquidity?"** A single Veleda LP vault across all markets, with a transferable vault token, so LPs exit by selling the token and the pool never shrinks. Surplus capital is released as the worst case falls.
 - **"What stops LPs being picked off?"** Depth grows with volume, so the long-shot phase is shallow and cheap to run; a fee that rises with volatility recovers part of any news jump; a higher fee near now prices late information. All rules depend on market data and time, never on platform judgement.
@@ -245,9 +245,9 @@ What the design already answers but the prototype doesn't build, framed for judg
 - **"Can people trade where it's shared?"** Every shared link opens the app with that window already selected, so a friend can back it or adjust it in a couple of taps. Later, Blinks could turn a shared window into a tradable card on X, built from one Solana Action.
 - **Later features:** a daytime-only filter, permissionless market creation with review, native apps, mainnet after regulatory advice.
 
-## Submission checklist
+## Delivery checklist
 
-Track: Best Consumer App on Solana. Each item maps to a stated requirement or judging criterion.
+Each item maps to a goal in `docs/04-product-goals.md`.
 
 - [ ] **Working demo on devnet:** both markets live and seeded, onboarding working on a phone
 - [ ] **Repository** with a README covering what Veleda is, a screenshot, setup instructions and a one-command setup script (deploy the program, create the VCR mint, create and seed both markets, start the bots)

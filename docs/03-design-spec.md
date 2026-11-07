@@ -3,7 +3,7 @@
 Oct 9, 2026 · @Outsider Gaming
 Source: https://claude.ai/code/artifact/3672ca32-6da5-42de-b3cf-74fc3a82e672 (exported 12 Oct 2026)
 
-> Note: this spec uses £ in its worked examples. The prototype runs in a USD-pegged test token (see the hackathon spec), so read £ as "1 unit of the market's currency".
+> Note: this spec uses £ in its worked examples. The prototype runs in a USD-pegged test token (see the prototype spec), so read £ as "1 unit of the market's currency".
 
 ## Overview
 
@@ -51,7 +51,7 @@ Prices are always positive and sum to £1. A trade costs C(after) − C(before).
 - **Thin parts of the band give higher multipliers, not better odds.** Cheap atoms move fast in money terms, so the multiplier decays quickly with stake size. The buy sheet shows the effective multiplier for the user's stake.
 - **Cheap atoms are cheap to manipulate visually** (about £100 takes 0.2% to 10%). Mitigations: allow selling/shorting so anyone can push back, and show the money behind a price next to it.
 - **Worst-case house loss** is b · ln(1/p₀) for the winning atom; with a flat prior that is b · ln(n) ≈ £10.7k at b = £1,000 for 43,800 atoms. No per-atom supply caps are needed.
-- **b over time.** Fixed per market for the hackathon. Later: step increases by volume milestones or LP deposits (scale all q with b so prices don't move). Liquidity-sensitive LMSR is not recommended until its margin bound is checked at this atom count (Othman et al.).
+- **b over time.** Fixed per market for the prototype. Later: step increases by volume milestones or LP deposits (scale all q with b so prices don't move). Liquidity-sensitive LMSR is not recommended until its margin bound is checked at this atom count (Othman et al.).
 
 ## Opening prior
 
@@ -141,7 +141,7 @@ Effect of the fee on a 6.1% chunk, and the volume needed to cover a £2,303 LP l
 
 - **Deposit** raises b; every q scales by the same ratio so prices don't move. LP receives pool tokens.
 - **At resolution**, money remaining after winners are paid, plus accumulated fees, is distributed by pool tokens.
-- **Withdrawals.** Locked until resolution for the hackathon; fees claimable as they accrue. Mid-market exits need a fair value for open risk (roadmap).
+- **Withdrawals.** Locked until resolution for the prototype; fees claimable as they accrue. Mid-market exits need a fair value for open risk (roadmap).
 - **Late LPs** take on risk only from the moment they join, priced then.
 
 ## Insider risk and listing policy
@@ -162,7 +162,7 @@ Classifying each market is a judgment call; fine while markets are curated, but 
 
 ## Resolution
 
-Each market names its resolution source and precision up front; the hackathon resolves manually and presents the optimistic-oracle design.
+Each market names its resolution source and precision up front; the prototype resolves manually and presents the optimistic-oracle design.
 
 - **Source and precision** fixed at creation, e.g. "date of birth as reported by at least 5 of 10 named outlets, to the day". A quorum of several outlets means no single outlet's error or early report decides the market. Atom size never finer than this.
 - **Void if it already happened.** If the event turns out to have happened before the market opened, the market is voided. Each position is refunded its net amount paid (stakes including fees, minus cash-out proceeds, never below 0). Nobody should profit from information the market couldn't have priced.
@@ -186,7 +186,7 @@ A continuous vertical timeline, not a calendar grid: now at the top, the future 
 - **Opening estimate** label on the band until enough has traded. Test that the band reads well when nearly flat.
 - **Daytime-only filter** on a chunk (roadmap): higher multiplier, one trade for "this month, US daytime only".
 
-## Solana and hackathon scope
+## Solana and prototype scope
 
 Pitch: a fully on-chain AMM over thousands of mutually exclusive outcomes, where every trade costs the same whatever the chunk width, and every prediction is a shareable, tradable link.
 
@@ -204,7 +204,7 @@ Pitch: a fully on-chain AMM over thousands of mutually exclusive outcomes, where
 - [ ] Permissionless advance-time instruction that prunes elapsed atoms
 - [ ] 72h locked zone and max-cost / min-proceeds checks
 - [ ] Flat 3.5% fee split LP 2.5% / platform 1%, multipliers shown after fees; LPs locked to resolution
-- [ ] Prior presets: "not by end date" slider, optional earliest date (the daily pattern is out of scope for the hackathon)
+- [ ] Prior presets: "not by end date" slider, optional earliest date (the daily pattern is out of scope for the prototype)
 - [ ] Phone frontend: timeline band, drag-to-select, buy sheet, positions with cash-out
 - [ ] Share a chunk as a plain link (the Blink moved to the roadmap)
 
@@ -213,7 +213,7 @@ Pitch: a fully on-chain AMM over thousands of mutually exclusive outcomes, where
 ## Open questions
 
 - [ ] Value of b for the demo market, and who funds it
-- [x] Demo market: "When will Taylor Swift's first child be born?", daily atoms, at least 5 of 10 named outlets (see the hackathon spec)
+- [x] Demo market: "When will Taylor Swift's first child be born?", daily atoms, at least 5 of 10 named outlets (see the prototype spec)
 - [x] Rule for unreported or delayed resolution: no quorum, no resolution; the market stays unresolved
 - [x] Is the 72h zone frozen for sells as well as buys? **Yes: both are frozen (decided in the project brief).**
 - [ ] Liquidity-sensitive LMSR: check the Othman et al. margin bound at this atom count before considering it

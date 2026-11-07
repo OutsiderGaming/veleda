@@ -27,7 +27,7 @@ export function Shell({ children }: { children: ReactNode }) {
 function Header() {
   const { ready, authenticated, login, balance, airdropping } = useSession();
   const money = useMoney();
-  // Practice mode shows no real balances (hackathon spec, "Practice mode").
+  // Practice mode shows no real balances (prototype spec, "Practice mode").
   const practice = usePathname().startsWith("/practice");
   return (
     <header className={s.header}>

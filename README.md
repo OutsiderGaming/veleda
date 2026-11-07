@@ -2,7 +2,7 @@
 
 **Fans argue about *when* things will happen. Veleda, the market of seers, turns those arguments into calls you can stake, share and get credit for.** Buy any window of future time, from an hour to a year, in one trade, and cash out at the live price whenever the crowd moves your way.
 
-A prototype for the Encode Club Solana Hackathon (from 12 October 2026), "Best Consumer App on Solana" track, running on Solana devnet with a test currency, Veleda Credit (VCR).
+A four-week prototype (October–November 2026), running on Solana devnet with a test currency, Veleda Credit (VCR).
 
 - **Live app:** https://veleda-veleda1.vercel.app (sign in with email or Google; new accounts get 100 VCR of test money)
 - **Launch preview:** https://veleda-veleda1.vercel.app/?preview=launch shows the real-money flow as it would work at launch: new accounts start at $0 and add money through a simulated payment, with balances shown in dollars. Still test money on devnet.

@@ -1,6 +1,6 @@
 // Full resolution criteria per market, shown from the market screen ("View resolution criteria").
 // The one-line summary on market cards is `resolves` in markets.json.
-// Flagship rule: CLAUDE.md "Flagship resolution" and the hackathon spec. The 10 outlets and the
+// Flagship rule: CLAUDE.md "Flagship resolution" and the prototype spec. The 10 outlets and the
 // 5-of-10 quorum are still drafts there; change them here when they're final.
 import { endLabel, type TimelineMarket } from "./timeline";
 

@@ -1,6 +1,6 @@
-# Veleda — Submission copy (final)
+# Veleda — Project copy
 
-Final as of 7 Nov 2026. Drafted 12 Oct 2026, rewritten 4 Nov 2026 after judge feedback, checked against the build and the demo video on 6 Nov 2026, and restructured on 7 Nov 2026 around the feedback "explain the user, how a trade works, and how Solana powers it", for the Encode Club Solana Hackathon "Best Consumer App on Solana" submission form.
+Final as of 7 Nov 2026. Drafted 12 Oct 2026, checked against the build and the demo video on 6 Nov 2026, and organised around three questions: who the user is, how a trade works, and how Solana powers it.
 
 ## Project description
 

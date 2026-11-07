@@ -3,16 +3,16 @@ workflow: general-video
 flow: automation
 storyboard: no
 message: "Buy any stretch of time, in one trade, on Solana"
-destination: hackathon-submission
+destination: project-demo
 aspect: 1920x1080
 language: en
-audience: Encode Club Solana Hackathon judges, Consumer App track
+audience: demo-day audience and reviewers
 length: about 3:30 (limit 4:00)
 ---
 
 ## Intent
 
-Veleda's submission video. Four parts: why fixed yes/no deadlines are blunt, the whole flow for someone new to Solana, why Solana, and liquidity providers. The script is in `docs/08-demo-run-sheet.md`.
+Veleda's demo video. Four parts: why fixed yes/no deadlines are blunt, the whole flow for someone new to Solana, why Solana, and liquidity providers. The script is in `docs/08-demo-run-sheet.md`.
 
 ## Assets
 

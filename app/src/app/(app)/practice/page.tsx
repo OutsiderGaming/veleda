@@ -1,6 +1,6 @@
 "use client";
 
-// Practice mode (hackathon spec, "Practice mode"): a scripted market on a
+// Practice mode (prototype spec, "Practice mode"): a scripted market on a
 // fictional event that you scrub forwards and backwards. Same maths as the
 // real markets (the reference model), no chain, no sign-in, labelled as
 // simulated throughout.

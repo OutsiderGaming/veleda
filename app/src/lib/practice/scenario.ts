@@ -1,4 +1,4 @@
-// Practice mode's scripted market (hackathon spec, "Practice mode"): a
+// Practice mode's scripted market (prototype spec, "Practice mode"): a
 // fictional event, fixed opening prices and fixed moves by other traders, so
 // the story plays the same every time. Run it through the reference model
 // (packages/reference) to get every figure; scripts/practice-scenario.ts

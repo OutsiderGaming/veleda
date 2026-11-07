@@ -4,7 +4,7 @@ Oct 12, 2026 · @Outsider Gaming
 
 ## What Veleda is
 
-Veleda is a "when will it happen" prediction market on Solana, being built as a four-week prototype for the Encode Club Solana Hackathon's Best Consumer App track. Users buy any contiguous window of future time (an hour, a day, a month) as one trade; narrow windows are cheap and pay big, wide ones cost more and pay less. Positions can be cashed out at any time as the crowd moves. Named after a 1st-century Germanic seeress who predicted Rome's defeat ("VEL-eh-dah"); tagline "the market of seers". Earlier working names, now retired: Longshot, Twelvescore, Vatum.
+Veleda is a "when will it happen" prediction market on Solana, being built as a four-week consumer-app prototype. Users buy any contiguous window of future time (an hour, a day, a month) as one trade; narrow windows are cheap and pay big, wide ones cost more and pay less. Positions can be cashed out at any time as the crowd moves. Named after a 1st-century Germanic seeress who predicted Rome's defeat ("VEL-eh-dah"); tagline "the market of seers". Earlier working names, now retired: Longshot, Twelvescore, Vatum.
 
 ## Decisions made
 
@@ -19,7 +19,7 @@ Veleda is a "when will it happen" prediction market on Solana, being built as a 
 | Liquidity | Platform is the only LP and creates every market at launch; each market fully funded for its worst case b · ln(1 / lowest opening price); fixed b in the prototype: flagship 1,000 (subsidy ≈ 9,210), fast demo 100 (≈ 513) |
 | Later liquidity design | Depth grows with volume; volatility-based fee; transferable LP vault token; capital release as exposure falls; pooled reserve with per-market cap (~5% of pool) and loss waterfall. No platform halts or reprices on news |
 | Insider risk / listing | List by who controls timing (natural / institutional / one party); resolve on the natural event (date of birth, not the announcement); void the market if the event happened before it opened (refund each position's net amount paid, including fees; specced, not built for the demo) |
-| Hackathon | Devnet, our own 6-decimal devnet mint, Veleda Credit (VCR) (configurable per market; not USDC); email sign-in with a Privy embedded wallet (free Developer tier; no paid services for the demo), platform-paid fees and rent, 100 test funds on sign-up; plain share links (Blinks are roadmap); ~2:25 demo video; final submissions close 9 Nov 2026 |
+| Prototype | Devnet, our own 6-decimal devnet mint, Veleda Credit (VCR) (configurable per market; not USDC); email sign-in with a Privy embedded wallet (free Developer tier; no paid services for the demo), platform-paid fees and rent, 100 test funds on sign-up; plain share links (Blinks are roadmap); ~2:25 demo video; wrap-up by 8 Nov 2026 |
 | Brand and UI | Name Veleda; logo is a gold engraved seeress on dark green-black; UI style is dark obsidian with copper (final — reskin options retired), Cinzel for wordmark, multiplier and main button, Manrope for body; square stippled timeline bars; button text "predict the future │ 20 VCR"; mockups show "USDC" as a placeholder for VCR; app copy says "window" not "chunk" |
 | Practice mode | Decided 13 Oct 2026: an interactive tutorial with a scripted, simulated market (fictional event) that users scrub forwards and backwards; same maths as the program via the TypeScript reference model; never on-chain, no sign-in, labelled "Practice · simulated prices". It replaces the idea of user-controlled clocks: the on-chain fast market keeps its admin-only clock as proof of the real flow |
 | Timeline zoom levels | Year / Month / Day / Hour tabs. Month view uses thick, individually tappable bars (about 8 months on screen) with the month name on each bar and a per-month multiplier and percentage; Day and Hour use thin stippled bars |
@@ -30,11 +30,11 @@ Veleda is a "when will it happen" prediction market on Solana, being built as a 
 
 | Document | What it holds |
 | --- | --- |
-| Veleda — Hackathon Spec (`02-hackathon-spec.md`) | What gets built in four weeks: scope, demo markets, on-chain program, onboarding, week plan, demo script, risks, submission checklist |
+| Veleda — Prototype Spec (`02-prototype-spec.md`) | What gets built in four weeks: scope, demo markets, on-chain program, onboarding, week plan, demo script, risks, delivery checklist |
 | Veleda — Design Spec (`03-design-spec.md`) | Full design rationale: pricing maths, prior, pruning, trading, fees and LPs, listing policy, resolution, UX |
 | Veleda App mockups (`../design/`) | Core flow in the final style: 1 · timeline (month view), 2 · dragging a window, 3 · buy sheet, 4 · your positions |
 
-**Submission description** (latest draft): Veleda, the market of seers. Fans argue about when things will happen; Veleda turns those arguments into calls you can stake, share and get credit for. Buy any window from an hour to a year in one swipe; hold or cash out early. Solana points: the whole timeline lives in one account; every trade costs the same whatever the width; every payout fully backed on-chain; email sign-in with no crypto setup.
+**Project description** (latest draft): Veleda, the market of seers. Fans argue about when things will happen; Veleda turns those arguments into calls you can stake, share and get credit for. Buy any window from an hour to a year in one swipe; hold or cash out early. Solana points: the whole timeline lives in one account; every trade costs the same whatever the width; every payout fully backed on-chain; email sign-in with no crypto setup.
 
 ## Open questions and next steps
 
@@ -49,5 +49,5 @@ Veleda is a "when will it happen" prediction market on Solana, being built as a 
 - [ ] Tune the quorum: is 5 of 10 too strict or too loose?
 - [ ] Confirm the remaining demo-market parameters (atom size, window)
 - [ ] Mockups: board 1 is month view but board 2 is day view — align them or frame month as a separate zoom level; show the 72h locked state on a positions card again; off-screen "1 more position" marker; how held positions show in month view
-- [ ] Pitch video (~2:25, news-broadcast framing) built around the demo script in the hackathon spec; show the swipe-down gesture on the buy sheet early
+- [ ] Pitch video (~2:25, news-broadcast framing) built around the demo script in the prototype spec; show the swipe-down gesture on the buy sheet early
 - [ ] Regulatory advice before anything beyond devnet (gambling, LP tokens)

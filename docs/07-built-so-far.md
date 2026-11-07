@@ -1,6 +1,6 @@
 # Veleda — What we've built so far
 
-Written 20 Oct 2026 as source material for the pitch deck; status updated 6 Nov 2026. Weeks 1–3 are done and week 4 is nearly done: the setup script, README, seeded markets and the demo video cut are finished, and the video needs its voiceover and render. Final submissions close 9 Nov 2026; we're submitting by 8 Nov.
+Written 20 Oct 2026 as source material for the pitch deck; status updated 6 Nov 2026. Weeks 1–3 are done and week 4 is nearly done: the setup script, README, seeded markets and the demo video cut are finished, and the video needs its voiceover and render. Wrap-up is 8 Nov 2026.
 
 > **For the deck writer:** everything below is built and working unless it's under "Not built yet" or "Roadmap". Figures are measured, not estimated, unless marked. Please don't present roadmap items as built.
 
@@ -10,10 +10,10 @@ Written 20 Oct 2026 as source material for the pitch deck; status updated 6 Nov 
 
 Pronounced "VEL-eh-dah", after a 1st-century Germanic seeress who predicted Rome's defeat. Never shorten it to "Veda" (that's an existing Solana DeFi protocol).
 
-## Hackathon context
+## Context
 
-- **Event:** Encode Club Solana Hackathon, **Best Consumer App on Solana** track (12 Oct – 9 Nov 2026). Prize: accelerator places.
-- **Judging criteria:** clear user need and adoption potential · ease of use, including onboarding · technical execution and meaningful use of Solana · a working end-to-end experience.
+- **Timeline:** a four-week prototype, 12 Oct – 8 Nov 2026.
+- **Success criteria:** clear user need and adoption potential · ease of use, including onboarding · technical execution and meaningful use of Solana · a working end-to-end experience.
 - **Requirements:** working devnet demo · repo with README and setup · 2–4 minute video · a clear explanation of how Solana powers the project.
 
 ## The problem and the audience
@@ -52,7 +52,7 @@ Example: on the flagship, a 20 VCR stake on a window the crowd gives 6.1% pays a
 ## What's live today
 
 **Live app:** https://veleda-veleda1.vercel.app (mobile web app, installable to the home screen as a PWA)
-**Repo:** https://github.com/OutsiderGaming/veleda (going public for judging)
+**Repo:** https://github.com/OutsiderGaming/veleda (public)
 
 | Built | Detail |
 | --- | --- |
@@ -117,15 +117,15 @@ The script and how it's built are in `docs/08-demo-run-sheet.md`; the video proj
 
 The stopwatch beat was dropped: the real-money flow includes an ID check, so "under a minute" holds only for the free-credit path on the normal site. The share link was dropped from the video to save time; it's still in the app.
 
-## Not done yet (before submission)
+## Not done yet (before wrap-up)
 
 - The demo video's voiceover and render (the cut is done; the raw phone take is the backup recording).
-- A clean fast market for judges, created as close to submission as possible.
+- A clean fast market for visitors, created as close to the demo as possible.
 - Connecting an existing wallet (Phantom, Solflare) is a stretch goal; the demo uses email/Google sign-in only.
 
 ## Roadmap (designed, not built)
 
-Good material for a "what's next" or "judges' questions" slide:
+Good material for a "what's next" or "audience questions" slide:
 
 - **Liquidity:** one shared Veleda LP vault across all markets with a transferable vault token; market depth that grows with volume; a fee that rises with volatility; surplus capital released as each market's worst case falls.
 - **Resolution:** an optimistic oracle with bonded proposals and a dispute window. Also specced: halt trading on the first credible report (with an AI watcher that can only pause, never resolve), and void-with-refunds if the event happened before the market opened.

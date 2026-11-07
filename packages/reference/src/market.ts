@@ -3,7 +3,7 @@
 // on-chain program are tested against. Clarity beats speed here: every
 // operation is O(n) over the atoms.
 //
-// Spec: docs/02-hackathon-spec.md ("On-chain program", "Core maths", "Fees").
+// Spec: docs/02-prototype-spec.md ("On-chain program", "Core maths", "Fees").
 //
 // Representation: each atom i has a weight w_i = p0_i · e^(q_i / b), where p0
 // is the opening prior and q_i the net shares sold on atom i. Prices are

@@ -1,6 +1,6 @@
 # Veleda — Build plan
 
-Oct 12, 2026 · Week 1 itemised. Later weeks are planned in detail at the end of the week before, against the week-by-week plan in the hackathon spec.
+Oct 12, 2026 · Week 1 itemised. Later weeks are planned in detail at the end of the week before, against the week-by-week plan in the prototype spec.
 
 ## Decisions
 
@@ -66,7 +66,7 @@ keys/                  devnet keypairs (gitignored, never committed)
 
 ## Week 2: the real program
 
-Goal from the hackathon spec: both demo markets live on devnet with bot trading; the vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically (already done in week 1).
+Goal from the prototype spec: both demo markets live on devnet with bot trading; the vault invariant holds after every instruction; new sign-ups receive 100 VCR automatically (already done in week 1).
 
 ### Decisions
 
@@ -96,7 +96,7 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
   - Tests (`tests/trading.rs`): a trader with 0 SOL buys and cashes out in two steps, fee split, rent refund, compute; locked, slippage, too-large, bad-range and reused-nonce rejections on buy; over-selling, slippage, another user's position and a redirected rent refund on sell; invariant (vault = balance + fees ≥ largest payout) after every step.
 - [x] **`advance_time`, `resolve`, `claim`, `set_clock_offset`**: clock offset only on markets created as demo markets, forward only; "now" = chain time + offset everywhere. Done 13 Oct 2026. `advance_time` is permissionless; `resolve` and `set_clock_offset` check the market's admin; `claim` needs the owner's signature, pays the winner 1 VCR per share (losers and pruned positions get 0) and always closes the position, rent to the stored rent payer. Emits `Claimed`.
 - [x] **Tests**: full lifecycle per market type; locked/pruned/slippage/too-large/resolved rejections; claim on fully pruned positions; a user with 0 SOL buys and sells; invariant after every instruction. Re-run the compute measurement. Done 13 Oct 2026 (`tests/lifecycle.rs`, `tests/trading.rs`, `tests/create_market.rs`; 17 tests). The engine's `Pruned` error can't fire on-chain: a pruned atom always starts before now + lock, so `Locked` fires first. Compute (LiteSVM, flagship): create 666K, buy 69–100K, sell 82–93K, advance_time 19K for 9 days, claim 12K.
-- [x] **Deploy + create markets**: upgrade the devnet program; `scripts/create-markets.ts` creates the flagship (Taylor Swift, 3 years = 1,096 daily atoms, b 1,000, 72h lock, 24h lag, the opening shape from the hackathon spec) and the fast market (168 hourly atoms, b 100, flat, 1h lock, 10 min lag, clock offset enabled), minting each subsidy to its vault. Done 13 Oct 2026: program upgraded on devnet (389,520 bytes), markets created and recorded in `markets.json`: flagship `63fNCmpHJVRE5RduWzzcFT39Tm7PTh1U5v2qjhMdq5Jb` (subsidy 9,210.34 VCR, atom 0 = 13 Oct 2026 00:00 UTC), fast `59dFi4bkexb7oSbCcMA5Z6hZSPyUEtzghHrSC7KXKf6K` (subsidy 512.99 VCR, atom 0 = 13 Oct 2026 10:00 UTC). `scripts/create-markets.ts flagship|fast` (one transaction per market; admin pays) and `scripts/lib/veleda.ts` (PDAs, layout, presets, encoders for all seven instructions). The fast market's 7-day window starts at creation, so re-create it (`fast` only, ~0.07 SOL) before recording the demo.
+- [x] **Deploy + create markets**: upgrade the devnet program; `scripts/create-markets.ts` creates the flagship (Taylor Swift, 3 years = 1,096 daily atoms, b 1,000, 72h lock, 24h lag, the opening shape from the prototype spec) and the fast market (168 hourly atoms, b 100, flat, 1h lock, 10 min lag, clock offset enabled), minting each subsidy to its vault. Done 13 Oct 2026: program upgraded on devnet (389,520 bytes), markets created and recorded in `markets.json`: flagship `63fNCmpHJVRE5RduWzzcFT39Tm7PTh1U5v2qjhMdq5Jb` (subsidy 9,210.34 VCR, atom 0 = 13 Oct 2026 00:00 UTC), fast `59dFi4bkexb7oSbCcMA5Z6hZSPyUEtzghHrSC7KXKf6K` (subsidy 512.99 VCR, atom 0 = 13 Oct 2026 10:00 UTC). `scripts/create-markets.ts flagship|fast` (one transaction per market; admin pays) and `scripts/lib/veleda.ts` (PDAs, layout, presets, encoders for all seven instructions). The fast market's 7-day window starts at creation, so re-create it (`fast` only, ~0.07 SOL) before recording the demo.
 - [x] **Trade endpoints**: `app/` API routes that build buy/sell/claim transactions with the server as fee payer (same pattern as the week 1 transfer), for the web app in week 3. Done 13 Oct 2026:
   - `POST /api/trade/buy` `{market, from, to, stake}` quotes the stake into shares at the live price (asks 0.2% fewer shares than exact, so ~0.4% room for the price to move; `max_cost` = the stake) and rejects locked windows up front. `POST /api/trade/sell` `{position, shares?}` (default all; `min_proceeds` 1% under the quote). `POST /api/trade/claim` `{position}`. Each returns a fee-payer-signed transaction for the wallet to sign, then `POST /api/submit` (was `/api/transfer/submit`) relays it.
   - `GET /api/positions` (signed in): open positions with cash-out value, `locked`, or payout once resolved. `GET /api/markets` (public): live state and every atom's price.
@@ -124,7 +124,7 @@ Goal from the hackathon spec: both demo markets live on devnet with bot trading;
 
 ## Week 3: the web app
 
-Goal from the hackathon spec: the real app on a phone (home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link), plus practice mode. Done when a link opens to a first position in under 60 seconds on a phone, three times in a row.
+Goal from the prototype spec: the real app on a phone (home, timeline band, drag-to-select, buy sheet with sign-in at the point of buying, positions with cash-out, claim, share link), plus practice mode. Done when a link opens to a first position in under 60 seconds on a phone, three times in a row.
 
 ### Decisions
 
@@ -137,7 +137,7 @@ Goal from the hackathon spec: the real app on a phone (home, timeline band, drag
 | Time and dates | The flagship's atoms are UTC days and the fast market's are UTC hours; the app labels them in the viewer's local time. Share links use atom indexes (`/m/flagship?from=300&to=330`): short and exact |
 | Sign-up airdrop | Automatic: the app calls `/api/airdrop` once after the first sign-in (it's already idempotent). The 100 VCR is there before the buy sheet asks for it |
 | Positions data | Open positions from `/api/positions` (built). "Paid" and entry odds come from the buy's `Trade` event, read once per position from its first transaction and cached server-side; no program change. Settled positions come from the wallet's recent transactions (`Trade` sells and `Claimed` events). Total traded on Home = accrued fees ÷ 3.5% |
-| Sparklines | Decided 13 Oct 2026: dropped from position cards for the hackathon (they'd need stored price history). Cards show entry odds → current odds instead |
+| Sparklines | Decided 13 Oct 2026: dropped from position cards for the prototype (they'd need stored price history). Cards show entry odds → current odds instead |
 | External wallets | Decided 13 Oct 2026: email/Google embedded wallets only for the demo; Phantom/Solflare via Privy's connectors is a stretch goal, because the server currently only trusts the embedded wallet |
 | Keys on Vercel | Fee payer and mint authority as environment secrets (JSON arrays), read when `keys/` isn't there. Devnet only |
 | Bots | Decided 13 Oct 2026: a scheduled GitHub Actions job runs one bot round every 30 minutes. The repo is private (2,000 free minutes a month, at least 1 billed minute per run), so 30 minutes is about 1,440 minutes a month; tighten it if the repo goes public. Admin, mint-authority and bot keys go in as repo secrets, set with `gh secret set` straight from the key files so they're never printed |
@@ -162,7 +162,7 @@ In build order; each step should leave the app working.
 - [x] **Positions**: hero total value, P&L, paid and count; Open / Settled tabs; cards with window, paid / worth now (after fee) / if it lands, entry vs current odds, "cash out │ amount VCR"; locked state "Locked · within 72h of now" (fast: "within 1h"); claim button after resolution. Needs the `Trade`-event lookup in `/api/positions`. Done 13 Oct 2026: paid and entry odds from each position's buy event, Settled from recent sells and claims (transaction logs, cached, retried on rate limits). Checked 14 Oct 2026 with a Privy account: repeated buys and cash-outs, instant.
 - [x] **Share link**: `/m/<market>?from=&to=` opens the market with that window selected and the buy sheet open, signed in or not. Done 13 Oct 2026.
 - [x] **Deploy**: Vercel free tier, keys and Privy secrets as environment variables, the Vercel domain added to Privy's allowed origins. Check nothing on the way needs a paid plan. Prepared 13 Oct 2026: the server reads `FEE_PAYER_KEY`, `MINT_AUTHORITY_KEY` and `MARKETS_JSON` from the environment when `keys/` and `markets.json` aren't deployed; `next build` passes. Needs the user's Vercel account (Root Directory `app`, with files outside it included, since practice mode imports `packages/reference`). Vercel project `veleda` on the OutsiderGaming account (team `veleda1`, Hobby plan), connected to the GitHub repo so every push to `main` deploys; root directory `app`, Node 24; production variables `FEE_PAYER_KEY`, `MINT_AUTHORITY_KEY`, `MARKETS_JSON`, `NEXT_PUBLIC_PRIVY_APP_ID`, `PRIVY_APP_SECRET` (13 Oct 2026). If markets are re-created, update `MARKETS_JSON` too. Live 13 Oct 2026 at https://veleda-veleda1.vercel.app (Vercel Authentication switched off so it's public). Privy sign-in works on the live site (checked 14 Oct 2026), so its origin is allowed.
-- [x] **Practice mode** (hackathon spec, "Practice mode"): a scripted, simulated market that users scrub forwards and backwards, all in the browser. Done 13 Oct 2026 with the draft script and the model's figures; the script still needs the user's sign-off (edit `app/src/lib/practice/scenario.ts`).
+- [x] **Practice mode** (prototype spec, "Practice mode"): a scripted, simulated market that users scrub forwards and backwards, all in the browser. Done 13 Oct 2026 with the draft script and the model's figures; the script still needs the user's sign-off (edit `app/src/lib/practice/scenario.ts`).
   - Run the script through `packages/reference` once per scenario (and per choice: cash out or hold) to produce snapshots of every atom's price, the user's position value and the caption, about one per simulated hour. The slider indexes the snapshots. The reference model is plain TypeScript with no dependencies, so the app can import or copy it.
   - Fixed script, no randomness; the user's own window and stake feed into the same replay.
   - Reuse the timeline, select and buy sheet components; add a caption card and the "Practice · simulated prices" tag.
@@ -194,23 +194,23 @@ In build order; each step should leave the app working.
 
 ## Week 4: ship it
 
-Goal from the hackathon spec: one-command setup script and README, seeded markets, the demo video (~2:25) and rehearsals. Done when a stranger can run the repo from the README and the demo script runs end to end twice without intervention. Drafted 14 Oct 2026; nothing here is built yet.
+Goal from the prototype spec: one-command setup script and README, seeded markets, the demo video (~2:25) and rehearsals. Done when a stranger can run the repo from the README and the demo script runs end to end twice without intervention. Drafted 14 Oct 2026; nothing here is built yet.
 
 ### Decisions
 
 | Area | Decision |
 | --- | --- |
 | Setup script | `npm run setup` runs `scripts/setup.sh`. Default mode: install both projects, check `.env`, run the app against the live devnet markets (README step 3). `--own` mode: everything in README step 4 (keys, devnet SOL, build and deploy, mint and metadata, both markets, one bot round). It updates the program address in the four files listed in step 4 itself, so a stranger doesn't have to |
-| Repo visibility | Decided 14 Oct 2026: the repo goes public, so judges can read it. History scanned the same day: the only committed files under `keys/` or `.env*` are `keys/README.md` and `.env.example`; no keypairs or Privy secrets anywhere in history; commits use the GitHub noreply address. The bots read their keys from repo secrets, which stay hidden. Public repos get free Actions minutes, so the bots' schedule can tighten |
-| Recording | Open: phone screen recording plus voiceover, or a capture of a phone-width browser window; which editor; whether to use the news-broadcast framing (hackathon spec, "Demo script") |
-| Deadline | Final submissions close 9 Nov 2026 (confirmed by the user 14 Oct 2026). Submission through the Encode Club portal. Aim to have the video recorded a week early, leaving time for a re-record and devnet trouble |
+| Repo visibility | Decided 14 Oct 2026: the repo goes public, so anyone can read it. History scanned the same day: the only committed files under `keys/` or `.env*` are `keys/README.md` and `.env.example`; no keypairs or Privy secrets anywhere in history; commits use the GitHub noreply address. The bots read their keys from repo secrets, which stay hidden. Public repos get free Actions minutes, so the bots' schedule can tighten |
+| Recording | Open: phone screen recording plus voiceover, or a capture of a phone-width browser window; which editor; whether to use the news-broadcast framing (prototype spec, "Demo script") |
+| Deadline | Wrap-up by 8 Nov 2026 (confirmed by the user 14 Oct 2026). Aim to have the video recorded a week early, leaving time for a re-record and devnet trouble |
 
 ### Steps
 
 - [x] **Setup script** _(done 6 Nov 2026: the default mode needs only Node and creates your own keys, mint and markets on the deployed program; see the README)_ (`scripts/setup.sh`, `npm run setup`), both modes. Fails early with a plain message when a tool is missing (Node, and for `--own`: Rust, Solana CLI, Anchor) or the devnet faucet rate-limits (print the address and point to a web faucet).
 - [x] **Fresh-clone test** _(default mode passed 6 Nov 2026 from an empty folder, including a faucet limit and re-runs; `--own` not run, it needs about 7 devnet SOL)_: clone into an empty directory and follow only the README, default mode then `--own`. Fix the README wherever it falls short. This is the "stranger can run it" check.
-- [x] **README finish** _(6 Nov 2026: quick start, screenshot from the phone take, launch preview and practice links; the video link goes in at submission)_: a screenshot of the real app (timeline plus buy sheet; the README has none yet); the demo video link once it exists; a line on practice mode. Check the "How Solana powers Veleda" claims against the build (below).
-- [x] **Measure the tree claim** _(measured compute units instead of nodes: 70K for 1 day, 81K for 31 days, 100K for 700 days; the copy now also says each trade updates a per-slot liability record)_: count the nodes a `buy_range` touches on the flagship (732 atoms) and record the compute units for a 1-day and a 1-year window. Then either keep "about 16 nodes" in `docs/05-submission-copy.md` or replace it with the measured figure.
+- [x] **README finish** _(6 Nov 2026: quick start, screenshot from the phone take, launch preview and practice links; video link added 7 Nov 2026)_: a screenshot of the real app (timeline plus buy sheet; the README has none yet); the demo video link once it exists; a line on practice mode. Check the "How Solana powers Veleda" claims against the build (below).
+- [x] **Measure the tree claim** _(measured compute units instead of nodes: 70K for 1 day, 81K for 31 days, 100K for 700 days; the copy now also says each trade updates a per-slot liability record)_: count the nodes a `buy_range` touches on the flagship (732 atoms) and record the compute units for a 1-day and a 1-year window. Then either keep "about 16 nodes" in `docs/05-project-copy.md` or replace it with the measured figure.
 - [x] **Seed for recording** _(6 Nov 2026: new fast market, bot burst, plus `scripts/demo/early-buy.ts` so window A profits at +2d)_: re-create the fast market (`node scripts/create-markets.ts fast`, then update `MARKETS_JSON` on Vercel); run a bot burst so both bands have fresh shape and the fast market has some volume (Home shows "0 VCR traded" today).
 - [x] **Demo accounts** _(a Google account new to Veleda for the take; the share beat was dropped)_: a fresh email alias for beat 2 (first call), a second phone or browser for beat 4 (share), and an account holding a fast-market position for beats 5–6 that lands in profit when the clock moves.
 - [x] **Admin run sheet** _(`docs/08-demo-run-sheet.md`)_: the exact `scripts/admin.ts fast` commands for beats 5–6 (how far to move the clock, which atom to resolve on), tried once off camera so the cash-out figure visibly climbs and the claim pays.
@@ -225,19 +225,19 @@ Goal from the hackathon spec: one-command setup script and README, seeded market
   - **UK trademarks** (UK IPO, checked by the user): no VELEDA; the only near matches are two marks spelled VELLEDA, with a double L.
   - **X:** @veleda is taken by a personal account, inactive since 2021 (checked by the user). Use a fallback such as @veledamarket or @veleda_market; check which is free before announcing.
   - "Veda" stays off-limits: an existing Solana DeFi protocol.
-- [ ] **Submission**: final project description and "How Solana powers Veleda" from `docs/05-submission-copy.md`; repo link, live link and video link; tick the hackathon spec's submission checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
+- [ ] **Hand-off**: final project description and "How Solana powers Veleda" from `docs/05-project-copy.md`; repo link, live link and video link; tick the prototype spec's delivery checklist, including the name checks (domain, X handle, DexScreener/pump.fun, trademarks).
 
 - [x] **Launch preview, real-money order** (4 Nov 2026): in the preview a new account gets no free credits and sees dollars throughout. Sign-in opens Add money, and the call places itself after the deposit. Needs a phone pass on a new Google account after the next push.
-- [x] **Launch preview** (added 4 Nov 2026 after judge feedback): `/?preview=launch` shows how real-money onboarding would work; `/?preview=off` leaves it. The payment is simulated and collects nothing; `/api/preview/deposit` then mints test VCR (set amounts, balance capped at 500), so later trades are real. Amounts show as dollars after the first deposit, with "test money" labels. The whole flow, including the automatic buy after Google sign-in, passed on a phone on the live URL on 4 Nov 2026 in a normal tab. A private tab can stop the wallet connecting, and the buy sheet now says so. The take itself is in `docs/08-demo-run-sheet.md`.
+- [x] **Launch preview** (added 4 Nov 2026 after reviewer feedback): `/?preview=launch` shows how real-money onboarding would work; `/?preview=off` leaves it. The payment is simulated and collects nothing; `/api/preview/deposit` then mints test VCR (set amounts, balance capped at 500), so later trades are real. Amounts show as dollars after the first deposit, with "test money" labels. The whole flow, including the automatic buy after Google sign-in, passed on a phone on the live URL on 4 Nov 2026 in a normal tab. A private tab can stop the wallet connecting, and the buy sheet now says so. The take itself is in `docs/08-demo-run-sheet.md`.
 
 ### Optional, if there's room
 
 - A free RPC tier (e.g. Helius) in `SOLANA_RPC_URL` for faster positions and history. Needs a sign-up: the user's call.
-- Phantom/Solflare through Privy's connectors (week 3 stretch goal; cut first if time is short, per the hackathon spec).
+- Phantom/Solflare through Privy's connectors (week 3 stretch goal; cut first if time is short, per the prototype spec).
 
 ### Week 4 is done when
 
 - A stranger can run the repo from the README, in either mode.
 - The demo script runs end to end twice without intervention.
 - The video (2–4 minutes) and a backup recording exist.
-- Every item in the hackathon spec's submission checklist is ticked.
+- Every item in the prototype spec's delivery checklist is ticked.

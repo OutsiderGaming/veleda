@@ -10,7 +10,7 @@ function market(b: number, prior: number[], atomSeconds = DAY): Market {
   return new Market({ b, atomSeconds, startTime: 0, atoms: prior.length - 1, lockSeconds: 0, lagSeconds: 0, prior });
 }
 
-test("buy sheet: 20 stake on a 6.1% window (hackathon spec, b = 1,000 and 300)", () => {
+test("buy sheet: 20 stake on a 6.1% window (prototype spec, b = 1,000 and 300)", () => {
   const prior = [0.061, 0.5, 0.439];
   const q1000 = market(1000, prior).quoteBuyByStake(0, 0, 20);
   close(q1000.shares, 277, 1, "b=1000 shares");

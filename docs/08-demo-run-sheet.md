@@ -104,6 +104,6 @@ If window A doesn't show a clear profit, make the first jump larger, but keep it
 ## After recording
 
 1. Upload the main video and keep a backup recording.
-2. Create one last clean market (step 1 above) for judges, as close to submission as you can. It expires after about 7 days, so reset it if judging runs longer.
+2. Create one last clean market (step 1 above) for visitors, as close to the demo as you can. It expires after about 7 days, so reset it if the demo period runs longer.
 3. Turn the scheduled bots back on.
-4. Paste `docs/05-submission-copy.md` and the video link into the submission form by 9 Nov.
+4. Use `docs/05-project-copy.md` and the video link wherever the project is presented.

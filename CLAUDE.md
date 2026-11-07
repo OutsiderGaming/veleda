@@ -1,25 +1,25 @@
 # Veleda — onboarding for Claude Code
 
-Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype for the **Encode Club Solana Hackathon, "Best Consumer App on Solana" track** (12 Oct – 9 Nov 2026, final submissions close 9 Nov), deployed on devnet.
+Veleda ("VEL-eh-dah", tagline "the market of seers") is a "when will it happen" prediction market on Solana. Users buy any contiguous window of future time — an hour, a day, a month, a year — as a single trade against an on-chain LMSR market maker, and can cash out at the live price at any time. It's a four-week prototype (12 Oct – 8 Nov 2026), deployed on devnet.
 
-**Status (7 Nov 2026): week 4 nearly done; submitting by Sunday 8 Nov. Demo video final: https://youtu.be/XSCJWLiuu-g.** Done in week 4: the launch preview (`/?preview=launch`, real-money order), the one-command setup (`npm run setup`, tested from a fresh clone; `--own` untested), the README with a screenshot, the submission copy checked against the build, and the demo video cut from a real phone take (`videos/veleda-demo`, run sheet `docs/08-demo-run-sheet.md`). Left: a clean fast market for judges (then test the Positions fixes live and turn the scheduled bots back on); then the submission form. Earlier: Weeks 1–2: reference model, Rust maths and engine (cross-checked on 26,000 trades), the Anchor program with all seven instructions live on devnet, both markets created (`markets.json`), trade endpoints, trader bots, and the Privy onboarding proof. Week 3: the web app is live on Vercel (home, timeline, select, buy sheet, positions, share link, practice mode); the 60-second stopwatch test passed on 14 Oct. Still open from week 3: the user's sign-off on the practice-mode script. Next: week 4 (setup script, README, seeded markets, demo video; checklist in the build plan). Work from `docs/06-build-plan.md`.
+**Status (7 Nov 2026): week 4 nearly done; wrapping up by Sunday 8 Nov. Demo video final: https://youtu.be/XSCJWLiuu-g.** Done in week 4: the launch preview (`/?preview=launch`, real-money order), the one-command setup (`npm run setup`, tested from a fresh clone; `--own` untested), the README with a screenshot, the project copy checked against the build, and the demo video cut from a real phone take (`videos/veleda-demo`, run sheet `docs/08-demo-run-sheet.md`). The scheduled bots are back on (7 Nov), and the flagship market is the one for visitors to trade. Left: test the Positions fixes live (buy and cash out on the flagship); final checks. Earlier: Weeks 1–2: reference model, Rust maths and engine (cross-checked on 26,000 trades), the Anchor program with all seven instructions live on devnet, both markets created (`markets.json`), trade endpoints, trader bots, and the Privy onboarding proof. Week 3: the web app is live on Vercel (home, timeline, select, buy sheet, positions, share link, practice mode); the 60-second stopwatch test passed on 14 Oct. Still open from week 3: the user's sign-off on the practice-mode script. Next: week 4 (setup script, README, seeded markets, demo video; checklist in the build plan). Work from `docs/06-build-plan.md`.
 
 ## Read in this order
 
-1. `docs/04-track-brief.md` — the hackathon track: judging criteria and submission requirements. Everything is judged against this.
+1. `docs/04-product-goals.md` — the product goals: who it's for, success criteria and deliverables. Everything is measured against this.
 2. `docs/01-project-brief.md` — one-page summary of every decision made so far, plus open questions. **Newest; wins on conflicts.**
-3. `docs/02-hackathon-spec.md` — **what to build**: scope (in/out), demo markets and parameters, accounts, instructions, maths, fees, frontend screens, share link, onboarding, week plan, demo script, risks, submission checklist. This is the build spec.
+3. `docs/02-prototype-spec.md` — **what to build**: scope (in/out), demo markets and parameters, accounts, instructions, maths, fees, frontend screens, share link, onboarding, week plan, demo script, risks, delivery checklist. This is the build spec.
 4. `docs/03-design-spec.md` — **why**: full rationale for pricing, prior, pruning, trading, fees/LPs, listing policy, resolution, UX. Use it for reasoning; don't build its roadmap items.
 5. `design/README.md` + `design/screens/*.png` — the four mockups, colour/type tokens and screen notes.
-6. `docs/05-submission-copy.md` — draft submission text and the "How Solana powers Veleda" explanation.
+6. `docs/05-project-copy.md` — the project description and the "How Solana powers Veleda" explanation.
 7. `docs/06-build-plan.md` — **current work**: repo layout, build decisions and the itemised week 1 checklist.
 
 ## Source-of-truth rules
 
 - **Lean:** this is a proof of concept. Build the smallest thing that makes the demo work; spec ideas fully, but put anything the demo doesn't need on the roadmap.
 
-- **Scope:** only items in the hackathon spec's "In (build it)" column get built. Anything in "Out (slide only)" or the design spec's roadmap stays a slide until week 4 is done.
-- **Conflicts:** project brief > hackathon spec > design spec. Mockups are authoritative for UI layout and copy.
+- **Scope:** only items in the prototype spec's "In (build it)" column get built. Anything in "Out (slide only)" or the design spec's roadmap stays a slide until week 4 is done.
+- **Conflicts:** project brief > prototype spec > design spec. Mockups are authoritative for UI layout and copy.
 - **Units:** the design spec's worked examples use £; the prototype uses a 6-decimal devnet test token. Treat £1 as 1 token unit.
 - **Currency: Veleda Credit (VCR).** Our own 6-decimal devnet mint, `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`, with on-chain name and symbol (Metaplex metadata, `scripts/set-token-metadata.ts`). The platform holds the mint authority and mints market subsidies, sign-up airdrops and bot balances. Keep the mint configurable per market; don't hard-code a name. It is not USDC, and "USDXII" is a retired name from the old Twelvescore brand. The mockups show "USDC" only as a placeholder.
 
@@ -66,13 +66,13 @@ Anchor program on devnet · React mobile-first PWA with the Solana wallet adapte
 ## Open decisions (don't guess — ask)
 
 - Whether 5 of 10 is the right quorum (it can be tuned).
-- Final list of the 10 flagship resolution sources (a draft is in the hackathon spec).
+- Final list of the 10 flagship resolution sources (a draft is in the prototype spec).
 
 ## Flagship resolution
 
 - **Question:** "When will Taylor Swift's first child be born?" It resolves on the date of birth, not the announcement.
 - **Source rule:** the calendar date of birth (local to the place of birth) as reported by **at least 5 of 10 named outlets**. If they disagree, the date reported by the most outlets wins. If fewer than 5 report, the bar isn't met and the market stays unresolved, however long that takes. Admin resolves by hand once the quorum is met. Draft list: Associated Press, Reuters, BBC News, CNN, The New York Times, People, TMZ, E! News, Billboard, Variety.
-- **Roadmap only (don't build):** halt on first report, void-if-already-happened with refunds, and an AI halt watcher. All three are specced in the hackathon spec's "Market integrity" section.
+- **Roadmap only (don't build):** halt on first report, void-if-already-happened with refunds, and an AI halt watcher. All three are specced in the prototype spec's "Market integrity" section.
 
 ## Wallets and fees
 
@@ -82,6 +82,6 @@ Anchor program on devnet · React mobile-first PWA with the Solana wallet adapte
 - **Server also pays rent.** In Anchor `init`, set `payer` to the fee-payer key, not the user, for `Position` accounts. The server also creates the user's token account when it sends the sign-up airdrop. A user with no SOL must be able to complete a first buy.
 - When `claim` closes a position, its rent refund goes back to the fee payer.
 
-## Definition of done (from the track brief and spec)
+## Definition of done (from the product goals and spec)
 
 Working devnet demo with both markets seeded · repo with README, screenshot, one-command setup script, and a "How Solana powers Veleda" section · link-to-first-position under 60 seconds on a phone, three times in a row · 2–4 minute demo video (target ~2:25) plus a backup recording.

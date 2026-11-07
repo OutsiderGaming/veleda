@@ -51,8 +51,8 @@ Live canvas (owner only): https://claude.ai/artifact/AT3unoJ2sQ7hHadgNZWfih
 
 - Screen 1 is month view but screen 2 is day view, so the sequence jumps zoom level.
 - The mockups show amounts in **USDC** as a placeholder. The demo uses our own devnet mint, Veleda Credit (VCR), with a "test money" label: the app shows "VCR" wherever the mockups show "USDC".
-- **Multipliers ignore price impact.** The buy sheet's 316 shares and ×15.8 for 20 USDC are the flat-price figures. With the hackathon spec's flagship b = 1,000, 20 buys about 277 shares (×13.9). The app shows the real figure for the chosen stake.
-- The "When will BTC first cross $200,000" card on screen 4 is decoration. That market is not in the hackathon spec.
+- **Multipliers ignore price impact.** The buy sheet's 316 shares and ×15.8 for 20 USDC are the flat-price figures. With the prototype spec's flagship b = 1,000, 20 buys about 277 shares (×13.9). The app shows the real figure for the chosen stake.
+- The "When will BTC first cross $200,000" card on screen 4 is decoration. That market is not in the prototype spec.
 - The flagship market uses daily atoms, so the app hides the Hour tab there.
 - Positions are shown as a card list here; the design spec also describes positions as coloured bands on the timeline. Both can coexist.
 - The mockups' demo market, "When will Taylor Swift's first child be born?", is the confirmed flagship question.
