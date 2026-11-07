@@ -7,7 +7,7 @@ A prototype for the Encode Club Solana Hackathon (from 12 October 2026), "Best C
 - **Live app:** https://veleda-veleda1.vercel.app (sign in with email or Google; new accounts get 100 VCR of test money)
 - **Launch preview:** https://veleda-veleda1.vercel.app/?preview=launch shows the real-money flow as it would work at launch: new accounts start at $0 and add money through a simulated payment, with balances shown in dollars. Still test money on devnet.
 - **Practice mode:** https://veleda-veleda1.vercel.app/practice, a scripted market on a fictional event that you scrub forwards and backwards. Same maths as the live markets, with no sign-in and nothing on chain.
-- **Demo video:** _link added at submission_
+- **Demo video:** https://youtu.be/XSCJWLiuu-g (2:51)
 - **Program (devnet):** `7be7tgXwK46Yu9AWqes8g5FBvBjjBqvxJFVhP1io37hx`
 - **VCR mint (devnet):** `CjkpwuK5BU8sC4vhAgvnGLFg1QAf4xLNxiRKesMEfXaP`
 
