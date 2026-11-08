@@ -2,7 +2,6 @@
 .card { background: var(--card); border: 1px solid var(--hairline); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
 .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
 .balance { font: 700 34px var(--serif); color: var(--copper-light); }
-.balance span { font-size: 0.5em; color: var(--text-2); }
 .note { color: var(--muted); font-size: 13px; margin-top: 8px; }
 .mono { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--text-2); word-break: break-all; }
 .text { color: var(--text-2); }

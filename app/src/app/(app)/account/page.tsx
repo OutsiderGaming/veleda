@@ -18,12 +18,12 @@ export default function Account() {
           <div className={s.card}>
             <div className={s.label}>Balance</div>
             <div className={s.balance}>
-              {money.amount(balance ?? 0)} {money.unit && <span>{money.unit}</span>}
+              {money.amount(balance ?? 0)}
             </div>
             <div className={s.note}>
               {preview.active
                 ? "Test money: this preview shows how real deposits would work, and the balance has no cash value."
-                : "Test money: Veleda Credit has no cash value. Every account starts with 100."}
+                : "Test money: your balance has no cash value. Every account starts with $100."}
             </div>
             {preview.active && <button className={s.addMoney} onClick={preview.openAddMoney}>Add money</button>}
           </div>
@@ -43,7 +43,7 @@ export default function Account() {
         </>
       ) : (
         <>
-          <p className={s.text}>{preview.active ? "Sign in with Google or email. We set up everything else, then you add money." : <>Sign in with Google or email. We set up everything else, and you start with 100 VCR of test money.</>}</p>
+          <p className={s.text}>{preview.active ? "Sign in with Google or email. We set up everything else, then you add money." : <>Sign in with Google or email. We set up everything else, and you start with $100 of test money.</>}</p>
           <button className={s.primary} onClick={login}>Sign in</button>
           <Link href="/practice" className={s.link}>How it works →</Link>
         </>

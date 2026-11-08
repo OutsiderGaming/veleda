@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const from = atomIndex(b.from, "from");
     const to = atomIndex(b.to, "to");
     const stake = Math.round(Number(b.stake) * BASE);
-    if (!(stake >= BASE / 100)) throw new HttpError(400, "Stake must be at least 0.01 VCR");
+    if (!(stake >= BASE / 100)) throw new HttpError(400, "Stake must be at least $0.01");
     if (header.resolved) throw new HttpError(409, "This market has resolved");
     if (from > to || to > header.atoms) throw new HttpError(400, "That window is outside the market");
     if (from < firstOpenAtom(header)) throw new HttpError(400, "That window starts too soon: it's inside the locked zone");

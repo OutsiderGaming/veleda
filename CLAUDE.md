@@ -59,7 +59,7 @@ Anchor program on devnet · React mobile-first PWA with the Solana wallet adapte
 ## Terminology and copy
 
 - App copy says **"window"**, not "chunk" (code and specs may still say chunk).
-- Primary button: **"predict the future │ 20 VCR"**. Cash-out button: **"cash out │ <amount> VCR"**. Show a small "test money" label next to balances.
+- The app shows amounts in dollars (1 VCR stands in for $1); VCR is only the on-chain token. Primary button: **"predict the future │ $20"**. Cash-out button: **"cash out │ $<amount>"**. Show a small "test money" label next to balances.
 - Never shorten the brand to "Veda" (an existing Solana DeFi protocol).
 - Onboarding must never show "seed phrase", "SOL" or "devnet" to the user.
 

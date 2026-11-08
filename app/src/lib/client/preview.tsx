@@ -2,7 +2,7 @@
 
 // Launch preview (/?preview=launch; /?preview=off leaves it): shows how real-money onboarding would
 // work, with a simulated payment. The credit that follows is real test VCR, so every trade after it
-// is still on-chain. The normal site is unchanged. Remembered in localStorage: a per-viewer
+// is still on-chain. Remembered in localStorage: a per-viewer
 // convenience, so a blocked or cleared store just drops back to the normal site on the next load.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSession } from "./session";
@@ -62,29 +62,16 @@ export function usePreview(): Preview {
   return p;
 }
 
-/** Formats amounts as VCR, or as dollars throughout the launch preview (1 VCR stands in for $1). */
+const MONEY = {
+  /** "$12.50". */
+  amount: (v: number) => `$${vcr(v)}`,
+  /** Rounded, for market volume: "$1,234". */
+  rounded: (v: number) => `$${Math.round(v).toLocaleString("en-GB")}`,
+  /** A whole-or-two-decimals stake: "$20". */
+  stake: (v: number) => `$${Number.isInteger(v) ? v : v.toFixed(2)}`,
+};
+
+/** Formats amounts in dollars, as the live app will. It's still test money: 1 VCR stands in for $1. */
 export function useMoney() {
-  const { active: dollars } = usePreview();
-  return useMemo(
-    () => ({
-      dollars,
-      /** "12.50", or "$12.50" in dollars. */
-      amount: (v: number) => (dollars ? `$${vcr(v)}` : vcr(v)),
-      /** The unit shown after amount(): "VCR", or nothing in dollars. */
-      unit: dollars ? "" : "VCR",
-      /** "12.50 VCR", or "$12.50" in dollars. */
-      full: (v: number) => (dollars ? `$${vcr(v)}` : `${vcr(v)} VCR`),
-      /** Rounded, for market volume: "1,234 VCR", or "$1,234" in dollars. */
-      rounded: (v: number) => {
-        const n = Math.round(v).toLocaleString("en-GB");
-        return dollars ? `$${n}` : `${n} VCR`;
-      },
-      /** A whole-or-two-decimals stake: "20 VCR", or "$20" in dollars. */
-      stake: (v: number) => {
-        const n = Number.isInteger(v) ? String(v) : v.toFixed(2);
-        return dollars ? `$${n}` : `${n} VCR`;
-      },
-    }),
-    [dollars],
-  );
+  return MONEY;
 }

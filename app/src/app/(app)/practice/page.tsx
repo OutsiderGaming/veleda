@@ -10,7 +10,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Timeline, fmtMult, type Range } from "@/components/Timeline";
 import { BEATS, END_TIME, beatById, quoteAtBuy, replay } from "@/lib/practice/replay";
 import { DAY, SCENARIO as S } from "@/lib/practice/scenario";
-import { pct, vcr, type TimelineMarket } from "@/lib/veleda/timeline";
+import { pct, type TimelineMarket } from "@/lib/veleda/timeline";
+import { useMoney } from "@/lib/client/preview";
 import s from "./practice.module.css";
 
 const HOUR = 3_600;
@@ -21,6 +22,7 @@ const W = S.window;
 const isScripted = (w: Range | null) => w?.from === W.from && w.to === W.to;
 
 export default function Practice() {
+  const money = useMoney();
   const [t, setT] = useState(0);
   const [picked, setPicked] = useState<Range | null>(null);
   const [cashOut, setCashOut] = useState(false);
@@ -83,40 +85,40 @@ export default function Practice() {
               <Fig label="Pays" value={`×${fmtMult(quote.multiplier)}`} copper />
             </div>
             <button className={s.primary} onClick={() => move(buyAt)}>
-              PREDICT THE FUTURE <span className={s.sep} /> {S.stake} VCR
+              PREDICT THE FUTURE <span className={s.sep} /> {money.stake(S.stake)}
             </button>
           </>
         )}
 
         {pos && (
           <div className={s.figures}>
-            <Fig label="Paid" value={vcr(pos.paid)} />
+            <Fig label="Paid" value={money.amount(pos.paid)} />
             {pos.cashedOut !== null ? (
-              <Fig label="Cashed out" value={vcr(pos.cashedOut)} copper />
+              <Fig label="Cashed out" value={money.amount(pos.cashedOut)} copper />
             ) : snap.resolved ? (
-              <Fig label="Paid out" value={vcr(pos.payout ?? 0)} copper />
+              <Fig label="Paid out" value={money.amount(pos.payout ?? 0)} copper />
             ) : (
-              <Fig label="Worth now" value={pos.value === null ? "Locked" : vcr(pos.value)} />
+              <Fig label="Worth now" value={pos.value === null ? "Locked" : money.amount(pos.value)} />
             )}
-            <Fig label="If it lands" value={pos.cashedOut !== null ? "—" : vcr(pos.shares)} copper={pos.cashedOut === null} />
+            <Fig label="If it lands" value={pos.cashedOut !== null ? "—" : money.amount(pos.shares)} copper={pos.cashedOut === null} />
           </div>
         )}
 
         {snap.beat.id === "choice" && pos && pos.cashedOut === null && pos.value !== null && (
           <>
             <button className={s.primary} onClick={() => { setCashOut(true); move(beatById("locked").at); }}>
-              CASH OUT <span className={s.sep} /> {vcr(pos.value)} VCR
+              CASH OUT <span className={s.sep} /> {money.amount(pos.value)}
             </button>
-            <button className={s.secondary} onClick={() => move(beatById("locked").at)}>Hold for {vcr(pos.shares)} VCR</button>
+            <button className={s.secondary} onClick={() => move(beatById("locked").at)}>Hold for {money.amount(pos.shares)}</button>
           </>
         )}
 
         {snap.resolved && pos && (
           <div className={s.result}>
             {pos.cashedOut !== null
-              ? `You locked in ${vcr(pos.cashedOut)} VCR early.`
+              ? `You locked in ${money.amount(pos.cashedOut)} early.`
               : pos.payout
-                ? `You win ${vcr(pos.payout)} VCR.`
+                ? `You win ${money.amount(pos.payout)}.`
                 : "Not this time: your window missed."}
           </div>
         )}

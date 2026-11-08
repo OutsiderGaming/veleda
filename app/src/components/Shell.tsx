@@ -38,7 +38,7 @@ function Header() {
       </Link>
       {!ready || practice ? null : authenticated ? (
         <div className={s.balance}>
-          <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : money.amount(balance)}</span> <span className={s.unit}>{money.unit}</span>
+          <span className={s.balanceValue}>{balance === null || (airdropping && !balance) ? "…" : money.amount(balance)}</span>
           <span className={s.testMoney}>test money</span>
         </div>
       ) : (

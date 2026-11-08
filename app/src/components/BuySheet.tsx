@@ -133,13 +133,13 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
   let disabled = busy || stake <= 0 || q.shares <= 0 || market.resolved;
   if (busy) label = "PLACING YOUR CALL…";
   else if (session.authenticated && session.airdropping) {
-    label = "GETTING YOUR 100 VCR…";
+    label = "GETTING YOUR $100…";
     disabled = true;
   } else if (session.authenticated && balance === null) {
     label = "ONE MOMENT…";
     disabled = true;
   } else if (session.authenticated && balance !== null && balance < stake) {
-    label = preview.active ? "ADD MONEY" : "NOT ENOUGH VCR";
+    label = preview.active ? "ADD MONEY" : "NOT ENOUGH MONEY";
     disabled = !preview.active;
   }
 
@@ -155,7 +155,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
             <p className={s.doneText}>
               {formatWindow(market, range.from, range.to)}
               <br />
-              Wins {money.full(done.shares)} if it lands. Cash out any time.
+              Wins {money.amount(done.shares)} if it lands. Cash out any time.
             </p>
             <Link href="/positions" className={s.primary} style={{ textDecoration: "none" }}>SEE YOUR POSITIONS</Link>
             {preview.active && !preview.deposited && <button className={s.secondary} onClick={preview.openAddMoney}>Add real money (preview)</button>}
@@ -172,7 +172,7 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
                 </div>
                 <div className={s.odds}>Crowd odds {pct(q.price)} · payout after fees</div>
               </div>
-              <div className={s.stakeLabel}>Stake ({money.dollars ? "$" : "VCR"})</div>
+              <div className={s.stakeLabel}>Stake ($)</div>
               <div className={s.chips}>
                 {CHIPS.map((c) => (
                   <button key={c} className={`${s.chip} ${other === null && stake === c ? s.chipOn : ""}`} onClick={() => { setOther(null); pickStake(c); }}>
@@ -199,10 +199,12 @@ export function BuySheet({ market, range, onClose }: { market: MarketView; range
             </div>
             <div className={s.wins}>
               <span className={s.winsLabel}>Win if it lands:</span>
-              <span className={s.winsValue}>{money.amount(shares)}{money.unit && <small>{money.unit}</small>}</span>
+              <span className={s.winsValue}>{money.amount(shares)}</span>
             </div>
             <div className={s.detail}>
               {Math.round(shares).toLocaleString("en-GB")} shares · 3.5% fee included · cancels if price passes {pctFine(cancelAt)}
+              <br />
+              Test money: no real funds are used.
             </div>
             {walletSlow && <div className={s.error}>Your wallet is taking a while. If you&apos;re in a private tab, open this link in your normal browser.</div>}
             {error && <div className={s.error}>{error}</div>}

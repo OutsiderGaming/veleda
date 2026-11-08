@@ -1,6 +1,5 @@
 .hero { text-align: center; margin: 6px 0 4px; }
 .heroValue { font: 700 60px/1 var(--serif); color: var(--copper-light); }
-.heroUnit { font: 700 28px var(--serif); color: var(--copper); margin-left: 8px; }
 .summary { text-align: center; color: var(--text-2); font-size: 15px; margin: 8px 0 18px; }
 .summary span + span::before { content: "·"; margin: 0 10px; color: var(--muted); }
 .gain { color: var(--gain); }

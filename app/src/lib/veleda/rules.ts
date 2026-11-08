@@ -15,7 +15,7 @@ export interface Rules {
 
 type M = Pick<TimelineMarket, "atoms" | "atomSeconds" | "startTime"> & { lockSeconds: number };
 
-const settle = "Once the result is in, Veleda records the winning slot on-chain. Every window that contains it pays 1 VCR per share, which you claim from Positions. All other windows pay nothing.";
+const settle = "Once the result is in, Veleda records the winning slot on-chain. Every window that contains it pays $1 per share, which you claim from Positions. All other windows pay nothing.";
 const hours = (n: number) => (n === 1 ? "an hour" : `${n} hours`);
 const lock = (m: M) => `Windows starting within ${hours(m.lockSeconds / 3600)} of now can't be bought or sold, so nobody can trade on news that has just broken.`;
 

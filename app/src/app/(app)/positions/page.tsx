@@ -91,7 +91,6 @@ export default function Positions() {
     <>
       <div className={s.hero}>
         <span className={s.heroValue}>{money.amount(total)}</span>
-        {money.unit && <span className={s.heroUnit}>{money.unit}</span>}
       </div>
       <div className={s.summary}>
         {paidValued > 0 && <span className={pnl >= 0 ? s.gain : s.loss}>{signed(pnl, money.amount)} ({signedPct(pnl / paidValued)})</span>}
@@ -183,13 +182,13 @@ function OpenCard({ p, m, busy, error, onAct }: { p: PositionView; m: MarketView
       )}
       {m.resolved ? (
         <button className={s.primary} disabled={busy} onClick={() => onAct(p, "claim")}>
-          {busy ? "CLAIMING…" : won ? <>CLAIM <span className={s.sep} /> {money.full(p.value ?? 0)}</> : "CLOSE · NO PAYOUT"}
+          {busy ? "CLAIMING…" : won ? <>CLAIM <span className={s.sep} /> {money.amount(p.value ?? 0)}</> : "CLOSE · NO PAYOUT"}
         </button>
       ) : p.status === "locked" ? (
         <button className={s.locked} disabled>🔒 Locked · within {lock} of now</button>
       ) : (
         <button className={s.primary} disabled={busy} onClick={() => onAct(p, "sell")}>
-          {busy ? "CASHING OUT…" : <>CASH OUT <span className={s.sep} /> {money.full(p.value ?? 0)}</>}
+          {busy ? "CASHING OUT…" : <>CASH OUT <span className={s.sep} /> {money.amount(p.value ?? 0)}</>}
         </button>
       )}
       {error && <div className={s.error}>{error}</div>}
